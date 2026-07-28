@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="site-title-meta">KABAS MEAN - Kanal Bantuan, Sumber Informasi & Media Panduan SRIKANDI</title>
+    <link id="site-favicon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/logo/Kabasmean.png">
+    <meta name="description" content="Kanal Bantuan, Sumber Informasi, dan Media Panduan SRIKANDI Kabupaten Malaka. Bisa diakses tanpa koneksi internet setelah dibuka pertama kali.">
+    <meta name="keywords" content="kabasmean, KABAS, MEAN, KABAS MEAN, kabas mean, SRIKANDI, srikandi, panduan srikandi">
+    <meta name="author" content="kabasmean">
+    <meta name="language" content="Indonesian">
+
+    <!-- Open Graph (untuk Social Media) -->
+    <meta property="og:title" content="SRIKANDI">
+    <meta property="og:description" content="Panduan penggunaan SRIKANDI dengan nama KABAS MEAN/Kanal Bantuan, Sumber Informasi, dan Media Panduan">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kabasmean.my.id/">
+    <meta property="og:image" content="https://iili.io/CEdhArB.png">
+
+    <link rel="canonical" href="https://kabasmean.my.id">
+
+    <!-- PWA: bisa dipasang ke layar utama & tetap bisa dibuka offline (lihat sw.js) -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0b0f19">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KABAS MEAN">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background-color: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        .nav-active {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);
+        }
+        /* ================== TEKS RATA KIRI-KANAN (JUSTIFY) ==================
+           Hanya diterapkan pada paragraf ISI KONTEN tiap menu, yaitu paragraf
+           di dalam #content-container (Beranda, FAQ, Infografis, Video,
+           Pendamping Teknis, Evaluasi, dsb). Subtitel (di header/sidebar) dan
+           footer berada di luar #content-container sehingga TIDAK terpengaruh
+           dan tetap rata kiri seperti semula. */
+        #content-container p {
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, aside, #mobile-overlay, footer, button, .no-print { display: none !important; }
+            main { overflow: visible !important; display: block !important; padding: 0 !important; }
+            #main-card-pane { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+        }
+
+        /* ================== MODE TERANG (LIGHT MODE) ================== */
+        /* Ditambahkan dengan menimpa kelas Tailwind gelap saat elemen <html> punya kelas "light-mode",
+           supaya seluruh konten yang di-render lewat JavaScript ikut berubah otomatis tanpa perlu
+           mengubah setiap potongan HTML satu per satu. */
+        html.light-mode body { background-color: #f1f5f9 !important; color: #1e293b !important; }
+        html.light-mode .bg-\[\#0b0f19\],
+        html.light-mode .bg-\[\#0d121f\] { background-color: #f1f5f9 !important; }
+
+        /* Latar gelap -> latar terang */
+        html.light-mode .bg-slate-950,
+        html.light-mode .bg-slate-900,
+        html.light-mode .bg-slate-950\/40,
+        html.light-mode .bg-slate-950\/30,
+        html.light-mode .bg-slate-950\/20,
+        html.light-mode .bg-slate-900\/70,
+        html.light-mode .bg-slate-900\/60,
+        html.light-mode .bg-slate-900\/50,
+        html.light-mode .bg-slate-900\/40,
+        html.light-mode .bg-slate-900\/30,
+        html.light-mode .hover\:bg-slate-900\/50:hover,
+        html.light-mode .hover\:bg-slate-900\/30:hover { background-color: #ffffff !important; }
+
+        html.light-mode .bg-slate-800,
+        html.light-mode .bg-slate-800\/60,
+        html.light-mode .bg-slate-700,
+        html.light-mode .bg-slate-500,
+        html.light-mode .hover\:bg-slate-800\/60:hover,
+        html.light-mode .hover\:bg-slate-700:hover { background-color: #eef2f7 !important; }
+
+        /* Border gelap -> border terang */
+        html.light-mode .border-slate-950,
+        html.light-mode .border-slate-900,
+        html.light-mode .border-slate-800,
+        html.light-mode .border-slate-800\/80,
+        html.light-mode .border-slate-800\/85,
+        html.light-mode .border-slate-800\/70,
+        html.light-mode .border-slate-800\/60,
+        html.light-mode .border-slate-850,
+        html.light-mode .border-slate-700 { border-color: #e2e8f0 !important; }
+
+        /* Teks terang di atas latar gelap -> teks gelap di atas latar terang */
+        html.light-mode body.text-slate-100,
+        html.light-mode .text-slate-100,
+        html.light-mode .text-slate-200,
+        html.light-mode .text-slate-300 { color: #334155 !important; }
+        html.light-mode .text-slate-400 { color: #64748b !important; }
+
+        /* Judul putih (h1/h2) & header mobile perlu jadi gelap karena latarnya ikut terang */
+        html.light-mode h1.text-white,
+        html.light-mode h2.text-white,
+        html.light-mode header.text-white,
+        html.light-mode header .text-white { color: #0f172a !important; }
+        html.light-mode header.bg-slate-900 { background-color: #ffffff !important; }
+
+        /* Aksen kuning & merah muda sedikit digelapkan agar tetap terbaca di atas latar putih */
+        html.light-mode .text-amber-400,
+        html.light-mode .text-amber-500,
+        html.light-mode .hover\:text-amber-400:hover,
+        html.light-mode .hover\:text-amber-500:hover { color: #b45309 !important; }
+        html.light-mode .text-rose-300,
+        html.light-mode .text-rose-400,
+        html.light-mode .hover\:text-rose-300:hover,
+        html.light-mode .hover\:text-rose-400:hover { color: #be123c !important; }
+        html.light-mode .bg-rose-950\/40,
+        html.light-mode .bg-rose-950\/30,
+        html.light-mode .bg-rose-900\/50,
+        html.light-mode .bg-rose-900\/30,
+        html.light-mode .border-rose-900\/50 { background-color: #fff1f2 !important; border-color: #fecdd3 !important; }
+
+        /* Kartu/panel utama & scrollbar */
+        html.light-mode #main-card-pane { box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08) !important; }
+        html.light-mode .custom-scrollbar::-webkit-scrollbar-track { background: #e2e8f0; }
+        html.light-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; }
+
+        /* Notifikasi toast tetap terbaca di mode terang */
+        html.light-mode .bg-emerald-950\/90 { background-color: #ecfdf5 !important; }
+        html.light-mode .bg-rose-950\/90 { background-color: #fff1f2 !important; }
+        html.light-mode .text-emerald-300 { color: #047857 !important; }
+
+        /* Placeholder input tetap kontras */
+        html.light-mode ::placeholder { color: #94a3b8 !important; opacity: 1; }
+
+        /* ================== GELEMBUNG LIVE CHAT ADMIN ALA WHATSAPP ==================
+           #admin-chat-thread diberi latar bertekstur mirip wallpaper WhatsApp, lalu
+           setiap gelembung pesan (.wa-bubble) diberi sudut lancip + "ekor" segitiga
+           hanya pada pesan TERAKHIR dari setiap grup pengirim beruntun, persis seperti
+           perilaku bubble WhatsApp asli. Jam & centang kirim diletakkan menyatu di
+           pojok kanan-bawah bubble. */
+        #admin-chat-thread {
+            background-color: #0b141a;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 1.6px);
+            background-size: 24px 24px;
+        }
+        html.light-mode #admin-chat-thread {
+            background-color: #e7ecef;
+            background-image: radial-gradient(circle at 1px 1px, rgba(15,23,42,0.05) 1px, transparent 1.6px);
+            background-size: 24px 24px;
+        }
+
+        .wa-bubble { position: relative; border-radius: 12px; }
+        .wa-bubble-out-tail { border-bottom-right-radius: 3px; }
+        .wa-bubble-in-tail { border-bottom-left-radius: 3px; }
+        .wa-bubble-out-tail::after,
+        .wa-bubble-in-tail::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 12px;
+            background: inherit;
+        }
+        .wa-bubble-out-tail::after {
+            right: -6px;
+            clip-path: polygon(0 0, 0 100%, 100% 100%);
+        }
+        .wa-bubble-in-tail::after {
+            left: -6px;
+            clip-path: polygon(100% 0, 0 100%, 100% 100%);
+        }
+        .wa-msg-text { white-space: pre-wrap; word-break: break-word; }
+        .wa-meta {
+            float: right;
+            margin-left: 8px;
+            margin-top: 3px;
+            font-size: 10px;
+            line-height: 1;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .wa-daydivider span {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(2px);
+        }
+        html.light-mode .wa-daydivider span {
+            background: rgba(255, 255, 255, 0.85);
+        }
+    </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
+
+    <script>
+        // Variabel Global
+        let currentSection = 'beranda';
+        let isMobileSidebarOpen = false;
+
+        // Nilai Default Sistem (Bisa diubah langsung di sini)
+        const defaultLogoText = 'KM';
+        const siteName = 'KABAS MEAN';
+        const siteSubtitle = 'KANAL BANTUAN, SUMBER INFORMASI & MEDIA PANDUAN SRIKANDI';
+        const homeImageUrl = 'https://images.unsplash.com/photo-1683178861301-bd306d03dfd3?q=80&w=872&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+        const logoImageUrl = 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/logo/Kabasmean.png';
+
+        const defaultMentors = [
+            { id: '1', name: 'Stanislaus Bria, S.Fil', role: 'Admin Instansi', phone: '085126524343', status: 'Aktif' },
+            { id: '2', name: 'Vinsensiana Abuk, SE', role: 'User/Kabid Kearsipan', phone: '085126524343', status: 'Aktif' },
+            { id: '3', name: 'Aryana Dini Putri Tianto, S.Fil.', role: 'Admin Satker', phone: '082146013722', status: 'Aktif' },
+            { id: '4', name: 'Yohanes Ruru Rengga, S.Fil', role: 'Arsiparis Instansi', phone: '081237759738', status: 'Aktif' },
+            { id: '5', name: 'Adelbertus Erwin Berek, S.Fil', role: 'Pencatat Surat Satker', phone: '082144341892', status: 'Aktif' },
+            { id: '6', name: 'Elfrida Hoar Lebo, S.AP', role: 'Arsiparis Satker', phone: '081336172979', status: 'Aktif' },
+        ];
+
+        // Ubah teks beranda di sini
+        const defaultHomeText = `<p class="mb-4">Selamat datang di <strong>KABAS MEAN</strong>: Kanal Bantuan, Sumber Informasi, dan Media Panduan SRIKANDI Kabupaten Malaka.</p><p>Silakan menggunakan menu navigasi di sebelah kiri untuk eksplor beberapa fitur penting SRIKANDI, menggunakan kolom pencarian, dan membaca FAQ yang tersedia. Jika mengalami kendala, manfaatkan live chat serta kontak Admin Instansi melalui tombol "Hubungi Admin Instansi" atau dapat menghubungi salah satu staf Bidang Kearsipan Dinas Perpustakaan dan Kearsipan Kabupaten Malaka yang tertera pada halaman "Pendamping Teknis".</p>`;
+        
+        // Ubah isi konten panduan pada masing-masing menu di bawah ini.
+        // Untuk menu Hak Akses (admin-instansi, admin-satker, tata-usaha, pencatat-surat, user),
+        // link pada properti "links" yang berakhiran .pdf otomatis tampil sebagai kartu PDF.
+        // Upload file PDF ke folder "dokumen/PDF/" pada repo kabasmean/SRIKANDI,
+        // lalu isi url dengan pola jsDelivr CDN (supaya PDF tampil langsung, bukan didownload):
+        // https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@BRANCH-ATAU-COMMIT-HASH/dokumen/PDF/NAMA-FILE.pdf
+        // Bisa pakai nama branch (mis. "main") atau commit hash spesifik agar link permanen.
+        const defaultContent = {
+            'beranda': { title: 'Sambutan', body: defaultHomeText, links: [] },
+            'informasi': { title: 'Informasi Umum', body: `<p><strong>SRIKANDI (Sistem Informasi Kearsipan Dinamis Terintegrasi)</strong> adalah aplikasi kearsipan dinamis yang diluncurkan berdasarkan Peraturan Presiden Nomor 95 Tahun 2018 tentang Sistem Pemerintahan Berbasis Elektronik (SPBE). SRIKANDI yang diluncurkan oleh Arsip Nasional Republik Indonesia (ANRI) terdiri dari 2 versi: Versi Bimtek untuk latihan dan Versi 3/Live untuk penggunaan yang sesungguhnya. Untuk mengakses kedua versi SRIKANDI tersebut, silahkan klik pada tautan berikut:</p>`, links: [{ text: 'AKSES SRIKANDI BIMTEK', url: 'https://srikandi-v3-bimtek.arsip.go.id/auth/login' },{ text: 'AKSES SRIKANDI V3 LIVE', url: 'https://srikandi.arsip.go.id/auth/login' }], after: `<p>SRIKANDI Versi 3.0 saat ini mewajibkan setiap pengguna untuk mengaktifkan Multi Factor Authentication (MFA) untuk menjaga keamanan akun saat login.</p>` },
+            'admin-instansi': { title: 'Admin Instansi', body: '<p>Admin Instansi adalah pemeran "di balik layar" yang bertugas menyiapkan pondasi sistem sebelum aplikasi bisa digunakan oleh pegawai. Tugas utamanya adalah membuat Unit Kerja, mendaftarkan akun pegawai (User), mengatur Jabatan, dan mengunggah Logo Instansi. Ciri khasnya, Admin Instansi memiliki akses penuh ke menu Master (Pengguna, Jabatan, Unit Kerja). Admin Instansi berwenang menyusun struktur organisasi instansi dari induk hingga unit terkecil, mengunggah/mengubah logo resmi instansi yang otomatis muncul pada QR Code Tanda Tangan Elektronik, mendaftarkan akun user dan jabatan baru, serta mereset password dan MFA semua pengguna SRIKANDI.</p>', links: [{ text: 'Panduan PDF Admin Instansi', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Instansi.pdf' }] },
+            'admin-satker': { title: 'Admin Satker', body: '<p>Admin Satker memiliki hak akses untuk membuat dan mengelola struktur organisasi pengguna aplikasi SRIKANDI pada level Satker/OPD, membuat dan mengelola akun pengguna umum, akun Sekretaris/Tata Usaha, akun Unit Persuratan/Tata Usaha, serta akun Unit Kearsipan — semuanya pada level Satker/OPD. Jika ada kendala lupa password atau Kode Authenticator terhapus, bisa direset oleh Admin Satker.</p>', links: [{ text: 'Panduan PDF Admin Satker', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Satker.pdf' }] },
+            'tata-usaha': { title: 'Tata Usaha (TU)', body: '<p>Role TU/Sekretaris berperan penuh dalam siklus tata naskah dinas — mulai dari pengaturan data master (penandatangan, tujuan naskah, verifikator, tembusan), pembuatan template & penomoran otomatis, registrasi dan pengelolaan naskah masuk maupun keluar (termasuk disposisi, koordinasi, arahan), hingga pemberkasan/pemeliharaan arsip aktif.</p>', links: [{ text: 'Panduan PDF Tata Usaha', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/TU_Sekretaris.pdf' }] },
+            'pencatat-surat': { title: 'Pencatat Surat', body: '<p>Role Pencatat Surat Satker ini berfokus pada pencatatan dan administrasi surat masuk/keluar di tingkat satuan kerja (Satker), lengkap dengan kewenangan mengelola data master pendukung (penandatangan, tujuan naskah, verifikator, tembusan) dan instrumen kearsipan (klasifikasi, template naskah dinas) yang dibutuhkan dalam proses registrasi surat.</p>', links: [{ text: 'Panduan PDF Pencatat Surat', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Pencatat_Surat_Satker.pdf' }] },
+            'user': { title: 'User/Pengguna', body: '<p>Role User di sini berperan sebagai operator naskah dinas tingkat unit kerja — mengelola surat masuk dan keluar, memverifikasi serta menandatangani naskah, mengatur data pendukung persuratan (penandatangan/verifikator/tujuan), sampai mengurus peminjaman arsip inaktif.</p>', links: [{ text: 'Panduan PDF User/Pengguna', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/User.pdf' }] },
+            'tte-pengajuan': { title: 'Pengajuan Email Dinas', body: '<p>Proses pembuatan email dinas pribadi sebagai langkah awal pengajuan TTE dimulai dengan mendaftar akun di Layanan Bantuan/servicedesk.layanan.go.id dari Kementerian Komunikasi dan Digital menggunakan tipe akun "Umum" (karena belum memiliki email dinas pribadi) dengan mengisi data Nama, NIK, Email, dan Nomor Telepon, kemudian akun diverifikasi melalui tautan yang dikirim ke email terdaftar hingga sistem mengirimkan username dan password untuk login, dilanjutkan dengan autentikasi menggunakan OTP via Email atau Authenticator SPBE; setelah berhasil login, pemohon membuat tiket pengajuan dengan mengisi formulir "Pembuatan Email Dinas Pribadi" pada aplikasi Mail Pemerintahan (mail.go.id) di bawah Kementerian Komunikasi dan Digital, melengkapi data diri (Nomor Telepon, Nama, NIP, Instansi) serta mengunggah dokumen pendukung berupa foto Kartu Pegawai dan foto selfie sambil memegang kartu pegawai, lalu mengirimkan tiket tersebut; tiket kemudian diproses oleh tim WAH dengan status berubah dari "Dibuat" menjadi "Sedang Dalam Pengerjaan" hingga akhirnya "Selesai", di mana pemohon menerima link akses email dinas (mail.pemerintah.go.id), username (@mail.go.id), dan password, dengan catatan penting agar segera mengganti password demi keamanan akun.</p>', links: [{ text: 'Layanan Servicedesk Komdigi', url: 'https://servicedesk.layanan.go.id/user/sign-up/pelanggan' }] },
+            'tte-aktivasi': { title: 'Aktivasi Email Dinas', body: '<p>Untuk mengaktifkan email dinas, pertama login ke https://surel.mail.go.id/mailgoid/ menggunakan username dan password yang diberikan pada email pendaftaran. Selanjutnya, login ke asndigital.bkn.go.id, pilih menu Layanan Individu ASN, kemudian MyASN, klik Update Data, lalu Riwayat Ubah Profil pada bagian Kontak Pribadi, masukkan alamat email dinas pribadi pada kolom Email Dinas, dan klik Verifikasi. Terakhir, kembali ke email dinas pribadi, buka email Aktivasi yang telah dikirim, lalu klik tombol Aktivasi Email Dinas untuk menyelesaikan proses. Pastikan data email yang dimasukkan sudah benar agar aktivasi berhasil, dan jaga kerahasiaan username serta password dengan tidak membagikannya kepada siapa pun.</p>', links: [{ text: 'Surel.Mail', url: 'https://surel.mail.go.id/mailgoid/'}] },
+            'tte-registrasi': { title: 'Registrasi Sertifikat BSrE', body: '<p>Untuk registrasi sertifikat BSrE, langkah pertama adalah login ke ASNdigital, memastikan Email Dinas sudah "Terverifikasi", lalu klik "Registrasi Sertifikat" hingga muncul notifikasi berhasil. Selanjutnya, buka email di https://surel.mail.go.id/mailgoid/, cari email dari [BsrE] Aktivasi Akun, klik tautan tersebut untuk diarahkan ke halaman aktivasi (https://bsre.bssn.go.id/email/aktivasi/akun/), lalu isi Nama Lengkap, NIP, dan No. HP WhatsApp aktif, kemudian kirim Kode OTP. Terakhir, masukkan kode OTP yang diterima, lengkapi data yang diminta, ambil foto selfie, dan submit — pastikan seluruh data benar sebelum submit dan jangan pernah membagikan kode OTP, username, atau password kepada siapa pun karena keamanan akun sepenuhnya menjadi tanggung jawab pemilik akun.</p>', links: [{ text: 'BSrE', url: 'https://bsre.bssn.go.id/email/aktivasi/akun/'}] },
+            'tte-passphrase': { title: 'Membuat Passphrase', body: '<p>Setelah submit foto diri, cek email di surel.mail.go.id/mailgoid dengan subjek "[BsrE] Set Passphrase", klik "Buat Passphrase", lalu verifikasi ulang data diri dan foto; selanjutnya buat passphrase minimal 8 karakter untuk menandatangani Surat Dinas, centang persetujuan Perjanjian Pemilik Sertifikat Elektronik, dan klik Submit; terakhir login kembali ke MyASN dan cek menu Sertifikat Elektronik untuk memastikan Sertifikat/Tandatangan Elektronik sudah aktif — pastikan username, password, dan passphrase disimpan baik-baik dan tidak dibagikan kepada siapapun. ⚠️ PENTING: Passphrase adalah kunci sandi pembubuhan TTE.</p>', links: [{ text: 'MyASN', url: 'https://asndigital.bkn.go.id/'}] },
+            'tte-pembubuhan': { title: 'Pembubuhan Tanda Tangan Elektronik', body: '<p>Pembubuhan TTE dilakukan dengan login ke https://srikandi.arsip.go.id/ sebagai user penandatanganan, lalu pada Beranda klik Tampilkan Statistik dan cek bagian Tandatangan Naskah pada sub bagian Belum Ditandatangani untuk melihat daftar naskah yang belum ditandatangani; selanjutnya klik ikon mata pada naskah yang dituju, buka dropdown Daftar Penandatanganan, klik ikon pensil lalu SETUJU dan klik Kirim; kemudian isi Form TTE dengan klik Ambil Nomor, masukkan Key Phrase/Passphrase, dan klik Tandatangan; setelah berhasil, scroll ke atas, pilih Aksi lalu pilih Kirim Naskah, sehingga naskah yang telah ditandatangani secara elektronik pun terkirim ke tujuan.</p>', links: [{ text: 'SRIKANDI', url: 'https://srikandi.arsip.go.id/auth/login'}] },
+            'nm-registrasi': { title: 'Registrasi Naskah Masuk', body: '<p>Form Registrasi Naskah Masuk pada aplikasi SRIKANDI ini digunakan untuk mencatat naskah dinas yang diterima, dengan sejumlah field wajib diisi (ditandai tanda bintang merah) yaitu identitas pengirim (nama, jabatan, dan instansi pengirim), detil isi naskah (jenis naskah, sifat naskah, nomor naskah, tanggal naskah, tanggal diterima, hal, isi ringkas, serta file naskah dalam format PDF maksimal 5MB), dan tujuan utama naskah; sementara field yang bersifat opsional atau tidak wajib meliputi lampiran naskah tambahan (dengan format file yang lebih beragam seperti JPG, DOC, XLS, PPT, MP4, dan WAV, maksimal 5MB per file dan 20MB total), grup tujuan, serta grup tembusan. Setelah semua data wajib terisi lengkap, pengguna dapat menekan tombol SIMPAN untuk menyimpan data registrasi, atau RESET jika ingin mengosongkan kembali seluruh isian formulir.</p>', links: [] },
+            'nm-daftar': { title: 'Daftar Naskah Masuk', body: '<p>Daftar Naskah Masuk merupakan bagian dari menu Naskah Masuk pada aplikasi SRIKANDI yang berfungsi untuk menampilkan seluruh daftar naskah dinas yang telah diterima oleh instansi. Pada halaman ini, pengguna dapat melihat informasi naskah masuk secara rinci, meliputi tanggal naskah, nomor naskah, hal (perihal surat), serta asal naskah beserta nama dan jabatan pengirimnya. Setiap naskah juga dilengkapi dengan keterangan status tindak lanjut dan status baca yang ditandai dengan label berwarna.</p>', links: [] },
+            'nm-agenda': { title: 'Agenda', body: '<p>Menu ini menampilkan tampilan kalender bulanan yang berfungsi untuk memantau dan mengelola jadwal atau agenda yang berkaitan dengan naskah masuk, di mana pengguna dapat memilih bulan dan tahun melalui dropdown, kembali ke tanggal hari ini melalui tombol "Hari Ini", serta melihat status agenda yang ditandai dengan kode warna berupa biru untuk "Agenda Aktif/Mendatang", abu-abu untuk "Agenda Sudah Berakhir", dan hitam untuk opsi "Lihat lebih Banyak" jika terdapat agenda tambahan pada tanggal tertentu.</p>', links: [] },
+            'nm-tembusan': { title: 'Tembusan', body: '<p>Menu ini berfungsi untuk mengelola dan menampilkan daftar naskah dinas yang diterima sebagai tembusan (bukan naskah utama) oleh suatu unit kerja, di mana pengguna dapat mencari naskah berdasarkan tanggal, nomor naskah, hal, asal naskah, status tindak lanjut, status baca, maupun status berkas, serta dapat memilih naskah untuk diberkaskan melalui tombol "Pilih Naskah untuk Diberkaskan" dan menghitung jumlah total naskah tembusan melalui tombol "Hitung Total", sehingga memudahkan petugas Tata Usaha dalam mendokumentasikan dan menindaklanjuti naskah-naskah yang bersifat tembusan atau salinan informasi secara tertib dan terintegrasi.</p>', links: [] },
+            'nm-log': { title: 'Log Naskah Masuk', body: '<p>Menu ini berfungsi sebagai halaman pencatatan dan pemantauan seluruh naskah dinas yang masuk ke dalam sistem, di mana setiap naskah menampilkan informasi berupa tanggal naskah, nomor naskah, hal (perihal), asal naskah (instansi pengirim), status kirim, status berkas, hingga aksi yang dapat dilakukan, dan dilengkapi fitur pencarian di setiap kolom, tombol "Hitung Total" untuk merekap jumlah naskah, serta pengaturan jumlah data yang ditampilkan per halaman; menu ini memiliki peran krusial dalam alur disposisi naskah dinas karena sebelum pimpinan dapat memberikan disposisi terhadap suatu naskah, naskah tersebut wajib terlebih dahulu dikirim melalui menu ini kepada pimpinan yang bersangkutan, sehingga status "Status Kirim" menjadi penanda apakah naskah sudah diteruskan ke pimpinan atau belum—jika belum dikirim melalui menu ini, pimpinan tidak akan bisa melihat maupun mendisposisikan naskah tersebut, menjadikan menu ini sebagai pintu gerbang administratif yang menjembatani proses penerimaan naskah oleh staf/admin dengan proses tindak lanjut (disposisi) oleh pimpinan.</p>', links: [] },
+            'nm-disposisi': { title: 'Disposisi', body: '<p>Menu Disposisi ini adalah tabel yang digunakan untuk mencatat dan melacak surat atau naskah dinas yang didisposisikan (diteruskan dengan instruksi) dari satu pejabat ke pejabat/unit lain dalam suatu instansi. Setiap baris data menampilkan informasi lengkap mulai dari tanggal disposisi dan batas waktu penyelesaiannya, tanggal serta nomor naskah surat masuk, uraian singkat isi informasi surat, instruksi yang diberikan (termasuk pengirim dan perihal surat), instruksi tambahan jika ada, hingga status tindak lanjut yang menunjukkan apakah disposisi tersebut sudah ditindaklanjuti atau masih dalam proses. Fitur pencarian di bagian atas setiap kolom memudahkan pengguna untuk menyaring data berdasarkan tanggal, uraian, instruksi, maupun status, sehingga memudahkan pemantauan alur kerja dan akuntabilitas penyelesaian tugas dalam sebuah organisasi.</p>', links: [] },
+            'nm-koordinasi': { title: 'Koordinasi', body: '<p>Menu ini merupakan fitur yang digunakan untuk mencatat dan mengelola proses koordinasi terkait naskah dinas dalam sistem kearsipan elektronik instansi. Pada menu ini, pengguna dapat mencari dan memfilter data berdasarkan beberapa kolom seperti Tanggal Koordinasi, Tanggal Naskah Masuk, Uraian Informasi, Instruksi, Status Tindak Lanjut, Status Baca, dan Status Berkas, sehingga memudahkan pemantauan sejauh mana suatu naskah telah ditindaklanjuti atau dibaca oleh pihak terkait. Terdapat pula tombol "Pilih Naskah untuk Diberkaskan" untuk menautkan naskah dinas ke dalam berkas koordinasi, serta tombol "Hitung Total" untuk merekap jumlah data yang tersedia. Jika belum ada data yang dimasukkan atau sesuai dengan filter pencarian, sistem akan menampilkan keterangan "Tidak ada data ditemukan" seperti terlihat pada tangkapan layar tersebut.</p>', links: [] },
+            'nm-arahan': { title: 'Arahan', body: '<p>Menu Arahan dalam aplikasi Srikandi merupakan fitur yang digunakan untuk mengelola dan memantau tindak lanjut atas naskah dinas yang memerlukan instruksi atau disposisi dari pimpinan. Pada halaman ini, pengguna dapat memilih naskah yang akan diberkaskan melalui tombol "Pilih Naskah untuk Diberkaskan", serta melihat data arahan dalam bentuk tabel yang mencakup informasi seperti tanggal arahan, tanggal naskah masuk, uraian informasi, instruksi yang diberikan, status tindak lanjut, status baca, dan status berkas. Setiap kolom dilengkapi dengan fitur pencarian (filter) untuk memudahkan pengguna menelusuri data berdasarkan kriteria tertentu, sementara tombol "Hitung Total" berfungsi untuk merekapitulasi jumlah data arahan yang ada. Dengan fitur ini, proses pengelolaan disposisi dan tindak lanjut naskah dinas menjadi lebih tertata, transparan, dan mudah dipantau secara digital.</p>', links: [] },
+            'nk-registrasi': { title: 'Registrasi Naskah Keluar', body: '<p>Langkah pembuatan konsep surat baru. Halaman Registrasi Naskah Keluar pada aplikasi SRIKANDI merupakan formulir yang digunakan oleh pengguna dengan peran Tata Usaha/Sekretaris untuk mendaftarkan naskah dinas keluar, yang dapat diakses melalui menu Naskah Keluar pada bagian Penciptaan Arsip. Dalam form ini, pengguna terlebih dahulu memilih tipe form berupa Naskah Keluar atau Naskah Final, kemudian mengisi detail isi naskah yang mencakup unit kerja pengirim, jenis naskah, sifat naskah, klasifikasi arsip, nomor naskah (yang dapat diperoleh otomatis melalui tombol "Ambil Nomor" meski masih bersifat sementara), nomor referensi, unit pengolah yang memberkaskan, perihal, isi ringkas, serta mengunggah file naskah utama dalam format DOCX atau PDF dengan ukuran maksimal 5 MB. Selain itu, pengguna juga dapat melampirkan dokumen pendukung tambahan dalam berbagai format seperti gambar, dokumen Office, PDF, video, atau audio, dengan batas maksimal 5 MB per file dan total 20 MB, serta ketentuan penamaan file tanpa simbol tertentu. Form kemudian dilanjutkan dengan penentuan tujuan pengiriman, baik tujuan utama maupun tembusan, yang bisa berupa penerima internal sesama pengguna SRIKANDI maupun pihak eksternal di luar sistem. Pada bagian akhir, pengguna menetapkan verifikator dan penandatangan naskah, memilih tipe tanda tangan berupa elektronik atau konvensional, serta jenis visual tanda tangan elektronik berupa QR Code atau spesimen gambar, sebelum akhirnya menyimpan data melalui tombol Simpan atau mengulang pengisian melalui tombol Reset.</p>', links: [] },
+            'nk-daftar': { title: 'Daftar Naskah Keluar', body: '<p>Melihat perkembangan draf naskah keluar yang sedang berjalan. Halaman Daftar Naskah Keluar ini berfungsi sebagai pusat pemantauan seluruh surat/naskah dinas yang telah dibuat dan dikeluarkan oleh unit kerja, di mana pengguna (dalam hal ini "Tata Usaha") dapat mencari dan memfilter naskah berdasarkan rentang tanggal, jenis, sifat, dan klasifikasi naskah, lalu menampilkannya dalam bentuk tabel berisi nomor, tanggal, nomor naskah, perihal, asal naskah, status verifikator, dan status penandatanganan (misalnya "1 Setuju" berarti sudah disetujui satu verifikator/penandatangan, sedangkan "1 Belum" berarti masih menunggu persetujuan); dari halaman ini pengguna juga bisa memilih naskah untuk diteruskan (forward) ke pihak lain atau mengunduhnya (download) sebagai laporan.</p>', links: [] },
+            'nk-pemberkasan': { title: 'Pemberkasan Naskah Keluar', body: '<p>Proses penataan berkas dan pengelompokan naskah keluar. Menu Pemberkasan Naskah Keluar pada aplikasi SRIKANDI adalah halaman untuk mengelola dan mengorganisasi naskah/surat keluar yang telah diregistrasi ke dalam suatu berkas (folder arsip). Di halaman ini, pengguna dapat membuat laporan dengan menyaring naskah berdasarkan rentang tanggal, jenis naskah, sifat naskah, dan klasifikasi naskah, lalu memilih naskah-naskah yang ingin diberkaskan melalui tombol "Pilih Naskah untuk Diberkaskan". Tabel yang ditampilkan berisi daftar naskah keluar lengkap dengan informasi tanggal, nomor naskah, perihal, asal naskah, serta status verifikasi dan status penandatanganan (ditandai dengan label hijau "1 Setuju" jika sudah disetujui, atau oranye "1 Belum" jika masih menunggu persetujuan). Dengan fitur ini, pengguna baru dapat dengan mudah memastikan naskah keluar yang sudah selesai diproses (diverifikasi dan ditandatangani) dikelompokkan rapi ke dalam berkas arsip sesuai klasifikasinya.</p>', links: [] },
+            'nk-log': { title: 'Log Naskah Keluar', body: '<p>Melacak jejak audit draf surat keluar. Menu Log Naskah Keluar adalah halaman riwayat/pelacakan yang menampilkan seluruh naskah keluar beserta status perjalanannya secara transparan, mulai dari tanggal naskah, nomor naskah, perihal, asal naskah, hingga status verifikasi dan status penandatanganan (ditandai warna hijau "Setuju" atau oranye "Belum"). Fitur ini sangat penting bagi **konseptor surat, karena melalui menu inilah konseptor dapat memantau naskah yang telah ia buat dan kirimkan untuk diproses lebih lanjut — apakah sudah diverifikasi oleh verifikator dan sudah ditandatangani oleh pejabat berwenang atau masih dalam antrean persetujuan. Dengan kata lain, Log Naskah Keluar berfungsi sebagai alat kontrol bagi konseptor untuk memastikan setiap surat/naskah dinas yang dibuatnya tidak "hilang" dalam alur kerja, sehingga ia dapat menindaklanjuti atau melakukan pengecekan jika suatu naskah masih berstatus "Belum" disetujui/ditandatangani dalam waktu yang lama.</p>', links: [] },
+            'nk-ttd': { title: 'Tandatangan Naskah', body: '<p>Laman khusus pejabat penandatangan. Menu Tandatangan Naskah adalah "meja kerja digital" bagi pejabat penandatangan untuk memantau dan menyelesaikan proses pengesahan naskah dinas secara elektronik, di mana setiap surat yang masuk ke sini menampilkan status penandatanganannya secara jelas—label hijau "Setuju" menandakan naskah sudah ditandatangani, sementara label abu-abu "Belum" menunjukkan naskah masih menunggu tanda tangan pejabat berwenang. Menu ini juga dilengkapi kolom Status Kirim yang menginformasikan apakah naskah sudah "Sudah" atau "Belum" dikirimkan ke tujuan setelah proses tanda tangan selesai, sehingga alur naskah dinas—dari penandatanganan hingga pengiriman—dapat dipantau secara transparan dan real-time. Dengan fitur ini, tidak ada lagi surat yang "tersangkut" tanpa kejelasan; setiap pengguna, baik penandatangan maupun konseptor, dapat langsung mengetahui sejauh mana progres suatu naskah tanpa perlu bertanya-tanya atau mengecek secara manual.</p>', links: [] },
+            'pemberkasan': { title: 'Pemberkasan Arsip Aktif', body: '<p>Panduan mengenai tata cara manajemen pemberkasan pada aplikasi SRIKANDI. Fungsinya adalah mengelola berkas-berkas arsip aktif — yaitu arsip yang masih sering digunakan dan berada di unit pengolah/kerja. Untuk mengisi form Tambah Baru pada Pemberkasan Arsip Aktif, pengguna (Tata Usaha/Konseptor) mengklik tombol tersebut lalu melengkapi data berkas sesuai kolom yang tampak pada tabel, yaitu memilih Kode Klasifikasi/Nomor Berkas sesuai skema klasifikasi arsip yang berlaku di instansi, mengisi Nama Berkas yang mencerminkan isi/subjek arsip (misalnya "Surat Pemberitahuan 2026"), menentukan Tanggal Buat Berkas, menetapkan Total Retensi Aktif (jangka waktu berkas harus disimpan sebagai arsip aktif) yang otomatis akan menghasilkan Akhir Retensi Aktif, serta memilih Klasifikasi Keamanan (misalnya Terbuka, Terbatas, atau Rahasia) dan unit kerja pemilik berkas, kemudian menyimpan data sehingga berkas baru muncul dalam daftar dengan status "Belum Ditutup"; selama berkas berstatus ini, arsip/naskah terkait masih bisa dimasukkan ke dalamnya, dan begitu seluruh arsip di dalam berkas selesai serta tidak akan ditambah lagi, pengguna menutup berkas melalui tombol Pilih Berkas untuk Ditutup, lalu ketika masa retensi aktifnya telah habis (sesuai Akhir Retensi Aktif), berkas tersebut dipilih dan diajukan lewat tombol Pilih Berkas untuk Diusul Pemindahan, yang membawanya masuk ke tahap Penyusutan Arsip — di mana usulan pemindahan tersebut akan diverifikasi melalui menu Verifikasi Penyusutan, dan setelah disetujui, berkas secara resmi berpindah status menjadi arsip inaktif serta muncul pada menu Daftar Arsip Inaktif untuk pengelolaan lebih lanjut (retensi inaktif, pemusnahan, atau penyerahan ke lembaga kearsipan).</p>', links: [] },
+            'infografis': { title: 'Infografis Panduan', body: '<p>Kumpulan materi infografis tata cara penggunaan sistem.</p>', links: [] },
+            'video': { title: 'Video Tutorial', body: '<p>Silakan akses beberapa video tutorial panduan SRIKANDI melalui tautan eksternal di bawah ini.</p>', links: [] }
+        };
+
+        let localStateContents = { ...defaultContent };
+
+        // Data kartu Infografis (klik kartu untuk tampil full)
+        // Upload gambar ke folder "images/infografis/" di repo kabasmean/SRIKANDI,
+        // lalu isi imageUrl dengan pola: https://raw.githubusercontent.com/kabasmean/SRIKANDI/main/images/infografis/NAMA-FILE.jpg
+        // (Jika branch utama repo Anda bernama "master" bukan "main", ganti "main" jadi "master" di URL)
+        const defaultInfografis = [
+            { id: 'ig-1', title: 'Langkah 1 TTE: Daftar Akun Layanan Bantuan', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/1.%20Daftar%20Akun%20Layanan%20Bantuan.png' },
+            { id: 'ig-2', title: 'Langkah 2 TTE: Verifikasi Akun Layanan', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/2.%20Verifikasi%20Akun%20Layanan.png' },
+            { id: 'ig-3', title: 'Langkah 3 TTE: Buat Tiket Pengajuan', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/3.%20Buat%20Tiket%20Pengajuan.png' },
+            { id: 'ig-4', title: 'Langkah 4 TTE: Email Dinas Telah Dibuat', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/4.%20Email%20Dinas%20Telah%20Dibuat.png' },
+            { id: 'ig-5', title: 'Langkah 5 TTE: Aktivasi Email Dinas', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/5.%20Aktivasi%20Email%20Dinas.png' },
+            { id: 'ig-6', title: 'Langkah 6 TTE: Registrasi Sertifikat', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/6.%20Registrasi%20Sertifikat.png' },
+            { id: 'ig-7', title: 'Langkah 7 TTE: Buat Passphrase', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/7.%20Buat%20Passphrase.png' },
+            { id: 'ig-8', title: 'Pembubuhan TTE', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/8.%20Pembubuhan%20TTE.png' },
+            { id: 'ig-9', title: 'Naskah Dinas Keluar', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/9.%20Registrasi%20Naskah%20Keluar.png' },
+            { id: 'ig-10', title: 'Naskah Dinas Masuk', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/10.%20Registrasi%20Naskah%20Masuk.png' },
+            { id: 'ig-11', title: 'Pemberkasan Arsip Aktif', imageUrl: 'https://raw.githubusercontent.com/kabasmean/SRIKANDI/refs/heads/main/images/infografis/11.%20Pemberkasan%20Arsip%20Aktif.png' },
+        ];
+
+        // Data kartu Video Tutorial (klik kartu untuk memutar video di dalam website)
+        // Ganti youtubeId dengan ID video YouTube (contoh: dari url https://youtu.be/ABC123xyz, ID-nya adalah ABC123xyz)
+        const defaultVideos = [
+            { id: 'vid-1', title: 'Tanda Tangan Elektronik (TTE)', youtubeId: 'v3K2O5bcRus' },
+            { id: 'vid-2', title: 'Naskah Dinas Masuk', youtubeId: 'rpnHetqOxpQ' },
+            { id: 'vid-3', title: 'Naskah Dinas Keluar', youtubeId: 'L-ud2PUkAj0' },
+            { id: 'vid-4', title: 'Pemberkasan Arsip Aktif', youtubeId: 'QHYoQdegoi8' },
+        ];
+
+        // Data FAQ (Pertanyaan yang Sering Diajukan)
+        // Tambah/ubah/hapus item pada array ini sesuai kebutuhan. Field "answer" mendukung HTML sederhana.
+        const defaultFaqs = [
+            { id: 'faq-1', question: 'Bagaimana cara login ke SRIKANDI jika lupa password?', answer: '<p>Klik tautan "Lupa Password" pada halaman login SRIKANDI, lalu masukkan email dinas yang terdaftar. Tautan reset password akan dikirim ke email tersebut. Jika email dinas belum aktif atau tidak menerima tautan, silakan hubungi Admin Instansi melalui menu Live Chat atau tombol WhatsApp di sidebar.</p>' },
+            { id: 'faq-2', question: 'Kenapa Multi Factor Authentication (MFA) saya tidak bisa diaktifkan?', answer: '<p>Pastikan aplikasi autentikator (mis. Google Authenticator) sudah terpasang di ponsel dan waktu perangkat sudah sinkron otomatis. Jika kode OTP tetap ditolak, coba pindai ulang QR Code pendaftaran MFA dari menu profil SRIKANDI, atau hubungi Admin Instansi untuk direset.</p>' },
+            { id: 'faq-3', question: 'Apa itu Passphrase dan kenapa berbeda dari password akun?', answer: '<p>Passphrase adalah kunci rahasia khusus untuk membubuhkan Tanda Tangan Elektronik (TTE), terpisah dari password login akun SRIKANDI. Passphrase dibuat sekali saat registrasi sertifikat di BSrE dan wajib diingat karena tidak dapat dilihat kembali oleh admin manapun.</p>' },
+            { id: 'faq-4', question: 'Naskah masuk yang saya input tidak muncul di daftar disposisi pimpinan, kenapa?', answer: '<p>Periksa kembali apakah naskah sudah disimpan (submit) sepenuhnya, bukan hanya draf. Naskah berstatus draf tidak akan tampil di menu Disposisi pimpinan. Jika sudah berstatus final namun tetap tidak muncul, laporkan ke Admin Satker atau Admin Instansi.</p>' },
+            { id: 'faq-5', question: 'Apakah SRIKANDI Bimtek dan SRIKANDI V3 Live memakai akun yang sama?', answer: '<p>Tidak. Versi Bimtek digunakan khusus untuk latihan/simulasi dan tidak memengaruhi data resmi. Versi 3/Live digunakan untuk pekerjaan kearsipan yang sesungguhnya. Akun pada kedua versi dikelola secara terpisah.</p>' },
+            { id: 'faq-6', question: 'Bagaimana cara menghubungi Admin Instansi jika ada kendala teknis?', answer: '<p>Gunakan tombol <strong>Live Chat</strong> di sidebar untuk berkirim pesan langsung melalui website, atau klik tombol <strong>Hubungi Admin Instansi</strong> untuk terhubung via WhatsApp. Admin akan menerima notifikasi setiap kali ada pesan baru masuk.</p>' },
+            { id: 'faq-7', question: 'Berapa lama biasanya naskah keluar diproses hingga ditandatangani pejabat?', answer: '<p>Lama proses tergantung alur persetujuan di masing-masing instansi/satker. Pastikan draf naskah sudah lengkap dan diverifikasi oleh Tata Usaha sebelum diteruskan ke pejabat penandatangan agar proses tidak tertunda.</p>' },
+            { id: 'faq-8', question: 'Kenapa ketika membuat surat, pada kolom dikirimkan melalui tidak muncul unit kerjanya?', answer: '<p>Hak akses TU/Sekretaris belum membuat penomoran otomatis.</p>' },
+            { id: 'faq-9', question: 'Apakah dinas/instansi bisa mengirim naskah dinas melalui Srikandi jika instansi/dinas belum mempunyai tanda tangan elektronik?', answer: '<p>Bisa. SRIKANDI memberikan 2(dua) pilihan yakni Registrasi Naskah Keluar (Menggunakan TTE) dan Registrasi Naskah Final (Menggunakan Tanda Tangan Manual).</p>' },
+            { id: 'faq-10', question: 'Bagaimana pengguna bisa memanfaatkan SRIKANDI versi Bimtek untuk belajar?', answer: '<p>Siapkan akun gmail yang aktif, lalu kirim pesan memalui Live Chat atau WhatsApp agar Admin Instansi bisa membuat akun Admin Satker.</p>' },
+            
+        ];
+
+        // Data Balasan Cepat (Canned Reply) untuk Admin Live Chat
+        // Tambah/ubah/hapus item pada array ini sesuai kebutuhan. "label" tampil di daftar pilihan,
+        // "text" adalah isi pesan yang otomatis dimasukkan ke kotak balasan saat dipilih.
+        const defaultCannedReplies = [
+            { id: 'cr-1', label: 'Cara reset password', text: 'Untuk reset password SRIKANDI, silakan klik tautan "Lupa Password" pada halaman login, lalu masukkan email dinas Anda. Tautan reset akan dikirim ke email tersebut. Jika tidak menerima email dalam beberapa menit, cek folder Spam atau informasikan kembali ke kami.' },
+            { id: 'cr-2', label: 'Kendala MFA/OTP', text: 'Untuk kendala Multi Factor Authentication (MFA), pastikan waktu di ponsel Anda sudah sinkron otomatis dan aplikasi autentikator sudah terpasang dengan benar. Jika kode OTP tetap ditolak, kami dapat membantu mereset MFA akun Anda — mohon informasikan nama lengkap dan email dinas yang terdaftar.' },
+            { id: 'cr-3', label: 'Lupa passphrase TTE', text: 'Passphrase Tanda Tangan Elektronik (TTE) tidak dapat dilihat kembali oleh admin manapun karena bersifat rahasia. Jika lupa, Anda perlu mengajukan permohonan reset sertifikat elektronik melalui BSrE. Kami akan bantu arahkan proses pengajuannya.' },
+            { id: 'cr-4', label: 'Naskah tidak muncul', text: 'Mohon dicek kembali apakah naskah sudah disimpan secara final (bukan hanya draf), karena naskah berstatus draf tidak akan tampil di menu terkait. Jika sudah final namun tetap tidak muncul, mohon informasikan nomor/tanggal naskah agar kami bantu telusuri.' },
+            { id: 'cr-5', label: 'Sedang kami tindaklanjuti', text: 'Terima kasih atas laporannya. Kendala Anda sedang kami tindaklanjuti dan akan kami informasikan perkembangannya secepatnya. Mohon kesediaannya menunggu.' },
+            { id: 'cr-6', label: 'Minta info tambahan', text: 'Baik, agar kami bisa membantu lebih cepat, mohon informasikan nama lengkap, instansi/satker, dan tangkapan layar (screenshot) kendala yang dialami.' },
+        ];
+
+        // --- KONFIGURASI SUPABASE (Evaluasi Website) ---
+        // Ganti dua nilai di bawah ini dengan kredensial project Supabase Anda.
+        // URL & Anon Key dapat ditemukan di: Project Settings > API pada dashboard Supabase.
+        const SUPABASE_URL = 'https://ubmxavmxjmmhykqakxop.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibXhhdm14am1taHlrcWFreG9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI4Njg5ODUsImV4cCI6MjA5ODQ0NDk4NX0.t7Jjiz5DmlCLk4Cw0cSU9v2SsBqgvXH833c8WgsNn80';
+
+        let supabaseClient = null;
+        try {
+            if (window.supabase && SUPABASE_URL && !SUPABASE_URL.includes('xxxxxxxxxxxxxxxxx')) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.error('Gagal menginisialisasi Supabase:', e);
+        }
+
+        // --- JUMLAH KUNJUNGAN WEBSITE (SUPABASE) ---
+        // Buat dulu tabel "site_visits" di Supabase (SQL Editor) agar fitur ini berfungsi:
+        //
+        //   create table site_visits (id bigint primary key, count bigint not null default 0);
+        //   insert into site_visits (id, count) values (1, 0);
+        //   alter table site_visits enable row level security;
+        //   create policy "Publik bisa baca site_visits" on site_visits for select using (true);
+        //   create policy "Publik bisa update site_visits" on site_visits for update using (true);
+        //
+        // Setiap kali halaman dimuat, angka pada baris id=1 akan bertambah 1 dan ditampilkan
+        // di sidebar di bawah tombol "Hubungi Admin Instansi".
+        async function trackSiteVisit() {
+            const el = document.getElementById('visitor-count-value');
+            if (!supabaseClient) { if (el) el.textContent = '-'; return; }
+            try {
+                const { data: existing, error: selErr } = await supabaseClient
+                    .from('site_visits')
+                    .select('count')
+                    .eq('id', 1)
+                    .single();
+                if (selErr) throw selErr;
+
+                const newCount = (existing?.count || 0) + 1;
+                const { error: updErr } = await supabaseClient
+                    .from('site_visits')
+                    .update({ count: newCount })
+                    .eq('id', 1);
+                if (updErr) throw updErr;
+
+                if (el) el.textContent = newCount.toLocaleString('id-ID');
+            } catch (e) {
+                console.error('Gagal memuat jumlah kunjungan:', e);
+                if (el) el.textContent = '-';
+            }
+        }
+
+        // --- LIVE CHAT (SUPABASE REALTIME) ---
+        // Buat dulu tabel "live_chat_messages" di Supabase (SQL Editor) agar fitur ini berfungsi:
+        //
+        //   create table live_chat_messages (
+        //     id bigint generated always as identity primary key,
+        //     session_id text not null,
+        //     sender_name text not null default 'Pengunjung',
+        //     message text not null default '',
+        //     image_url text,
+        //     is_admin boolean not null default false,
+        //     created_at timestamptz not null default now()
+        //   );
+        //   alter table live_chat_messages enable row level security;
+        //   create policy "Publik bisa baca pesan" on live_chat_messages for select using (true);
+        //   create policy "Publik bisa kirim pesan" on live_chat_messages for insert with check (true);
+        //   create policy "Admin bisa menghapus percakapan" on live_chat_messages for delete using (auth.role() = 'authenticated');
+        //
+        // Lalu aktifkan Realtime untuk tabel ini lewat menu Database > Publications di dashboard Supabase,
+        // supaya balasan dari admin dapat langsung muncul di layar pengunjung tanpa refresh (dan sebaliknya).
+        //
+        // UNTUK FITUR ATTACH GAMBAR, siapkan Supabase Storage:
+        //   1. Buka Dashboard > Storage > New Bucket, beri nama "chat-attachments", centang "Public bucket".
+        //   2. Jalankan di SQL Editor agar publik bisa upload & baca gambar:
+        //      create policy "Publik bisa upload gambar chat" on storage.objects for insert with check (bucket_id = 'chat-attachments');
+        //      create policy "Publik bisa baca gambar chat" on storage.objects for select using (bucket_id = 'chat-attachments');
+        //   3. Jika tabel live_chat_messages sudah dibuat sebelumnya (belum punya kolom image_url), jalankan:
+        //      alter table live_chat_messages add column image_url text;
+        let liveChatSessionId = null;
+        let liveChatChannel = null;
+        let liveChatUnread = 0;
+        let liveChatPendingImage = null;
+        const CHAT_IMAGE_BUCKET = 'chat-attachments';
+        const CHAT_IMAGE_MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+        // --- NOTIFIKASI EMAIL KE ADMIN INSTANSI (VIA EMAILJS, TANPA BACKEND) ---
+        // Setiap kali pengunjung mengirim pesan baru di Live Chat, sistem akan otomatis
+        // mengirim notifikasi email ke ADMIN_EMAIL di bawah ini, memakai layanan gratis EmailJS
+        // (https://www.emailjs.com) yang bisa mengirim email langsung dari browser tanpa server.
+        //
+        // CARA MENGAKTIFKAN (gratis, sekali setup, sekitar 5 menit):
+        //   1. Daftar akun gratis di https://www.emailjs.com (bisa pakai akun Google).
+        //   2. Di dashboard, buka menu "Email Services" > "Add New Service", pilih Gmail,
+        //      lalu hubungkan dengan akun kabasmean@gmail.com. Catat "Service ID"-nya.
+        //   3. Buka menu "Email Templates" > "Create New Template". Isi "To Email" dengan
+        //      kabasmean@gmail.com, Subject dengan "Live Chat: {{title}}", dan Content memuat
+        //      {{name}}, {{time}}, {{message}}. Simpan lalu catat "Template ID"-nya.
+        //   4. Buka menu "Account" > "General", catat "Public Key" (kadang disebut "User ID").
+        //   5. Isi EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, dan EMAILJS_PUBLIC_KEY di bawah ini.
+        // Paket gratis EmailJS: sekitar 200 email/bulan.
+        const ADMIN_EMAIL = 'kabasmean@gmail.com'; // Alamat email yang menerima notifikasi (harus sama dengan "To Email" di template)
+        const EMAILJS_SERVICE_ID = 'service_r80x5u9'; // Isi dengan Service ID dari EmailJS
+        const EMAILJS_TEMPLATE_ID = 'template_tn3vl6b'; // Isi dengan Template ID dari EmailJS
+        const EMAILJS_PUBLIC_KEY = 'Wl9X5v-At4H2T5R8E'; // Isi dengan Public Key dari EmailJS
+
+        let emailjsReady = false;
+        function ensureEmailjsInit() {
+            if (emailjsReady || !window.emailjs || !EMAILJS_PUBLIC_KEY) return;
+            emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+            emailjsReady = true;
+        }
+
+        async function notifyAdminEmail(sessionId, pesanText) {
+            if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) return; // belum dikonfigurasi, lewati diam-diam
+            if (!window.emailjs) return; // library belum termuat
+            ensureEmailjsInit();
+            try {
+                const ringkas = (pesanText && pesanText.trim()) ? pesanText.trim().slice(0, 300) : '[Mengirim gambar]';
+                const jam = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                    title: 'Pesan Baru di Live Chat KABAS MEAN',
+                    name: `Pengunjung (sesi ...${String(sessionId || '').slice(-6)})`,
+                    time: jam,
+                    message: `${ringkas}\n\nSilakan balas melalui menu Admin Live Chat di website KABAS MEAN.`
+                });
+            } catch (e) {
+                console.error('Gagal mengirim notifikasi email ke admin:', e);
+            }
+        }
+
+        async function uploadChatImage(file, folder) {
+            if (!file) return null;
+            if (!supabaseClient) { showToast('Live chat belum terkonfigurasi.', 'error'); return null; }
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+            const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+            const { error: uploadError } = await supabaseClient.storage.from(CHAT_IMAGE_BUCKET).upload(path, file, { cacheControl: '3600', upsert: false });
+            if (uploadError) {
+                console.error('Gagal upload gambar:', uploadError);
+                showToast('Gagal mengunggah gambar: ' + uploadError.message, 'error');
+                return null;
+            }
+            const { data } = supabaseClient.storage.from(CHAT_IMAGE_BUCKET).getPublicUrl(path);
+            return data ? data.publicUrl : null;
+        }
+
+        function validateChatImageFile(file) {
+            if (!file) return false;
+            if (!file.type.startsWith('image/')) { showToast('Silakan pilih file gambar.', 'error'); return false; }
+            if (file.size > CHAT_IMAGE_MAX_SIZE) { showToast('Ukuran gambar maksimal 5MB.', 'error'); return false; }
+            return true;
+        }
+
+        function getLiveChatSessionId() {
+            let id = localStorage.getItem('kabasmean_chat_session');
+            if (!id) {
+                id = 'sesi-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10);
+                localStorage.setItem('kabasmean_chat_session', id);
+            }
+            return id;
+        }
+
+        function isLiveChatPanelOpen() {
+            const panel = document.getElementById('livechat-panel');
+            return !!panel && !panel.classList.contains('hidden');
+        }
+
+        function playNotifySound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = 'sine';
+                o.frequency.value = 880;
+                g.gain.value = 0.08;
+                o.connect(g); g.connect(ctx.destination);
+                o.start();
+                g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+                o.stop(ctx.currentTime + 0.35);
+            } catch (e) { /* diamkan jika browser membatasi autoplay audio */ }
+        }
+
+        function updateLiveChatBadge() {
+            const text = liveChatUnread > 9 ? '9+' : String(liveChatUnread);
+            ['livechat-badge', 'livechat-fab-badge'].forEach(id => {
+                const badge = document.getElementById(id);
+                if (!badge) return;
+                if (liveChatUnread > 0) {
+                    badge.textContent = text;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
+        async function openLiveChat() {
+            document.getElementById('livechat-panel').classList.remove('hidden');
+            document.getElementById('livechat-backdrop').classList.remove('hidden');
+            const fab = document.getElementById('livechat-fab');
+            if (fab) fab.classList.add('hidden');
+            lucide.createIcons();
+
+            liveChatUnread = 0;
+            updateLiveChatBadge();
+            await loadLiveChatMessages();
+
+            const input = document.getElementById('livechat-input');
+            if (input) setTimeout(() => input.focus(), 150);
+        }
+
+        function closeLiveChat() {
+            document.getElementById('livechat-panel').classList.add('hidden');
+            document.getElementById('livechat-backdrop').classList.add('hidden');
+            const fab = document.getElementById('livechat-fab');
+            if (fab) fab.classList.remove('hidden');
+        }
+
+        async function loadLiveChatMessages() {
+            const box = document.getElementById('livechat-messages');
+            if (!supabaseClient) {
+                box.innerHTML = `<div class="text-center text-[10px] text-rose-400 py-4">Live chat belum terkonfigurasi. Gunakan tombol "Hubungi Admin Instansi" di bawah.</div>`;
+                return;
+            }
+            const { data, error } = await supabaseClient
+                .from('live_chat_messages')
+                .select('*')
+                .eq('session_id', liveChatSessionId)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Gagal memuat live chat:', error);
+                box.innerHTML = `<div class="text-center text-[10px] text-rose-400 py-4">Gagal memuat percakapan.</div>`;
+                return;
+            }
+            renderLiveChatMessages(data || []);
+        }
+
+        function renderLiveChatMessages(rows) {
+            const box = document.getElementById('livechat-messages');
+            if (!rows || rows.length === 0) {
+                box.innerHTML = `<div class="text-center text-[10px] text-slate-500 py-4">Belum ada pesan. Silakan mulai percakapan dengan admin instansi.</div>`;
+                return;
+            }
+            box.innerHTML = rows.map(r => {
+                const jam = new Date(r.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const imageHtml = r.image_url ? `<a href="${r.image_url}" target="_blank" rel="noopener"><img src="${r.image_url}" alt="Lampiran gambar" class="max-w-full rounded-lg ${r.message ? 'mb-1.5' : ''} border border-white/10" loading="lazy"></a>` : '';
+                const textHtml = r.message ? escapeHtmlChat(r.message) : '';
+                if (r.is_admin) {
+                    return `<div class="flex flex-col items-start">
+                        <div class="max-w-[85%] bg-slate-800 border border-slate-700 text-slate-100 text-xs rounded-2xl rounded-tl-sm px-3.5 py-2.5 leading-relaxed">${imageHtml}${textHtml}</div>
+                        <span class="text-[9px] text-slate-500 mt-1 ml-1">Admin Instansi &middot; ${jam}</span>
+                    </div>`;
+                }
+                return `<div class="flex flex-col items-end">
+                    <div class="max-w-[85%] bg-emerald-600 text-white text-xs rounded-2xl rounded-tr-sm px-3.5 py-2.5 leading-relaxed">${imageHtml}${textHtml}</div>
+                    <span class="text-[9px] text-slate-500 mt-1 mr-1">Anda &middot; ${jam}</span>
+                </div>`;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function handleLiveChatImageSelect(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            if (!validateChatImageFile(file)) { e.target.value = ''; return; }
+            liveChatPendingImage = file;
+            const previewBox = document.getElementById('livechat-image-preview');
+            const previewImg = document.getElementById('livechat-image-preview-img');
+            if (previewImg) previewImg.src = URL.createObjectURL(file);
+            if (previewBox) { previewBox.classList.remove('hidden'); previewBox.classList.add('flex'); }
+            lucide.createIcons();
+        }
+
+        function clearLiveChatImage() {
+            liveChatPendingImage = null;
+            const input = document.getElementById('livechat-image-input');
+            if (input) input.value = '';
+            const previewBox = document.getElementById('livechat-image-preview');
+            if (previewBox) { previewBox.classList.add('hidden'); previewBox.classList.remove('flex'); }
+        }
+
+        function escapeHtmlChat(str) {
+            const div = document.createElement('div');
+            div.innerText = str;
+            return div.innerHTML;
+        }
+
+        function subscribeLiveChat() {
+            if (!supabaseClient || liveChatChannel || !liveChatSessionId) return;
+            liveChatChannel = supabaseClient
+                .channel('live-chat-' + liveChatSessionId)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'live_chat_messages',
+                    filter: `session_id=eq.${liveChatSessionId}`
+                }, (payload) => {
+                    const row = payload.new;
+                    if (isLiveChatPanelOpen()) {
+                        loadLiveChatMessages();
+                        return;
+                    }
+                    if (row && row.is_admin) {
+                        liveChatUnread++;
+                        updateLiveChatBadge();
+                        showToast('Admin Instansi membalas pesan Anda di Live Chat.', 'success');
+                        playNotifySound();
+                    }
+                })
+                .subscribe();
+        }
+
+        async function sendLiveChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('livechat-input');
+            const text = input.value.trim();
+            if (!text && !liveChatPendingImage) return;
+            if (!supabaseClient) { showToast('Live chat belum terkonfigurasi.', 'error'); return; }
+
+            let imageUrl = null;
+            if (liveChatPendingImage) {
+                imageUrl = await uploadChatImage(liveChatPendingImage, liveChatSessionId || 'pengunjung');
+                if (!imageUrl) return;
+            }
+
+            input.value = '';
+            clearLiveChatImage();
+            const { error } = await supabaseClient.from('live_chat_messages').insert({
+                session_id: liveChatSessionId,
+                sender_name: 'Pengunjung',
+                message: text,
+                image_url: imageUrl,
+                is_admin: false
+            });
+            if (error) {
+                console.error('Gagal mengirim pesan:', error);
+                showToast('Gagal mengirim pesan: ' + error.message, 'error');
+                return;
+            }
+            loadLiveChatMessages();
+            notifyAdminEmail(liveChatSessionId, text);
+        }
+
+        // --- AKSES HALAMAN ADMIN (VIA SUPABASE AUTH LOGIN) ---
+        // Admin harus login dengan email/password yang terdaftar di Supabase Authentication.
+        // Akses data (SELECT/DELETE) dikontrol lewat RLS policy di database (role: authenticated),
+        // bukan lewat kode di file ini — jadi tidak ada rahasia yang tersimpan di HTML publik.
+        //
+        // Tombol "KM" di sidebar hanya menyembunyikan/menampilkan tombol menu dari pengunjung
+        // biasa (kosmetik UI). Ini BUKAN pengaman — siapa pun tetap tidak bisa akses data
+        // tanpa login yang benar, meski mereka menekan tombol ini.
+        let isAdminMode = false;
+        let adminEvalData = [];
+
+        // State rating bintang untuk form Evaluasi Website
+        let evalRatings = { kemudahan: 0, tampilan: 0, konten: 0, layanan: 0 };
+    </script>
+
+    <div id="toast-wrapper" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <header class="bg-slate-900 border-b border-slate-800 text-white flex justify-between items-center p-4 shadow-md md:hidden">
+        <div class="flex items-center space-x-3">
+            <div id="mobile-logo-wrapper" class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 overflow-hidden shadow-lg shadow-amber-500/10"><img id="mobile-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo"><span id="mobile-logo-txt">KM</span></div>
+            <div>
+                <span class="font-black text-sm block tracking-wide uppercase dynamic-site-name">KABAS MEAN</span>
+                <span class="text-[9px] text-slate-400 block tracking-wider dynamic-site-sub">KANAL BANTUAN & MEDIA PANDUAN SRIKANDI</span>
+            </div>
+        </div>
+        <button onclick="toggleMobileSidebar()" class="text-white hover:text-amber-500 transition focus:outline-none p-1">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <div class="flex flex-1 min-h-0 relative">
+
+        <aside id="sidebar" class="bg-slate-900 text-slate-300 w-72 flex-shrink-0 flex flex-col border-r border-slate-800 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 shadow-2xl min-h-0 md:overflow-hidden">
+            <div class="p-6 border-b border-slate-800/80 bg-slate-950/40 flex flex-col items-center text-center relative">
+                <button onclick="toggleThemeMode()" id="theme-toggle-btn" title="Ganti mode terang/gelap" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition text-slate-300">
+                    <i data-lucide="sun" class="w-4 h-4" id="theme-toggle-icon"></i>
+                </button>
+                <div id="site-logo-container" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
+                    <span id="site-logo-txt" class="font-extrabold text-3xl text-amber-400">KM</span>
+                    <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo">
+                </div>
+                <h1 class="font-extrabold text-lg tracking-wider text-white dynamic-site-name uppercase">KABAS MEAN</h1>
+                <p class="text-[9px] text-amber-400 font-bold uppercase tracking-widest mt-1.5 dynamic-site-sub">PANDUAN PENGGUNAAN SRIKANDI</p>
+            </div>
+
+            <div class="px-4 pt-4 pb-1 relative bg-slate-900/50 flex-shrink-0">
+                <div class="relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-black/70 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input id="global-search-input" type="text" autocomplete="off" placeholder="Cari panduan, menu, FAQ..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" class="w-full bg-white border border-orange-500 rounded-xl pl-8 pr-7 py-2 text-[11px] text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button type="button" onclick="clearGlobalSearch()" id="global-search-clear" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <div id="global-search-results" class="hidden absolute left-4 right-4 mt-1.5 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-72 overflow-y-auto custom-scrollbar z-50"></div>
+            </div>
+
+            <nav class="flex-grow overflow-y-auto p-4 space-y-1.5 custom-scrollbar bg-slate-900/50">
+                <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Layanan Utama</span>
+
+                <button onclick="navigate('beranda')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-beranda">
+                    <i data-lucide="home" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Beranda Utama</span>
+                </button>
+                <button onclick="navigate('informasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-informasi">
+                    <i data-lucide="info" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Informasi Umum</span>
+                </button>
+                <button onclick="navigate('mentors')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-mentors">
+                    <i data-lucide="users-2" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Pendamping Teknis</span>
+                </button>
+                <button onclick="navigate('faq')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-faq">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">FAQ</span>
+                </button>
+
+                <div>
+                    <button onclick="toggleDropdown('hak-akses')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
+                        <span class="flex items-center gap-3"><i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> Hak Akses</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-hak-akses"></i>
+                    </button>
+                    <div id="drop-hak-akses" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
+                        <button onclick="navigate('admin-instansi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-admin-instansi">Admin Instansi</button>
+                        <button onclick="navigate('admin-satker')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-admin-satker">Admin Satker</button>
+                        <button onclick="navigate('tata-usaha')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tata-usaha">Tata Usaha</button>
+                        <button onclick="navigate('pencatat-surat')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-pencatat-surat">Pencatat Surat</button>
+                        <button onclick="navigate('user')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-user">User / Pengguna</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button onclick="toggleDropdown('tte')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
+                        <span class="flex items-center gap-3"><i data-lucide="fingerprint" class="w-4 h-4 text-amber-500"></i> Tandatangan Elektronik (TTE)</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-tte"></i>
+                    </button>
+                    <div id="drop-tte" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
+                        <button onclick="navigate('tte-pengajuan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-pengajuan">Pengajuan Email Dinas</button>
+                        <button onclick="navigate('tte-aktivasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-aktivasi">Aktivasi Email Dinas</button>
+                        <button onclick="navigate('tte-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-registrasi">Registrasi Sertifikat</button>
+                        <button onclick="navigate('tte-passphrase')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-passphrase">Buat Passphrase</button>
+                        <button onclick="navigate('tte-pembubuhan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-pembubuhan">Pembubuhan TTE</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button onclick="toggleDropdown('naskah-masuk')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
+                        <span class="flex items-center gap-3"><i data-lucide="folder-input" class="w-4 h-4 text-amber-500"></i> Naskah Masuk</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-masuk"></i>
+                    </button>
+                    <div id="drop-naskah-masuk" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800 max-h-40 overflow-y-auto custom-scrollbar">
+                        <button onclick="navigate('nm-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-registrasi">Registrasi Naskah Masuk</button>
+                        <button onclick="navigate('nm-daftar')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-daftar">Daftar Naskah Masuk</button>
+                        <button onclick="navigate('nm-agenda')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-agenda">Agenda</button>
+                        <button onclick="navigate('nm-tembusan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-tembusan">Tembusan</button>
+                        <button onclick="navigate('nm-log')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-log">Log Naskah Masuk</button>
+                        <button onclick="navigate('nm-disposisi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-disposisi">Disposisi</button>
+                        <button onclick="navigate('nm-koordinasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-koordinasi">Koordinasi</button>
+                        <button onclick="navigate('nm-arahan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-arahan">Arahan</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button onclick="toggleDropdown('naskah-keluar')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
+                        <span class="flex items-center gap-3"><i data-lucide="folder-output" class="w-4 h-4 text-amber-500"></i> Naskah Keluar</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-keluar"></i>
+                    </button>
+                    <div id="drop-naskah-keluar" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
+                        <button onclick="navigate('nk-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-registrasi">Registrasi Naskah Keluar</button>
+                        <button onclick="navigate('nk-daftar')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-daftar">Daftar Naskah Keluar</button>
+                        <button onclick="navigate('nk-pemberkasan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-pemberkasan">Pemberkasan Naskah Keluar</button>
+                        <button onclick="navigate('nk-log')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-log">Log Naskah Keluar</button>
+                        <button onclick="navigate('nk-ttd')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-ttd">Tandatangan Naskah</button>
+                    </div>
+                </div>
+
+                <button onclick="navigate('pemberkasan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
+                    <i data-lucide="archive" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
+                </button>
+
+                <button onclick="navigate('infografis')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-infografis">
+                    <i data-lucide="image" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Infografis</span>
+                </button>
+
+                <button onclick="navigate('video')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-video">
+                    <i data-lucide="clapperboard" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Video Tutorial</span>
+                </button>
+
+                <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2 mt-4">Evaluasi &amp; Umpan Balik</span>
+                <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
+                    <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Evaluasi Website</span>
+                </button>
+                <button onclick="navigate('admin-evaluasi')" class="hidden items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-evaluasi">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-400"></i> <span class="text-xs font-bold">Admin Evaluasi</span>
+                </button>
+                <button onclick="navigate('admin-livechat')" class="hidden relative items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-livechat">
+                    <i data-lucide="message-square-more" class="w-4 h-4 text-rose-400"></i> <span class="text-xs font-bold">Admin Live Chat</span>
+                    <span id="adminchat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
+                </button>
+
+                <button onclick="revealAdminMenu()" title="Akses Admin" class="w-full text-center py-1 mt-1.5 text-[10px] font-bold text-slate-700 hover:text-rose-400 transition duration-150" id="km-btn">KM</button>
+
+                <div class="pt-4 no-print pb-6">
+                    <button onclick="openLiveChat()" class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 transition font-bold text-xs shadow-lg shadow-emerald-600/10 mb-2.5">
+                        <i data-lucide="message-circle-more" class="w-4 h-4"></i> <span>Live Chat</span>
+                        <span id="livechat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
+                    </button>
+                    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-[#ff0000] hover:bg-[#e60000] transition font-bold text-xs shadow-lg shadow-[#ff0000]/10">
+                        <i data-lucide="phone-call" class="w-4 h-4"></i> <span>Hubungi Admin Instansi</span>
+                    </a>
+                    <div class="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-slate-500 font-semibold">
+                        <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <span>Jumlah Kunjungan: <span id="visitor-count-value" class="text-amber-400 font-bold">-</span></span>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <div id="mobile-overlay" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-30 md:hidden"></div>
+
+        <!-- LIVE CHAT WIDGET -->
+        <div id="livechat-backdrop" onclick="closeLiveChat()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"></div>
+        <div id="livechat-panel" class="hidden fixed z-[70] bottom-0 right-0 md:bottom-6 md:right-6 w-full md:w-96 h-[85vh] md:h-[560px] bg-slate-900 border border-slate-800 md:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3.5 bg-emerald-700 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
+                        <i data-lucide="headset" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <p class="text-white text-xs font-bold leading-tight">Live Chat KABAS MEAN</p>
+                        <p class="text-emerald-100 text-[10px] leading-tight flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block"></span> Kirim pertanyaan, admin akan membalas</p>
+                    </div>
+                </div>
+                <button onclick="closeLiveChat()" class="text-white/80 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div id="livechat-messages" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-950/40">
+                <div class="text-center text-[10px] text-slate-500 py-4">Memuat percakapan...</div>
+            </div>
+
+            <div id="livechat-image-preview" class="hidden items-center gap-2 px-3 pt-2.5 bg-slate-900 flex-shrink-0">
+                <div class="relative">
+                    <img id="livechat-image-preview-img" src="" class="w-14 h-14 object-cover rounded-lg border border-slate-700">
+                    <button type="button" onclick="clearLiveChatImage()" class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-rose-600 hover:bg-rose-500 flex items-center justify-center text-white"><i data-lucide="x" class="w-2.5 h-2.5"></i></button>
+                </div>
+                <span class="text-[10px] text-slate-400">Gambar siap dikirim</span>
+            </div>
+            <form onsubmit="sendLiveChatMessage(event)" class="flex items-center gap-2 p-3 border-t border-slate-800 bg-slate-900 flex-shrink-0">
+                <input id="livechat-image-input" type="file" accept="image/*" class="hidden" onchange="handleLiveChatImageSelect(event)">
+                <button type="button" onclick="document.getElementById('livechat-image-input').click()" title="Lampirkan gambar" class="w-9 h-9 flex-shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                    <i data-lucide="image-plus" class="w-4 h-4 text-slate-300"></i>
+                </button>
+                <input id="livechat-input" type="text" autocomplete="off" placeholder="Tulis pesan..." class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button type="submit" class="w-10 h-10 flex-shrink-0 rounded-xl bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center transition">
+                    <i data-lucide="send" class="w-4 h-4 text-white"></i>
+                </button>
+            </form>
+        </div>
+
+        <main class="flex-grow flex flex-col min-h-0 overflow-y-auto overflow-x-hidden bg-[#0d121f] custom-scrollbar">
+            
+            <div class="flex-grow p-4 md:p-8 flex justify-center">
+                <div class="max-w-4xl w-full bg-slate-900/60 border border-slate-800/80 rounded-2xl shadow-2xl p-6 md:p-10 flex flex-col justify-between" id="main-card-pane">
+                    <div id="content-container" class="space-y-6">
+                    </div>
+                </div>
+            </div>
+
+            <footer class="bg-slate-950 text-slate-500 text-center py-6 text-xs border-t border-slate-800/80 flex-shrink-0">
+                <p>&copy; 2026 <span class="dynamic-site-name text-slate-300 font-bold">KABAS MEAN</span> - Kanal Bantuan, Sumber Informasi & Media Panduan SRIKANDI</p>
+                <p class="mt-1">Dibuat dengan penuh dedikasi oleh <span class="text-amber-500 font-bold">Stanislaus Bria, S.Fil</span></p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const wrapper = document.getElementById('toast-wrapper');
+            const toast = document.createElement('div');
+            toast.className = `flex items-center gap-3 p-4 rounded-xl shadow-xl transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto min-w-[280px] max-w-sm border ${type === 'success' ? 'bg-emerald-950/90 text-emerald-300 border-emerald-800' : 'bg-rose-950/90 text-rose-300 border-rose-800'}`;
+            const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5 flex-shrink-0 ${type === 'success' ? 'text-emerald-400' : 'text-rose-400'}"></i><span class="text-xs font-semibold leading-relaxed">${message}</span>`;
+            wrapper.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => { toast.classList.add('translate-y-2', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
+        function applyStaticIdentity() {
+            document.querySelectorAll('.dynamic-site-name').forEach(el => el.innerText = siteName);
+            document.querySelectorAll('.dynamic-site-sub').forEach(el => el.innerText = siteSubtitle);
+            document.getElementById('site-title-meta').innerText = siteName + " - " + siteSubtitle;
+
+            const txtLogo = document.getElementById('site-logo-txt');
+            const imgLogo = document.getElementById('site-logo-img');
+            const mobileLogoTxt = document.getElementById('mobile-logo-txt');
+            const mobileLogoImg = document.getElementById('mobile-logo-img');
+            
+            if (logoImageUrl && logoImageUrl.startsWith('http')) {
+                txtLogo.classList.add('hidden');
+                imgLogo.src = logoImageUrl;
+                imgLogo.classList.remove('hidden');
+
+                if (mobileLogoTxt) mobileLogoTxt.classList.add('hidden');
+                if (mobileLogoImg) { mobileLogoImg.src = logoImageUrl; mobileLogoImg.classList.remove('hidden'); }
+
+                const favicon = document.getElementById('site-favicon');
+                if (favicon) favicon.href = logoImageUrl;
+            } else {
+                txtLogo.classList.remove('hidden');
+                txtLogo.innerText = defaultLogoText;
+                imgLogo.classList.add('hidden');
+
+                if (mobileLogoTxt) { mobileLogoTxt.classList.remove('hidden'); mobileLogoTxt.innerText = defaultLogoText; }
+                if (mobileLogoImg) mobileLogoImg.classList.add('hidden');
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar'), overlay = document.getElementById('mobile-overlay');
+            isMobileSidebarOpen = !isMobileSidebarOpen;
+            if (isMobileSidebarOpen) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); } 
+            else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
+        }
+
+        const dropdownIds = ['hak-akses', 'tte', 'naskah-masuk', 'naskah-keluar'];
+
+        function toggleDropdown(id) {
+            const elem = document.getElementById('drop-' + id), icon = document.getElementById('icon-' + id);
+            const isCurrentlyOpen = !elem.classList.contains('hidden');
+
+            // Tutup semua dropdown lain sebelum membuka/menutup yang diklik
+            dropdownIds.forEach(otherId => {
+                if (otherId === id) return;
+                const otherElem = document.getElementById('drop-' + otherId), otherIcon = document.getElementById('icon-' + otherId);
+                if (otherElem && !otherElem.classList.contains('hidden')) {
+                    otherElem.classList.add('hidden');
+                    if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            if (isCurrentlyOpen) { elem.classList.add('hidden'); icon.style.transform = 'rotate(0deg)'; }
+            else { elem.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
+        }
+
+        // --- MODE TERANG / GELAP ---
+        function applyThemeMode(mode) {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (mode === 'light') {
+                document.documentElement.classList.add('light-mode');
+                if (icon) icon.setAttribute('data-lucide', 'moon');
+            } else {
+                document.documentElement.classList.remove('light-mode');
+                if (icon) icon.setAttribute('data-lucide', 'sun');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function toggleThemeMode() {
+            const isLight = document.documentElement.classList.contains('light-mode');
+            const next = isLight ? 'dark' : 'light';
+            try { localStorage.setItem('kabasmean-theme', next); } catch (e) { /* diamkan jika storage diblokir */ }
+            applyThemeMode(next);
+        }
+
+        function initThemeMode() {
+            let saved = null;
+            try { saved = localStorage.getItem('kabasmean-theme'); } catch (e) { /* diamkan */ }
+            applyThemeMode(saved === 'light' ? 'light' : 'dark');
+        }
+
+        // --- PENCARIAN GLOBAL (Menu, Panduan, FAQ) ---
+        function stripHtmlTags(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html || '';
+            return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function buildSearchIndex() {
+            const index = [];
+            Object.keys(localStateContents).forEach(key => {
+                const item = localStateContents[key];
+                if (!item || !item.title) return;
+                index.push({
+                    section: key,
+                    type: 'menu',
+                    title: item.title,
+                    snippet: stripHtmlTags(item.body).slice(0, 90)
+                });
+            });
+            defaultFaqs.forEach(f => {
+                index.push({
+                    section: 'faq',
+                    faqId: f.id,
+                    type: 'faq',
+                    title: f.question,
+                    snippet: stripHtmlTags(f.answer).slice(0, 90)
+                });
+            });
+            return index;
+        }
+
+        let searchIndexCache = null;
+
+        function handleGlobalSearch(query) {
+            const resultsBox = document.getElementById('global-search-results');
+            const clearBtn = document.getElementById('global-search-clear');
+            const q = (query || '').trim().toLowerCase();
+            clearBtn.classList.toggle('hidden', q.length === 0);
+
+            if (q.length === 0) { resultsBox.classList.add('hidden'); resultsBox.innerHTML = ''; return; }
+            if (!searchIndexCache) searchIndexCache = buildSearchIndex();
+
+            const matches = searchIndexCache.filter(it =>
+                it.title.toLowerCase().includes(q) || it.snippet.toLowerCase().includes(q)
+            ).slice(0, 8);
+
+            if (matches.length === 0) {
+                resultsBox.innerHTML = `<div class="p-3 text-[11px] text-slate-500 text-center">Tidak ada hasil untuk "${query}"</div>`;
+            } else {
+                resultsBox.innerHTML = matches.map(m => `
+                    <button onclick="goToSearchResult('${m.section}', ${m.faqId ? `'${m.faqId}'` : 'null'})" class="w-full text-left px-3.5 py-2.5 hover:bg-slate-700/60 border-b border-slate-700/60 last:border-b-0 transition">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="${m.type === 'faq' ? 'help-circle' : 'file-text'}" class="w-3.5 h-3.5 text-amber-400 flex-shrink-0"></i>
+                            <p class="text-[11px] font-bold text-slate-100 truncate">${m.title}</p>
+                        </div>
+                        ${m.snippet ? `<p class="text-[10px] text-slate-500 mt-0.5 pl-5 truncate">${m.snippet}</p>` : ''}
+                    </button>`).join('');
+            }
+            resultsBox.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function clearGlobalSearch() {
+            const input = document.getElementById('global-search-input');
+            input.value = '';
+            handleGlobalSearch('');
+            input.focus();
+        }
+
+        function goToSearchResult(section, faqId) {
+            clearGlobalSearch();
+            navigate(section);
+            if (section === 'faq' && faqId) {
+                setTimeout(() => {
+                    const el = document.getElementById('faq-item-' + faqId);
+                    if (el) {
+                        openFaqItem(faqId);
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 60);
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('global-search-results');
+            const input = document.getElementById('global-search-input');
+            if (!wrapper || !input) return;
+            if (!wrapper.contains(e.target) && e.target !== input) wrapper.classList.add('hidden');
+        });
+
+        // --- FAQ (Pertanyaan yang Sering Diajukan) ---
+        function renderFaqSection() {
+            const items = defaultFaqs.map(f => `
+                <div class="border border-slate-800 rounded-2xl overflow-hidden bg-slate-900/40" id="faq-item-${f.id}">
+                    <button onclick="toggleFaqItem('${f.id}')" class="w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 hover:bg-slate-800/40 transition">
+                        <span class="text-sm font-bold text-slate-100">${f.question}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 flex-shrink-0 transition-transform" id="faq-icon-${f.id}"></i>
+                    </button>
+                    <div class="hidden px-4 pb-4 text-sm text-slate-400 leading-relaxed" id="faq-answer-${f.id}">${f.answer}</div>
+                </div>`).join('');
+
+            return `
+                <div class="space-y-6">
+                    <div class="border-b border-slate-800/80 pb-4">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> FAQ - Pertanyaan yang Sering Diajukan</h2>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">Kumpulan jawaban atas pertanyaan yang paling sering ditanyakan seputar penggunaan SRIKANDI. Tidak menemukan jawaban yang Anda cari? Gunakan kotak pencarian di sidebar atau hubungi Admin Instansi melalui Live Chat.</p>
+                    <div class="space-y-3">${items || '<p class="text-slate-500 text-sm">Belum ada FAQ.</p>'}</div>
+                </div>`;
+        }
+
+        function toggleFaqItem(id) {
+            const ans = document.getElementById('faq-answer-' + id);
+            const icon = document.getElementById('faq-icon-' + id);
+            if (!ans) return;
+            const isOpen = !ans.classList.contains('hidden');
+            if (isOpen) { ans.classList.add('hidden'); if (icon) icon.style.transform = 'rotate(0deg)'; }
+            else { ans.classList.remove('hidden'); if (icon) icon.style.transform = 'rotate(180deg)'; }
+        }
+
+        function openFaqItem(id) {
+            const ans = document.getElementById('faq-answer-' + id);
+            const icon = document.getElementById('faq-icon-' + id);
+            if (ans) ans.classList.remove('hidden');
+            if (icon) icon.style.transform = 'rotate(180deg)';
+        }
+
+        function navigate(section) {
+            currentSection = section;
+            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('nav-active'));
+            const activeBtn = document.getElementById('menu-btn-' + section);
+            if (activeBtn) activeBtn.classList.add('nav-active');
+            if (isMobileSidebarOpen) toggleMobileSidebar();
+
+            const adminChatFab = document.getElementById('adminchat-fab');
+            if (adminChatFab && isAdminMode) {
+                if (section === 'admin-livechat') adminChatFab.classList.add('hidden');
+                else { adminChatFab.classList.remove('hidden'); adminChatFab.classList.add('flex'); }
+            }
+
+            renderContent();
+        }
+
+        // Kartu link umum (Informasi Umum: Bimtek/Live), kartu PDF (Hak Akses),
+        // dan kartu tautan pada semua sub menu TTE — semuanya memakai fungsi ini.
+        // Preview berupa ILUSTRASI SVG statis buatan sendiri (bukan screenshot
+        // pihak ketiga), dikelompokkan per kategori tautan supaya tetap relevan
+        // secara visual: srikandi, pdf, email, certificate (BSrE), asn (MyASN).
+        // Karena murni SVG inline, tampil instan, tidak butuh koneksi internet
+        // tambahan, tidak ada risiko kuota/limit layanan, dan otomatis kontras
+        // baik di dark maupun light mode (memakai warna gradasi sendiri).
+        function linkPreviewCategory(link, isPdf) {
+            if (isPdf) return 'pdf';
+            const t = (link.text || '').toLowerCase();
+            if (t.includes('bsre')) return 'certificate';
+            if (t.includes('myasn')) return 'asn';
+            if (t.includes('servicedesk') || t.includes('surel')) return 'email';
+            return 'srikandi';
+        }
+
+        function buildLinkPreviewSvg(category, uid) {
+            const THEMES = {
+                srikandi:    { c1: '#1e293b', c2: '#0b1220', accent: '#f59e0b', glow: '#fbbf24' },
+                pdf:         { c1: '#241419', c2: '#170c10', accent: '#f43f5e', glow: '#fda4af' },
+                email:       { c1: '#0f1e2b', c2: '#08131c', accent: '#38bdf8', glow: '#7dd3fc' },
+                certificate: { c1: '#0f2419', c2: '#081512', accent: '#34d399', glow: '#6ee7b7' },
+                asn:         { c1: '#1c1533', c2: '#100b1f', accent: '#a78bfa', glow: '#c4b5fd' },
+            };
+            const T = THEMES[category] || THEMES.srikandi;
+            const ICONS = {
+                srikandi: `<path d="M200 55 L255 75 L255 130 C255 168 230 196 200 208 C170 196 145 168 145 130 L145 75 Z" fill="none" stroke="${T.accent}" stroke-width="6" stroke-linejoin="round"/>
+                    <path d="M178 132 L196 152 L226 108" fill="none" stroke="${T.glow}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`,
+                pdf: `<path d="M158 50 H222 L246 74 V186 A6 6 0 0 1 240 192 H158 A6 6 0 0 1 152 186 V56 A6 6 0 0 1 158 50 Z" fill="none" stroke="${T.accent}" stroke-width="6"/>
+                    <path d="M222 50 V74 H246" fill="none" stroke="${T.accent}" stroke-width="6" stroke-linejoin="round"/>
+                    <line x1="170" y1="104" x2="230" y2="104" stroke="${T.glow}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="170" y1="124" x2="230" y2="124" stroke="${T.glow}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="170" y1="144" x2="210" y2="144" stroke="${T.glow}" stroke-width="6" stroke-linecap="round"/>
+                    <rect x="152" y="160" width="94" height="26" rx="6" fill="${T.accent}"/>`,
+                email: `<rect x="130" y="80" width="140" height="96" rx="10" fill="none" stroke="${T.accent}" stroke-width="6"/>
+                    <path d="M132 86 L200 138 L268 86" fill="none" stroke="${T.glow}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
+                certificate: `<circle cx="200" cy="112" r="52" fill="none" stroke="${T.accent}" stroke-width="6"/>
+                    <path d="M182 112 L196 128 L222 96" fill="none" stroke="${T.glow}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M172 156 L156 200 L188 188 L200 208 L212 188 L244 200 L228 156" fill="none" stroke="${T.accent}" stroke-width="6" stroke-linejoin="round"/>`,
+                asn: `<rect x="130" y="66" width="140" height="108" rx="12" fill="none" stroke="${T.accent}" stroke-width="6"/>
+                    <circle cx="172" cy="110" r="16" fill="none" stroke="${T.glow}" stroke-width="6"/>
+                    <path d="M150 156 C150 138 194 138 194 156" fill="none" stroke="${T.glow}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="216" y1="102" x2="252" y2="102" stroke="${T.accent}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="216" y1="118" x2="252" y2="118" stroke="${T.accent}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="216" y1="134" x2="240" y2="134" stroke="${T.accent}" stroke-width="6" stroke-linecap="round"/>`,
+            };
+            const icon = ICONS[category] || ICONS.srikandi;
+            return `<svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 w-full h-full">
+                    <defs>
+                        <linearGradient id="lp-grad-${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="${T.c1}"/>
+                            <stop offset="100%" stop-color="${T.c2}"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="400" height="240" fill="url(#lp-grad-${uid})"/>
+                    <circle cx="55" cy="205" r="70" fill="${T.accent}" opacity="0.08"/>
+                    <circle cx="365" cy="35" r="90" fill="${T.accent}" opacity="0.06"/>
+                    ${icon}
+                </svg>`;
+        }
+
+        function renderLinkCards(links) {
+            if (!links || links.length === 0) return '';
+            let cards = links.map((link, idx) => {
+                const isPdf = /\.pdf(\?.*)?$/i.test(link.url || '');
+                const icon = isPdf ? 'file-text' : 'external-link';
+                const label = isPdf ? 'Buka PDF' : 'Buka Tautan';
+                const category = linkPreviewCategory(link, isPdf);
+                const uid = `${category}-${idx}-${Math.random().toString(36).slice(2, 7)}`;
+
+                return `
+                    <a href="${link.url}" target="_blank" rel="noopener" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg flex flex-col">
+                        <div class="h-36 sm:h-40 w-full overflow-hidden bg-slate-950 relative">
+                            ${buildLinkPreviewSvg(category, uid)}
+                            <div class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur flex items-center justify-center border border-white/10">
+                                <i data-lucide="${icon}" class="w-3.5 h-3.5 text-white"></i>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <p class="font-bold text-sm text-slate-100">${link.text}</p>
+                            <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">${label} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></p>
+                        </div>
+                    </a>`;
+            }).join('');
+            return `<div class="pt-6 border-t border-slate-800/85 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>`;
+        }
+
+        function renderContent() {
+            const container = document.getElementById('content-container');
+            if (currentSection === 'mentors') { container.innerHTML = renderMentorsCRUD(); lucide.createIcons(); return; }
+            if (currentSection === 'evaluasi') {
+                container.innerHTML = renderEvaluasiForm();
+                lucide.createIcons();
+                ['kemudahan', 'tampilan', 'konten', 'layanan'].forEach(updateStarUI);
+                loadEvaluasiSummary();
+                return;
+            }
+            if (currentSection === 'faq') { container.innerHTML = renderFaqSection(); lucide.createIcons(); return; }
+            if (currentSection === 'infografis') { container.innerHTML = renderInfografisGrid(); lucide.createIcons(); return; }
+            if (currentSection === 'video') { container.innerHTML = renderVideoGrid(); lucide.createIcons(); return; }
+            if (currentSection === 'admin-evaluasi') {
+                renderAdminGate(() => {
+                    container.innerHTML = renderAdminEvaluasi();
+                    lucide.createIcons();
+                    loadAdminEvaluasiData();
+                });
+                return;
+            }
+            if (currentSection === 'admin-livechat') {
+                renderAdminGate(() => {
+                    container.innerHTML = renderAdminLiveChat();
+                    lucide.createIcons();
+                    adminChatUnread = 0;
+                    updateAdminChatBadge();
+                    loadAdminChatSessions();
+                    subscribeAdminLiveChat();
+                });
+                return;
+            }
+
+            let pageData = localStateContents[currentSection] || { title: 'Modul Belum Terdaftar', body: '<p>Konten sedang dipersiapkan.</p>', links: [] };
+
+            let html = `<div class="space-y-6">`;
+            if (currentSection === 'beranda' && homeImageUrl) {
+                html += `
+                    <div class="w-full h-52 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group">
+                        <img src="${homeImageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
+                    </div>`;
+            }
+            html += `
+                <div class="border-b border-slate-800/80 pb-4 flex justify-between items-center">
+                    <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                        <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> ${pageData.title}
+                    </h2>
+                </div>
+                <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base space-y-4">${pageData.body}</div>`;
+
+            if (pageData.links && pageData.links.length > 0) {
+                html += renderLinkCards(pageData.links);
+            }
+            if (pageData.after) {
+                html += `<div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base">${pageData.after}</div>`;
+            }
+            html += `</div>`;
+            container.innerHTML = html; lucide.createIcons();
+        }
+
+        // --- INFOGRAFIS (Kartu -> Klik -> Tampil Full) ---
+        function renderInfografisGrid() {
+            let cards = defaultInfografis.map(item => `
+                <button onclick="openImageModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
+                    <div class="aspect-video w-full overflow-hidden bg-slate-950">
+                        <img src="${item.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    </div>
+                    <div class="p-4">
+                        <p class="font-bold text-sm text-slate-100">${item.title}</p>
+                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Lihat Full <i data-lucide="expand" class="w-3.5 h-3.5"></i></p>
+                    </div>
+                </button>`).join('');
+
+            return `
+                <div class="space-y-6">
+                    <div class="border-b border-slate-800/80 pb-4">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Infografis Panduan SRIKANDI</h2>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">Kumpulan infografis berikut disusun secara berurutan untuk memudahkan Anda memahami setiap tahapan penggunaan SRIKANDI, mulai dari pendaftaran akun hingga pemberkasan arsip aktif. Klik salah satu kartu di bawah ini untuk menampilkan gambar infografis secara penuh. Supaya bisa diperbesar atau diperkecil, klik kanan pada gambar lalu buka di tab baru.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards || '<p class="text-slate-500 text-sm">Belum ada infografis.</p>'}</div>
+                </div>`;
+        }
+
+        function openImageModal(url, title) {
+            const modal = document.createElement('div');
+            modal.id = 'media-modal';
+            modal.className = 'fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4';
+            modal.onclick = (e) => { if (e.target === modal) closeMediaModal(); };
+            modal.innerHTML = `
+                <div class="relative max-w-4xl w-full">
+                    <button onclick="closeMediaModal()" class="absolute -top-11 right-0 text-slate-300 hover:text-white bg-slate-800/80 rounded-full p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <img src="${url}" class="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl">
+                    <p class="text-center text-slate-300 text-sm font-semibold mt-3">${title}</p>
+                </div>`;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        // --- VIDEO TUTORIAL (Kartu -> Klik -> Putar di dalam website, tanpa forward) ---
+        function renderVideoGrid() {
+            let cards = defaultVideos.map(item => `
+                <button onclick="openVideoModal('${item.youtubeId}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
+                    <div class="aspect-video w-full overflow-hidden bg-slate-950 relative">
+                        <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <div class="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-xl"><i data-lucide="play" class="w-5 h-5 text-slate-950"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="font-bold text-sm text-slate-100">${item.title}</p>
+                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Putar Video <i data-lucide="play-circle" class="w-3.5 h-3.5"></i></p>
+                    </div>
+                </button>`).join('');
+
+            return `
+                <div class="space-y-6">
+                    <div class="border-b border-slate-800/80 pb-4">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Video Tutorial Penggunaan</h2>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">Berikut adalah kumpulan video tutorial yang dapat Anda tonton langsung di halaman ini untuk membantu memahami alur kerja dan fitur-fitur pada aplikasi SRIKANDI secara lebih mendalam. Klik salah satu video di bawah untuk mulai memutar. Jika ingin menontonnya di Youtube, klik pada logo Youtube di bagian kanan bawah.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards || '<p class="text-slate-500 text-sm">Belum ada video.</p>'}</div>
+                </div>`;
+        }
+
+        function openVideoModal(youtubeId, title) {
+            const modal = document.createElement('div');
+            modal.id = 'media-modal';
+            modal.className = 'fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4';
+            modal.onclick = (e) => { if (e.target === modal) closeMediaModal(); };
+            // controls=0 & disablekb=1 & fs=0 -> tidak ada progress bar, tidak bisa di-skip/forward
+            const src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3`;
+            modal.innerHTML = `
+                <div class="relative max-w-3xl w-full">
+                    <button onclick="closeMediaModal()" class="absolute -top-11 right-0 text-slate-300 hover:text-white bg-slate-800/80 rounded-full p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    <div class="aspect-video w-full rounded-xl overflow-hidden shadow-2xl bg-black">
+                        <iframe class="w-full h-full" src="${src}" allow="autoplay; encrypted-media" allowfullscreen="false" frameborder="0"></iframe>
+                    </div>
+                    <p class="text-center text-slate-300 text-sm font-semibold mt-3">${title}</p>
+                </div>`;
+            document.body.appendChild(modal);
+            lucide.createIcons();
+        }
+
+        function closeMediaModal() {
+            const modal = document.getElementById('media-modal');
+            if (modal) modal.remove();
+        }
+
+        // --- SISTEM PENDAMPING (MENTORS) ---
+        function renderMentorsCRUD() {
+            const list = defaultMentors;
+            let cards = '';
+            list.forEach(m => {
+                const initials = m.name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+                const waNumber = m.phone.replace(/\D/g, '').replace(/^0/, '62');
+                const statusClass = m.status === 'Aktif' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-500/10 text-slate-400';
+                cards += `
+                    <div class="bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg p-5 flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
+                                <span class="text-amber-400 font-black text-sm">${initials}</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-sm text-slate-100 leading-snug">${m.name}</p>
+                                <p class="text-[11px] text-amber-400 font-semibold mt-0.5">${m.role}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-800/80">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${statusClass}">${m.status}</span>
+                            <a href="https://wa.me/${waNumber}" target="_blank" rel="noopener" class="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i> ${m.phone}</a>
+                        </div>
+                    </div>`;
+            });
+
+            return `
+                <div class="space-y-6" id="mentors-capture-area">
+                    <div class="border-b border-slate-800 pb-4 flex justify-between items-center">
+                        <h2 class="text-xl md:text-2xl font-black text-white flex items-center gap-2"><span class="w-1.5 h-6 bg-amber-500 rounded-full"></span> Daftar Pendamping Teknis</h2>
+                        <div class="flex gap-2 no-print">
+                            <button onclick="exportMentorsToPDF()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold rounded-xl flex items-center gap-2 border border-slate-700"><i data-lucide="printer" class="w-4 h-4"></i> Cetak</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-400 leading-relaxed">Tim Pendamping Teknis ini terdiri dari Kepala Bidang Penyelenggaraan Kearsipan Dinas Perpustakaan dan Kearsipan Kabupaten Malaka bersama staf Bidang Kearsipan dengan tanggung jawab masing-masing. Jika para pengguna SRIKANDI mengalami kendala, silahkan hubungi Kepala Bidang atau salah satu staf.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>
+                </div>`;
+        }
+
+        function exportMentorsToPDF() {
+            html2canvas(document.getElementById('mentors-capture-area'), { scale: 2, backgroundColor: '#0f172a' }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png'), { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4'), imgWidth = 190, imgHeight = (canvas.height * imgWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 10, 15, imgWidth, imgHeight); pdf.save("Laporan_Pendamping.pdf");
+            });
+        }
+
+        // --- FITUR EVALUASI WEBSITE ---
+        function renderStarRow(category, label) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<button type="button" onclick="setRating('${category}', ${i})" id="star-${category}-${i}" class="text-slate-600 hover:text-amber-400 transition p-0.5"><i data-lucide="star" class="w-5 h-5 md:w-6 md:h-6 pointer-events-none"></i></button>`;
+            }
+            return `
+                <div class="flex items-center justify-between py-2.5 border-b border-slate-800/60 last:border-b-0">
+                    <span class="text-xs md:text-sm font-semibold text-slate-300 pr-3">${label}</span>
+                    <div class="flex items-center gap-0.5 flex-shrink-0" id="stars-${category}">${stars}</div>
+                </div>`;
+        }
+
+        function setRating(category, value) {
+            evalRatings[category] = value;
+            updateStarUI(category);
+        }
+
+        function updateStarUI(category) {
+            const val = evalRatings[category];
+            for (let i = 1; i <= 5; i++) {
+                const el = document.getElementById(`star-${category}-${i}`);
+                if (!el) continue;
+                if (i <= val) { el.classList.remove('text-slate-600'); el.classList.add('text-amber-400'); }
+                else { el.classList.remove('text-amber-400'); el.classList.add('text-slate-600'); }
+            }
+        }
+
+        function renderEvaluasiForm() {
+            return `
+                <div class="space-y-6" id="evaluasi-area">
+                    <div class="border-b border-slate-800/80 pb-4 flex justify-between items-center">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Evaluasi Website
+                        </h2>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">Bantu kami meningkatkan kualitas Portal KABAS MEAN dengan memberikan penilaian dan masukan Anda. Data evaluasi tersimpan aman pada sistem kami dan digunakan untuk perbaikan layanan.</p>
+
+                    <div id="eval-summary-cards" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="col-span-2 md:col-span-4 bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-center">
+                            <p class="text-xs text-slate-500">Memuat statistik...</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950/30 border border-slate-800 rounded-2xl p-5 md:p-6 space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Nama Lengkap *</label>
+                                <input id="eval-nama" type="text" placeholder="Nama Anda" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Instansi / Satker</label>
+                                <input id="eval-instansi" type="text" placeholder="Nama Instansi" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                            </div>
+                        </div>
+
+                        <div class="pt-1">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Penilaian</p>
+                            ${renderStarRow('kemudahan', 'Kemudahan Penggunaan')}
+                            ${renderStarRow('tampilan', 'Tampilan')}
+                            ${renderStarRow('konten', 'Kelengkapan Materi Panduan')}
+                            ${renderStarRow('layanan', 'Respon Admin')}
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1.5">Saran & Masukan</label>
+                            <textarea id="eval-saran" rows="4" placeholder="Tuliskan saran Anda untuk pengembangan website ini..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                        </div>
+
+                        <button id="eval-submit-btn" onclick="submitEvaluasi()" class="w-full py-3 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-extrabold text-sm transition shadow-lg shadow-[#ff0000]/20 flex items-center justify-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i> <span>Kirim Evaluasi</span>
+                        </button>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3">Masukan Terbaru</h3>
+                        <div id="eval-recent-list" class="space-y-3">
+                            <p class="text-xs text-slate-500">Memuat data...</p>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function submitEvaluasi() {
+            const namaEl = document.getElementById('eval-nama');
+            const instansiEl = document.getElementById('eval-instansi');
+            const saranEl = document.getElementById('eval-saran');
+            const btn = document.getElementById('eval-submit-btn');
+
+            const nama = namaEl.value.trim();
+            const instansi = instansiEl.value.trim();
+            const saran = saranEl.value.trim();
+
+            if (!nama) { showToast('Nama lengkap wajib diisi.', 'error'); return; }
+            if (!evalRatings.kemudahan || !evalRatings.tampilan || !evalRatings.konten || !evalRatings.layanan) {
+                showToast('Mohon lengkapi seluruh penilaian bintang.', 'error'); return;
+            }
+            if (!supabaseClient) {
+                showToast('Database belum terkonfigurasi. Hubungi admin.', 'error'); return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>Mengirim...</span>`;
+            lucide.createIcons();
+
+            const { error } = await supabaseClient.from('website_evaluations').insert([{
+                nama: nama,
+                instansi: instansi || null,
+                rating_kemudahan: evalRatings.kemudahan,
+                rating_tampilan: evalRatings.tampilan,
+                rating_konten: evalRatings.konten,
+                rating_layanan: evalRatings.layanan,
+                saran: saran || null
+            }]);
+
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i> <span>Kirim Evaluasi</span>`;
+            lucide.createIcons();
+
+            if (error) {
+                showToast('Gagal mengirim evaluasi: ' + error.message, 'error');
+                return;
+            }
+
+            showToast('Terima kasih! Evaluasi Anda berhasil terkirim.', 'success');
+            namaEl.value = ''; instansiEl.value = ''; saranEl.value = '';
+            evalRatings = { kemudahan: 0, tampilan: 0, konten: 0, layanan: 0 };
+            ['kemudahan', 'tampilan', 'konten', 'layanan'].forEach(updateStarUI);
+            loadEvaluasiSummary();
+        }
+
+        async function loadEvaluasiSummary() {
+            const cardsEl = document.getElementById('eval-summary-cards');
+            const listEl = document.getElementById('eval-recent-list');
+            if (!cardsEl || !listEl) return;
+
+            if (!supabaseClient) {
+                cardsEl.innerHTML = `<div class="col-span-2 md:col-span-4 bg-rose-950/30 border border-rose-900 rounded-xl p-4 text-center"><p class="text-xs text-rose-400 font-semibold">Database belum terhubung. Lengkapi SUPABASE_URL & SUPABASE_ANON_KEY pada kode.</p></div>`;
+                listEl.innerHTML = `<p class="text-xs text-slate-500">Data tidak dapat dimuat karena database belum terkonfigurasi.</p>`;
+                return;
+            }
+
+            try {
+                const { data: summary, error: errSummary } = await supabaseClient
+                    .from('website_evaluation_summary').select('*').single();
+                if (errSummary) throw errSummary;
+
+                const total = summary?.total_evaluasi ?? 0;
+                const avg = summary?.avg_keseluruhan ?? '-';
+                cardsEl.innerHTML = `
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${total}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Total Evaluasi</p>
+                    </div>
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${avg}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Rata-rata</p>
+                    </div>
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${summary?.avg_kemudahan ?? '-'}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Kemudahan</p>
+                    </div>
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${summary?.avg_tampilan ?? '-'}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Tampilan</p>
+                    </div>`;
+            } catch (e) {
+                cardsEl.innerHTML = `<div class="col-span-2 md:col-span-4 bg-slate-950/40 border border-slate-800 rounded-xl p-4 text-center"><p class="text-xs text-slate-500">Statistik belum tersedia.</p></div>`;
+            }
+
+            try {
+                const { data: recent, error: errRecent } = await supabaseClient
+                    .from('website_evaluations')
+                    .select('nama, instansi, saran, created_at, rating_kemudahan, rating_tampilan, rating_konten, rating_layanan')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                if (errRecent) throw errRecent;
+
+                if (!recent || recent.length === 0) {
+                    listEl.innerHTML = `<p class="text-xs text-slate-500">Belum ada evaluasi. Jadilah yang pertama memberi masukan!</p>`;
+                    return;
+                }
+
+                listEl.innerHTML = recent.map(r => {
+                    const avgR = ((r.rating_kemudahan + r.rating_tampilan + r.rating_konten + r.rating_layanan) / 4).toFixed(1);
+                    const tanggal = new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    return `
+                        <div class="bg-slate-950/30 border border-slate-800/70 rounded-xl p-4">
+                            <div class="flex justify-between items-start mb-1.5 gap-3">
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-200 truncate">${r.nama}${r.instansi ? ' &middot; ' + r.instansi : ''}</p>
+                                    <p class="text-[10px] text-slate-500">${tanggal}</p>
+                                </div>
+                                <span class="text-[10px] font-black text-amber-400 flex items-center gap-1 flex-shrink-0"><i data-lucide="star" class="w-3 h-3"></i> ${avgR}</span>
+                            </div>
+                            ${r.saran ? `<p class="text-xs text-slate-400 mt-2 leading-relaxed">${r.saran}</p>` : ''}
+                        </div>`;
+                }).join('');
+                lucide.createIcons();
+            } catch (e) {
+                listEl.innerHTML = `<p class="text-xs text-slate-500">Gagal memuat data evaluasi.</p>`;
+            }
+        }
+
+        // --- HALAMAN ADMIN EVALUASI (AKSES VIA SUPABASE AUTH + WAJIB MFA/TOTP) ---
+        // Menu admin sebelumnya disembunyikan lewat parameter link rahasia (?admin=admin).
+        // Sekarang diganti dengan tombol "KM" di sidebar yang memicu revealAdminMenu().
+        //
+        // ALUR MFA (Multi Factor Authentication) WAJIB untuk semua admin:
+        // 1. Admin login dengan email + password (aal1 - baru satu faktor).
+        // 2. Jika akun belum pernah mendaftarkan TOTP -> WAJIB setup dulu: tampilkan QR
+        //    code untuk dipindai di aplikasi authenticator (Google/Microsoft Authenticator,
+        //    Authy, dll), lalu admin memasukkan kode 6 digit untuk mengonfirmasi.
+        // 3. Jika akun sudah punya TOTP terverifikasi -> admin wajib memasukkan kode 6
+        //    digit dari aplikasi authenticator setiap kali login (aal1 -> aal2).
+        // 4. Akses dashboard admin (isAdminMode = true) HANYA diberikan setelah level
+        //    aal2 tercapai. Sesi yang baru aal1 dianggap belum masuk.
+        let manualAdminReveal = false;
+        let adminAuthStage = 'login'; // 'login' | 'mfa-enroll' | 'mfa-verify'
+        let mfaFactorId = null;
+        let mfaEnrollTotp = null; // { qr_code, secret, uri } dari supabase saat enroll
+
+        function revealAdminMenu() {
+            manualAdminReveal = true;
+            checkAdminAccess();
+            navigate('admin-evaluasi');
+        }
+
+        // Hanya mengecek sesi + level MFA untuk tampil/sembunyikan menu di sidebar.
+        // Tidak pernah memicu dialog MFA di sini, supaya tidak muncul tiba-tiba saat
+        // pengguna biasa membuka website.
+        async function checkAdminAccess() {
+            if (supabaseClient) {
+                const { data } = await supabaseClient.auth.getSession();
+                if (data?.session) {
+                    const { data: aalData } = await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+                    isAdminMode = aalData?.currentLevel === 'aal2';
+                } else {
+                    isAdminMode = false;
+                }
+            } else {
+                isAdminMode = false;
+            }
+
+            const showMenu = isAdminMode || manualAdminReveal;
+
+            const adminBtn = document.getElementById('menu-btn-admin-evaluasi');
+            if (adminBtn) {
+                if (showMenu) { adminBtn.classList.remove('hidden'); adminBtn.classList.add('flex'); }
+                else { adminBtn.classList.add('hidden'); adminBtn.classList.remove('flex'); }
+            }
+
+            const adminChatBtn = document.getElementById('menu-btn-admin-livechat');
+            if (adminChatBtn) {
+                if (showMenu) { adminChatBtn.classList.remove('hidden'); adminChatBtn.classList.add('flex'); }
+                else { adminChatBtn.classList.add('hidden'); adminChatBtn.classList.remove('flex'); }
+            }
+
+            const adminChatFab = document.getElementById('adminchat-fab');
+            if (adminChatFab) {
+                if (isAdminMode) { adminChatFab.classList.remove('hidden'); adminChatFab.classList.add('flex'); }
+                else { adminChatFab.classList.add('hidden'); adminChatFab.classList.remove('flex'); }
+            }
+
+            if (isAdminMode) {
+                subscribeAdminLiveChat();
+            } else {
+                adminChatUnread = 0;
+                updateAdminChatBadge();
+            }
+        }
+
+        // Gerbang sebelum menampilkan halaman admin: kalau sudah aal2 -> tampilkan
+        // dashboard. Kalau ada sesi tapi belum aal2 (mis. reload di tengah proses MFA)
+        // -> lanjutkan proses MFA. Kalau belum login sama sekali -> tampilkan form login.
+        async function renderAdminGate(renderDashboard) {
+            if (isAdminMode) { renderDashboard(); return; }
+
+            if (supabaseClient && adminAuthStage === 'login') {
+                const { data: sessionData } = await supabaseClient.auth.getSession();
+                if (sessionData?.session) {
+                    const { data: aalData } = await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
+                    if (aalData?.currentLevel !== 'aal2' && aalData?.nextLevel === 'aal2') {
+                        await resolveMfaFlow();
+                        return;
+                    }
+                }
+            }
+            renderAuthContainer();
+        }
+
+        function renderAuthContainer() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = renderAdminLogin();
+            lucide.createIcons();
+        }
+
+        // Menentukan tahap MFA berikutnya setelah password benar (atau setelah sesi
+        // lama ditemukan masih aal1): setup TOTP baru, atau minta kode TOTP yang sudah ada.
+        async function resolveMfaFlow() {
+            if (!supabaseClient) return;
+
+            const { data: factorsData, error: factorsErr } = await supabaseClient.auth.mfa.listFactors();
+            if (factorsErr) {
+                showToast('Gagal memeriksa status MFA: ' + factorsErr.message, 'error');
+                renderAuthContainer();
+                return;
+            }
+
+            const verifiedFactor = (factorsData?.totp || []).find(f => f.status === 'verified');
+
+            if (verifiedFactor) {
+                mfaFactorId = verifiedFactor.id;
+                adminAuthStage = 'mfa-verify';
+                renderAuthContainer();
+                return;
+            }
+
+            // Belum ada TOTP terverifikasi -> bersihkan sisa faktor gagal/belum selesai, lalu daftarkan baru.
+            for (const f of (factorsData?.totp || [])) {
+                if (f.status !== 'verified') {
+                    try { await supabaseClient.auth.mfa.unenroll({ factorId: f.id }); } catch (e) { /* abaikan */ }
+                }
+            }
+
+            const { data: enrollData, error: enrollErr } = await supabaseClient.auth.mfa.enroll({
+                factorType: 'totp',
+                friendlyName: 'Admin KABAS MEAN'
+            });
+            if (enrollErr) {
+                showToast('Gagal memulai setup MFA: ' + enrollErr.message, 'error');
+                renderAuthContainer();
+                return;
+            }
+
+            mfaFactorId = enrollData.id;
+            mfaEnrollTotp = enrollData.totp;
+            adminAuthStage = 'mfa-enroll';
+            renderAuthContainer();
+        }
+
+        function resetMfaState() {
+            adminAuthStage = 'login';
+            mfaFactorId = null;
+            mfaEnrollTotp = null;
+        }
+
+        async function finalizeAdminAccess() {
+            isAdminMode = true;
+            resetMfaState();
+            await checkAdminAccess();
+            navigate('admin-evaluasi');
+        }
+
+        function renderAdminLogin() {
+            if (adminAuthStage === 'mfa-enroll' && mfaEnrollTotp) {
+                return `
+                    <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-mfa-enroll-area">
+                        <div class="text-center space-y-1.5">
+                            <i data-lucide="shield-plus" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                            <h2 class="text-lg font-extrabold text-white">Setup MFA (Wajib)</h2>
+                            <p class="text-xs text-slate-500">Pindai QR Code ini dengan aplikasi authenticator (Google Authenticator, Authy, dll), lalu masukkan kode 6 digit untuk mengaktifkan.</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-3 flex items-center justify-center">
+                            ${mfaEnrollTotp.qr_code}
+                        </div>
+                        <div class="bg-slate-950/40 border border-slate-800 rounded-lg p-3">
+                            <p class="text-[10px] text-slate-500 mb-1">Tidak bisa pindai? Masukkan kode ini secara manual:</p>
+                            <p class="text-xs font-mono text-amber-400 break-all select-all">${mfaEnrollTotp.secret}</p>
+                        </div>
+                        <div class="space-y-3">
+                            <input id="admin-mfa-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Kode 6 digit" onkeydown="if(event.key==='Enter') adminMfaEnrollVerify()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 text-center tracking-[0.3em] font-mono focus:outline-none focus:border-amber-500">
+                            <p id="admin-mfa-error" class="text-xs text-rose-400 hidden"></p>
+                            <button id="admin-mfa-btn" onclick="adminMfaEnrollVerify()" class="w-full py-2.5 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-extrabold text-sm transition">Aktifkan &amp; Masuk</button>
+                            <button onclick="adminMfaCancel()" class="w-full py-2 text-xs text-slate-500 hover:text-slate-300 transition">Batal</button>
+                        </div>
+                    </div>`;
+            }
+
+            if (adminAuthStage === 'mfa-verify') {
+                return `
+                    <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-mfa-verify-area">
+                        <div class="text-center space-y-1.5">
+                            <i data-lucide="shield-check" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                            <h2 class="text-lg font-extrabold text-white">Verifikasi MFA</h2>
+                            <p class="text-xs text-slate-500">Masukkan kode 6 digit dari aplikasi authenticator Anda.</p>
+                        </div>
+                        <div class="space-y-3">
+                            <input id="admin-mfa-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Kode 6 digit" onkeydown="if(event.key==='Enter') adminMfaVerify()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 text-center tracking-[0.3em] font-mono focus:outline-none focus:border-amber-500" autofocus>
+                            <p id="admin-mfa-error" class="text-xs text-rose-400 hidden"></p>
+                            <button id="admin-mfa-btn" onclick="adminMfaVerify()" class="w-full py-2.5 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-extrabold text-sm transition">Verifikasi</button>
+                            <button onclick="adminMfaCancel()" class="w-full py-2 text-xs text-slate-500 hover:text-slate-300 transition">Batal</button>
+                        </div>
+                    </div>`;
+            }
+
+            return `
+                <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-login-area">
+                    <div class="text-center space-y-1.5">
+                        <i data-lucide="shield-check" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                        <h2 class="text-lg font-extrabold text-white">Login Admin</h2>
+                        <p class="text-xs text-slate-500">Masuk untuk mengelola data evaluasi.</p>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="admin-login-email" type="email" placeholder="Email admin" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        <input id="admin-login-password" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') adminLogin()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        <p id="admin-login-error" class="text-xs text-rose-400 hidden"></p>
+                        <button id="admin-login-btn" onclick="adminLogin()" class="w-full py-2.5 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-extrabold text-sm transition">Masuk</button>
+                    </div>
+                </div>`;
+        }
+
+        async function adminLogin() {
+            const emailEl = document.getElementById('admin-login-email');
+            const passEl = document.getElementById('admin-login-password');
+            const errEl = document.getElementById('admin-login-error');
+            const btn = document.getElementById('admin-login-btn');
+            if (!supabaseClient) return;
+
+            errEl.classList.add('hidden');
+            btn.disabled = true; btn.innerText = 'Memproses...';
+
+            const { error } = await supabaseClient.auth.signInWithPassword({
+                email: emailEl.value.trim(),
+                password: passEl.value
+            });
+
+            btn.disabled = false; btn.innerText = 'Masuk';
+
+            if (error) {
+                errEl.innerText = 'Login gagal: email atau password salah.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            // Password benar, tapi akses admin BELUM diberikan sampai MFA (aal2) berhasil.
+            await resolveMfaFlow();
+        }
+
+        async function adminMfaEnrollVerify() {
+            const codeEl = document.getElementById('admin-mfa-code');
+            const errEl = document.getElementById('admin-mfa-error');
+            const btn = document.getElementById('admin-mfa-btn');
+            if (!supabaseClient || !mfaFactorId) return;
+
+            errEl.classList.add('hidden');
+            btn.disabled = true; btn.innerText = 'Memverifikasi...';
+
+            const { error } = await supabaseClient.auth.mfa.challengeAndVerify({
+                factorId: mfaFactorId,
+                code: (codeEl.value || '').trim()
+            });
+
+            btn.disabled = false; btn.innerText = 'Aktifkan & Masuk';
+
+            if (error) {
+                errEl.innerText = 'Kode salah atau kedaluwarsa. Coba pindai ulang / masukkan lagi.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            showToast('MFA berhasil diaktifkan untuk akun admin ini.', 'success');
+            await finalizeAdminAccess();
+        }
+
+        async function adminMfaVerify() {
+            const codeEl = document.getElementById('admin-mfa-code');
+            const errEl = document.getElementById('admin-mfa-error');
+            const btn = document.getElementById('admin-mfa-btn');
+            if (!supabaseClient || !mfaFactorId) return;
+
+            errEl.classList.add('hidden');
+            btn.disabled = true; btn.innerText = 'Memverifikasi...';
+
+            const { error } = await supabaseClient.auth.mfa.challengeAndVerify({
+                factorId: mfaFactorId,
+                code: (codeEl.value || '').trim()
+            });
+
+            btn.disabled = false; btn.innerText = 'Verifikasi';
+
+            if (error) {
+                errEl.innerText = 'Kode salah atau kedaluwarsa. Coba lagi.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            await finalizeAdminAccess();
+        }
+
+        // Batal di tengah proses MFA -> keluar total dari sesi supabase (bukan cuma
+        // sembunyikan form) supaya tidak ada sesi aal1 menggantung tanpa disadari admin.
+        async function adminMfaCancel() {
+            if (supabaseClient) { try { await supabaseClient.auth.signOut(); } catch (e) { /* abaikan */ } }
+            isAdminMode = false;
+            resetMfaState();
+            await checkAdminAccess();
+            navigate('beranda');
+        }
+
+        async function adminLogout() {
+            if (!supabaseClient) return;
+            await supabaseClient.auth.signOut();
+            isAdminMode = false;
+            resetMfaState();
+            await checkAdminAccess();
+            navigate('beranda');
+        }
+
+        function renderAdminEvaluasi() {
+            return `
+                <div class="space-y-6" id="admin-evaluasi-area">
+                    <div class="border-b border-slate-800/80 pb-4 flex flex-wrap justify-between items-center gap-3">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <span class="w-1.5 h-6 bg-rose-500 rounded-full inline-block"></span> Admin &middot; Data Evaluasi
+                        </h2>
+                        <div class="flex gap-2 no-print">
+                            <button onclick="loadAdminEvaluasiData()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang</button>
+                            <button onclick="exportEvaluasiCSV()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor CSV</button>
+                            <button onclick="adminLogout()" class="px-3 py-2 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-rose-900/50"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar</button>
+                        </div>
+                    </div>
+
+                    <div id="admin-eval-stats" class="grid grid-cols-3 gap-3">
+                        <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center col-span-3">
+                            <p class="text-xs text-slate-500">Memuat data...</p>
+                        </div>
+                    </div>
+
+                    <input id="admin-eval-search" type="text" placeholder="Cari nama atau instansi..." oninput="filterAdminEval(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+
+                    <div class="border border-slate-850 bg-slate-950/20 rounded-2xl overflow-x-auto shadow-xl">
+                        <table class="w-full text-left border-collapse min-w-[720px]">
+                            <thead>
+                                <tr class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                                    <th class="p-3 text-[10px] uppercase">Tanggal</th>
+                                    <th class="p-3 text-[10px] uppercase">Nama / Instansi</th>
+                                    <th class="p-3 text-[10px] uppercase text-center">K</th>
+                                    <th class="p-3 text-[10px] uppercase text-center">T</th>
+                                    <th class="p-3 text-[10px] uppercase text-center">M</th>
+                                    <th class="p-3 text-[10px] uppercase text-center">L</th>
+                                    <th class="p-3 text-[10px] uppercase">Saran</th>
+                                    <th class="p-3 text-[10px] uppercase text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-eval-tbody">
+                                <tr><td colspan="8" class="p-6 text-center text-xs text-slate-500">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-[10px] text-slate-600">Keterangan kolom: K = Kemudahan, T = Tampilan, M = Kelengkapan Materi, L = Layanan Admin.</p>
+                </div>`;
+        }
+
+        async function loadAdminEvaluasiData() {
+            const tbody = document.getElementById('admin-eval-tbody');
+            const statsEl = document.getElementById('admin-eval-stats');
+            if (!tbody) return;
+
+            if (!supabaseClient) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-xs text-rose-400">Database belum terkonfigurasi.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-xs text-slate-500">Memuat data...</td></tr>`;
+
+            const { data, error } = await supabaseClient
+                .from('website_evaluations')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-xs text-rose-400">Gagal memuat: ${error.message}</td></tr>`;
+                return;
+            }
+
+            adminEvalData = data || [];
+
+            if (statsEl) {
+                const total = adminEvalData.length;
+                const avgAll = total ? (adminEvalData.reduce((s, r) => s + (r.rating_kemudahan + r.rating_tampilan + r.rating_konten + r.rating_layanan) / 4, 0) / total).toFixed(2) : '-';
+                statsEl.innerHTML = `
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${total}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Total Data</p>
+                    </div>
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${avgAll}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Rata-rata</p>
+                    </div>
+                    <div class="bg-slate-950/40 border border-slate-800 rounded-xl p-3 text-center">
+                        <p class="text-lg font-black text-amber-400">${adminEvalData.filter(r => new Date(r.created_at).toDateString() === new Date().toDateString()).length}</p>
+                        <p class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Hari Ini</p>
+                    </div>`;
+            }
+
+            renderAdminRows(adminEvalData);
+        }
+
+        function renderAdminRows(rows) {
+            const tbody = document.getElementById('admin-eval-tbody');
+            if (!tbody) return;
+
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-xs text-slate-500">Tidak ada data.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = rows.map(r => {
+                const tanggal = new Date(r.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                return `
+                    <tr class="border-b border-slate-800/60 hover:bg-slate-900/30 text-xs align-top">
+                        <td class="p-3 text-slate-400 whitespace-nowrap">${tanggal}</td>
+                        <td class="p-3">
+                            <p class="font-bold text-slate-200">${r.nama}</p>
+                            ${r.instansi ? `<p class="text-[10px] text-slate-500">${r.instansi}</p>` : ''}
+                        </td>
+                        <td class="p-3 text-center text-amber-400 font-bold">${r.rating_kemudahan}</td>
+                        <td class="p-3 text-center text-amber-400 font-bold">${r.rating_tampilan}</td>
+                        <td class="p-3 text-center text-amber-400 font-bold">${r.rating_konten}</td>
+                        <td class="p-3 text-center text-amber-400 font-bold">${r.rating_layanan}</td>
+                        <td class="p-3 text-slate-400 max-w-[220px]">${r.saran || '-'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="confirmDeleteEvaluasi('${r.id}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-rose-950/40"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function filterAdminEval(term) {
+            const t = term.trim().toLowerCase();
+            if (!t) { renderAdminRows(adminEvalData); return; }
+            const filtered = adminEvalData.filter(r =>
+                (r.nama && r.nama.toLowerCase().includes(t)) ||
+                (r.instansi && r.instansi.toLowerCase().includes(t))
+            );
+            renderAdminRows(filtered);
+        }
+
+        function confirmDeleteEvaluasi(id) {
+            if (confirm('Yakin ingin menghapus data evaluasi ini secara permanen?')) {
+                deleteEvaluasiById(id);
+            }
+        }
+
+        async function deleteEvaluasiById(id) {
+            if (!supabaseClient) { showToast('Database belum terkonfigurasi.', 'error'); return; }
+            const { error } = await supabaseClient.from('website_evaluations').delete().eq('id', id);
+            if (error) { showToast('Gagal menghapus: ' + error.message, 'error'); return; }
+            showToast('Data evaluasi berhasil dihapus.', 'success');
+            loadAdminEvaluasiData();
+        }
+
+        function exportEvaluasiCSV() {
+            if (!adminEvalData || adminEvalData.length === 0) { showToast('Tidak ada data untuk diekspor.', 'error'); return; }
+            const headers = ['Tanggal', 'Nama', 'Instansi', 'Kemudahan', 'Tampilan', 'Konten', 'Layanan', 'Saran'];
+            const escapeCsv = (val) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+            const rows = adminEvalData.map(r => [
+                new Date(r.created_at).toLocaleDateString('id-ID'),
+                r.nama, r.instansi || '', r.rating_kemudahan, r.rating_tampilan, r.rating_konten, r.rating_layanan, r.saran || ''
+            ].map(escapeCsv).join(','));
+            const csv = [headers.map(escapeCsv).join(','), ...rows].join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `Evaluasi_Website_${new Date().toISOString().slice(0,10)}.csv`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- HALAMAN ADMIN LIVE CHAT ---
+        let adminChatSessions = [];
+        let adminSelectedSession = null;
+        let adminChatChannel = null;
+        let adminChatUnread = 0;
+        let adminChatPendingImage = null;
+
+        function handleAdminChatImageSelect(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            if (!validateChatImageFile(file)) { e.target.value = ''; return; }
+            adminChatPendingImage = file;
+            const previewBox = document.getElementById('admin-chat-image-preview');
+            const previewImg = document.getElementById('admin-chat-image-preview-img');
+            if (previewImg) previewImg.src = URL.createObjectURL(file);
+            if (previewBox) { previewBox.classList.remove('hidden'); previewBox.classList.add('flex'); }
+            lucide.createIcons();
+        }
+
+        function clearAdminChatImage() {
+            adminChatPendingImage = null;
+            const input = document.getElementById('admin-chat-image-input');
+            if (input) input.value = '';
+            const previewBox = document.getElementById('admin-chat-image-preview');
+            if (previewBox) { previewBox.classList.add('hidden'); previewBox.classList.remove('flex'); }
+        }
+
+        function updateAdminChatBadge() {
+            const text = adminChatUnread > 9 ? '9+' : String(adminChatUnread);
+            ['adminchat-badge', 'adminchat-fab-badge'].forEach(id => {
+                const badge = document.getElementById(id);
+                if (!badge) return;
+                if (adminChatUnread > 0) {
+                    badge.textContent = text;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderCannedList(filter) {
+            const q = (filter || '').trim().toLowerCase();
+            const items = defaultCannedReplies.filter(c => !q || c.label.toLowerCase().includes(q) || c.text.toLowerCase().includes(q));
+            if (items.length === 0) return `<p class="p-3 text-[11px] text-slate-500 text-center">Tidak ada balasan cepat yang cocok.</p>`;
+            return items.map(c => `
+                <button type="button" onclick="useCannedReply('${c.id}')" class="w-full text-left px-3.5 py-2.5 hover:bg-slate-700/60 border-b border-slate-700/60 last:border-b-0 transition">
+                    <p class="text-[11px] font-bold text-amber-400">${c.label}</p>
+                    <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-2">${c.text}</p>
+                </button>`).join('');
+        }
+
+        // Cache balasan cepat dirender sekali saja supaya panel langsung tampil tanpa jeda saat tombol diklik.
+        let cannedPanelBuilt = false;
+
+        function toggleCannedPanel() {
+            const panel = document.getElementById('admin-canned-panel');
+            if (!panel) return;
+            const isHidden = panel.classList.contains('hidden');
+            if (isHidden) {
+                if (!cannedPanelBuilt) {
+                    panel.innerHTML = `
+                        <div class="p-2 border-b border-slate-700 sticky top-0 bg-slate-800">
+                            <input type="text" placeholder="Cari balasan cepat..." oninput="panel_filterCanned(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500">
+                        </div>
+                        <div id="admin-canned-list">${renderCannedList('')}</div>`;
+                    cannedPanelBuilt = true;
+                }
+                panel.classList.remove('hidden');
+                const searchInput = panel.querySelector('input');
+                if (searchInput) { searchInput.value = ''; panel_filterCanned(''); searchInput.focus(); }
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        function panel_filterCanned(value) {
+            const listEl = document.getElementById('admin-canned-list');
+            if (listEl) listEl.innerHTML = renderCannedList(value);
+        }
+
+        function useCannedReply(id) {
+            const item = defaultCannedReplies.find(c => c.id === id);
+            if (!item) return;
+            const input = document.getElementById('admin-chat-reply-input');
+            if (input) { input.value = item.text; input.focus(); }
+            const panel = document.getElementById('admin-canned-panel');
+            if (panel) panel.classList.add('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('admin-canned-panel');
+            const toggleBtn = document.getElementById('admin-canned-toggle-btn');
+            if (!panel || panel.classList.contains('hidden')) return;
+            if (!panel.contains(e.target) && !toggleBtn.contains(e.target)) {
+                panel.classList.add('hidden');
+            }
+        });
+
+        function renderAdminLiveChat() {
+            return `
+                <div class="space-y-6" id="admin-livechat-area">
+                    <div class="border-b border-slate-800/80 pb-4 flex flex-wrap justify-between items-center gap-3">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <span class="w-1.5 h-6 bg-rose-500 rounded-full inline-block"></span> Admin &middot; Live Chat
+                        </h2>
+                        <div class="flex gap-2 no-print">
+                            <button onclick="loadAdminChatSessions()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang</button>
+                            <button onclick="adminLogout()" class="px-3 py-2 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-rose-900/50"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="md:col-span-1 border border-slate-850 bg-slate-950/20 rounded-2xl overflow-hidden flex flex-col max-h-[520px]">
+                            <div class="px-4 py-3 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Daftar Percakapan</div>
+                            <div id="admin-chat-session-list" class="overflow-y-auto custom-scrollbar flex-grow">
+                                <p class="p-4 text-xs text-slate-500">Memuat daftar percakapan...</p>
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2 border border-slate-850 bg-slate-950/20 rounded-2xl flex flex-col max-h-[520px]" id="admin-chat-thread-wrap">
+                            <div id="admin-chat-thread-header" class="hidden px-4 py-2.5 border-b border-slate-800 items-center justify-between flex-shrink-0">
+                                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Percakapan Aktif</p>
+                                <button onclick="confirmDeleteChatSession(adminSelectedSession)" class="px-2.5 py-1.5 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-[10px] font-bold rounded-lg flex items-center gap-1 border border-rose-900/50"><i data-lucide="trash-2" class="w-3 h-3"></i> Hapus Percakapan</button>
+                            </div>
+                            <div id="admin-chat-thread" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 flex flex-col items-center justify-center">
+                                <p class="text-xs text-slate-500 text-center">Pilih salah satu percakapan di sebelah kiri untuk mulai membalas.</p>
+                            </div>
+                            <div id="admin-chat-image-preview" class="hidden items-center gap-2 px-3 pt-2.5 flex-shrink-0">
+                                <div class="relative">
+                                    <img id="admin-chat-image-preview-img" src="" class="w-14 h-14 object-cover rounded-lg border border-slate-700">
+                                    <button type="button" onclick="clearAdminChatImage()" class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-rose-600 hover:bg-rose-500 flex items-center justify-center text-white"><i data-lucide="x" class="w-2.5 h-2.5"></i></button>
+                                </div>
+                                <span class="text-[10px] text-slate-400">Gambar siap dikirim</span>
+                            </div>
+                            <div id="admin-canned-panel" class="hidden absolute bottom-[62px] left-3 right-3 mb-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-56 overflow-y-auto custom-scrollbar z-20"></div>
+                            <form onsubmit="adminSendReply(event)" class="hidden items-center gap-2 p-3 border-t border-slate-800 flex-shrink-0 relative" id="admin-chat-reply-form">
+                                <input id="admin-chat-image-input" type="file" accept="image/*" class="hidden" onchange="handleAdminChatImageSelect(event)">
+                                <button type="button" onclick="document.getElementById('admin-chat-image-input').click()" title="Lampirkan gambar" class="w-9 h-9 flex-shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                                    <i data-lucide="image-plus" class="w-4 h-4 text-slate-300"></i>
+                                </button>
+                                <button type="button" id="admin-canned-toggle-btn" onclick="toggleCannedPanel()" title="Balasan cepat" class="w-9 h-9 flex-shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                                    <i data-lucide="zap" class="w-4 h-4 text-amber-400 pointer-events-none"></i>
+                                </button>
+                                <input id="admin-chat-reply-input" type="text" autocomplete="off" placeholder="Tulis balasan sebagai Admin Instansi..." class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                                <button type="submit" class="w-10 h-10 flex-shrink-0 rounded-xl bg-rose-600 hover:bg-rose-500 flex items-center justify-center transition">
+                                    <i data-lucide="send" class="w-4 h-4 text-white"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadAdminChatSessions() {
+            const listEl = document.getElementById('admin-chat-session-list');
+            if (!supabaseClient) {
+                if (listEl) listEl.innerHTML = `<p class="p-4 text-xs text-rose-400">Database belum terkonfigurasi.</p>`;
+                return;
+            }
+            const { data, error } = await supabaseClient
+                .from('live_chat_messages')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Gagal memuat sesi live chat:', error);
+                if (listEl) listEl.innerHTML = `<p class="p-4 text-xs text-rose-400">Gagal memuat data.</p>`;
+                return;
+            }
+
+            const grouped = {};
+            (data || []).forEach(row => {
+                if (!grouped[row.session_id]) grouped[row.session_id] = [];
+                grouped[row.session_id].push(row);
+            });
+
+            adminChatSessions = Object.keys(grouped).map(sid => {
+                const rows = grouped[sid];
+                const last = rows[rows.length - 1];
+                return {
+                    session_id: sid,
+                    last_message: last.message,
+                    last_time: last.created_at,
+                    needs_reply: !last.is_admin,
+                    total: rows.length
+                };
+            }).sort((a, b) => new Date(b.last_time) - new Date(a.last_time));
+
+            renderAdminChatSessionsList();
+
+            if (adminSelectedSession) {
+                const rows = grouped[adminSelectedSession] || [];
+                renderAdminChatThread(rows);
+            }
+        }
+
+        function renderAdminChatSessionsList() {
+            const listEl = document.getElementById('admin-chat-session-list');
+            if (!listEl) return;
+            if (adminChatSessions.length === 0) {
+                listEl.innerHTML = `<p class="p-4 text-xs text-slate-500">Belum ada percakapan masuk.</p>`;
+                return;
+            }
+            listEl.innerHTML = adminChatSessions.map(s => {
+                const jam = new Date(s.last_time).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                const active = s.session_id === adminSelectedSession;
+                return `
+                    <div onclick="adminOpenSession('${s.session_id}')" class="w-full text-left px-4 py-3 border-b border-slate-800/60 hover:bg-slate-900/50 transition cursor-pointer group ${active ? 'bg-slate-900/70 border-l-2 border-l-rose-500' : ''}">
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-xs font-bold text-slate-200 truncate">Pengunjung &middot; ${s.session_id.slice(6, 14)}</p>
+                            <div class="flex items-center gap-1.5 flex-shrink-0">
+                                ${s.needs_reply ? '<span class="w-2 h-2 rounded-full bg-rose-500"></span>' : ''}
+                                <button onclick="event.stopPropagation(); confirmDeleteChatSession('${s.session_id}')" title="Hapus percakapan" class="opacity-60 hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 rounded-lg hover:bg-rose-950/40"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-500 truncate mt-0.5">${escapeHtmlChat(s.last_message)}</p>
+                        <p class="text-[9px] text-slate-600 mt-1">${jam}</p>
+                    </div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        async function adminOpenSession(sessionId) {
+            adminSelectedSession = sessionId;
+            clearAdminChatImage();
+            renderAdminChatSessionsList();
+
+            const threadEl = document.getElementById('admin-chat-thread');
+            const formEl = document.getElementById('admin-chat-reply-form');
+            const headerEl = document.getElementById('admin-chat-thread-header');
+            threadEl.classList.remove('items-center', 'justify-center');
+            threadEl.innerHTML = `<p class="text-xs text-slate-500 text-center">Memuat percakapan...</p>`;
+            formEl.classList.remove('hidden');
+            formEl.classList.add('flex');
+            if (headerEl) { headerEl.classList.remove('hidden'); headerEl.classList.add('flex'); }
+            lucide.createIcons();
+
+            const { data, error } = await supabaseClient
+                .from('live_chat_messages')
+                .select('*')
+                .eq('session_id', sessionId)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Gagal memuat percakapan:', error);
+                threadEl.innerHTML = `<p class="text-xs text-rose-400 text-center">Gagal memuat percakapan.</p>`;
+                return;
+            }
+            renderAdminChatThread(data || []);
+        }
+
+        function waDayLabel(dateObj) {
+            const startOfDay = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+            const diffDays = Math.round((startOfDay(new Date()) - startOfDay(dateObj)) / 86400000);
+            if (diffDays === 0) return 'Hari Ini';
+            if (diffDays === 1) return 'Kemarin';
+            return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function renderAdminChatThread(rows) {
+            const threadEl = document.getElementById('admin-chat-thread');
+            if (!threadEl || !adminSelectedSession) return;
+            threadEl.classList.remove('items-center', 'justify-center');
+            if (!rows || rows.length === 0) {
+                threadEl.classList.add('items-center', 'justify-center');
+                threadEl.innerHTML = `<p class="text-xs text-slate-500 text-center">Belum ada pesan pada percakapan ini.</p>`;
+                return;
+            }
+
+            let html = '';
+            let lastDayKey = null;
+            let lastSender = null;
+
+            rows.forEach((r, idx) => {
+                const dateObj = new Date(r.created_at);
+                const dayKey = dateObj.toDateString();
+                const sender = r.is_admin ? 'admin' : 'visitor';
+
+                if (dayKey !== lastDayKey) {
+                    html += `<div class="wa-daydivider flex justify-center my-3">
+                        <span class="text-slate-300 text-[10px] font-semibold px-3 py-1 rounded-full border border-slate-700/60">${waDayLabel(dateObj)}</span>
+                    </div>`;
+                    lastDayKey = dayKey;
+                    lastSender = null;
+                }
+
+                const next = rows[idx + 1];
+                const isLastInGroup = !next || next.is_admin !== r.is_admin || new Date(next.created_at).toDateString() !== dayKey;
+                const grouped = sender === lastSender;
+                lastSender = sender;
+
+                const jam = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const imageHtml = r.image_url ? `<a href="${r.image_url}" target="_blank" rel="noopener"><img src="${r.image_url}" alt="Lampiran gambar" class="max-w-full rounded-lg ${r.message ? 'mb-1' : ''} border border-white/10" loading="lazy"></a>` : '';
+                const textHtml = r.message ? escapeHtmlChat(r.message) : '';
+
+                if (sender === 'admin') {
+                    const tailClass = isLastInGroup ? 'wa-bubble-out-tail' : '';
+                    html += `<div class="flex flex-col items-end ${grouped ? 'mt-0.5' : 'mt-2.5'}">
+                        <div class="wa-bubble ${tailClass} max-w-[78%] bg-rose-600 text-white text-xs px-2.5 py-[7px] leading-relaxed shadow-sm">
+                            ${imageHtml}<span class="wa-msg-text">${textHtml}</span><span class="wa-meta text-rose-100/80">${jam} <i data-lucide="check-check" class="w-3 h-3"></i></span>
+                        </div>
+                    </div>`;
+                } else {
+                    const tailClass = isLastInGroup ? 'wa-bubble-in-tail' : '';
+                    html += `<div class="flex flex-col items-start ${grouped ? 'mt-0.5' : 'mt-2.5'}">
+                        <div class="wa-bubble ${tailClass} max-w-[78%] bg-slate-800 border border-slate-700/70 text-slate-100 text-xs px-2.5 py-[7px] leading-relaxed shadow-sm">
+                            ${imageHtml}<span class="wa-msg-text">${textHtml}</span><span class="wa-meta text-slate-400">${jam}</span>
+                        </div>
+                    </div>`;
+                }
+            });
+
+            threadEl.innerHTML = html;
+            lucide.createIcons();
+            threadEl.scrollTop = threadEl.scrollHeight;
+        }
+
+        async function adminSendReply(e) {
+            e.preventDefault();
+            if (!adminSelectedSession) return;
+            const input = document.getElementById('admin-chat-reply-input');
+            const text = input.value.trim();
+            if (!text && !adminChatPendingImage) return;
+            if (!supabaseClient) { showToast('Database belum terkonfigurasi.', 'error'); return; }
+
+            let imageUrl = null;
+            if (adminChatPendingImage) {
+                imageUrl = await uploadChatImage(adminChatPendingImage, 'admin-' + adminSelectedSession);
+                if (!imageUrl) return;
+            }
+
+            input.value = '';
+            clearAdminChatImage();
+            const { error } = await supabaseClient.from('live_chat_messages').insert({
+                session_id: adminSelectedSession,
+                sender_name: 'Admin Instansi',
+                message: text,
+                image_url: imageUrl,
+                is_admin: true
+            });
+            if (error) {
+                console.error('Gagal mengirim balasan:', error);
+                showToast('Gagal mengirim balasan: ' + error.message, 'error');
+                return;
+            }
+            await adminOpenSession(adminSelectedSession);
+            loadAdminChatSessions();
+        }
+
+        function confirmDeleteChatSession(sessionId) {
+            if (!sessionId) return;
+            if (confirm('Yakin ingin menghapus seluruh percakapan ini secara permanen? Tindakan ini tidak dapat dibatalkan.')) {
+                deleteChatSession(sessionId);
+            }
+        }
+
+        async function deleteChatSession(sessionId) {
+            if (!supabaseClient) { showToast('Database belum terkonfigurasi.', 'error'); return; }
+            const { error } = await supabaseClient.from('live_chat_messages').delete().eq('session_id', sessionId);
+            if (error) {
+                console.error('Gagal menghapus percakapan:', error);
+                showToast('Gagal menghapus percakapan: ' + error.message, 'error');
+                return;
+            }
+            showToast('Percakapan berhasil dihapus.', 'success');
+
+            if (adminSelectedSession === sessionId) {
+                adminSelectedSession = null;
+                const threadEl = document.getElementById('admin-chat-thread');
+                const formEl = document.getElementById('admin-chat-reply-form');
+                const headerEl = document.getElementById('admin-chat-thread-header');
+                if (threadEl) {
+                    threadEl.classList.add('items-center', 'justify-center');
+                    threadEl.innerHTML = `<p class="text-xs text-slate-500 text-center">Pilih salah satu percakapan di sebelah kiri untuk mulai membalas.</p>`;
+                }
+                if (formEl) { formEl.classList.add('hidden'); formEl.classList.remove('flex'); }
+                if (headerEl) { headerEl.classList.add('hidden'); headerEl.classList.remove('flex'); }
+            }
+            loadAdminChatSessions();
+        }
+
+        function subscribeAdminLiveChat() {
+            if (!supabaseClient || adminChatChannel) return;
+            adminChatChannel = supabaseClient
+                .channel('admin-live-chat')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'live_chat_messages' }, (payload) => {
+                    const row = payload.new;
+                    if (currentSection === 'admin-livechat') {
+                        loadAdminChatSessions();
+                    } else if (row && !row.is_admin) {
+                        adminChatUnread++;
+                        updateAdminChatBadge();
+                        showToast('Pesan baru masuk di Live Chat dari pengunjung.', 'success');
+                        playNotifySound();
+                    }
+                })
+                .subscribe();
+        }
+
+        // --- PWA: DAFTARKAN SERVICE WORKER (AGAR BISA DIBUKA OFFLINE) ---
+        // Setelah halaman ini pernah dibuka sekali secara online, sw.js akan menyimpan
+        // salinan halaman + aset pendukung ke Cache Storage, sehingga FAQ, Hak Akses,
+        // dan seluruh konten panduan tetap bisa dibuka tanpa internet. Fitur yang butuh
+        // server (Live Chat, Login Admin, kirim Evaluasi) tetap butuh koneksi aktif.
+        function registerServiceWorker() {
+            if (!('serviceWorker' in navigator)) return;
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch((err) => {
+                    console.warn('Gagal mendaftarkan service worker (mode offline tidak aktif):', err);
+                });
+            });
+        }
+
+        function initOfflineIndicator() {
+            window.addEventListener('offline', () => {
+                showToast('Anda sedang offline. Konten FAQ & Panduan tetap bisa dibuka dari cache.', 'error');
+            });
+            window.addEventListener('online', () => {
+                showToast('Koneksi internet kembali tersambung.', 'success');
+            });
+        }
+
+        // --- INISIALISASI ---
+        window.addEventListener('DOMContentLoaded', async () => {
+            initThemeMode();
+            applyStaticIdentity();
+            registerServiceWorker();
+            initOfflineIndicator();
+            await checkAdminAccess();
+            navigate('beranda');
+            trackSiteVisit();
+
+            liveChatSessionId = getLiveChatSessionId();
+            subscribeLiveChat();
+        });
+    </script>
+
+    <!-- TOMBOL MENGAMBANG (anak langsung <body> supaya posisi fixed murni relatif ke layar, selalu tampil di kanan bawah) -->
+    <button id="livechat-fab" onclick="openLiveChat()" class="fixed bottom-4 right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
+        <i data-lucide="message-circle-more" class="w-5 h-5 text-white"></i>
+        <span id="livechat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
+    </button>
+
+    <button id="adminchat-fab" onclick="navigate('admin-livechat')" class="hidden fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-500 shadow-xl shadow-rose-600/40 items-center justify-center transition hover:scale-105">
+        <i data-lucide="message-square-more" class="w-5 h-5 text-white"></i>
+        <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
+    </button>
+</body>
+</html>
