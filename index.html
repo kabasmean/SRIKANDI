@@ -418,6 +418,17 @@
         //      create policy "Publik bisa baca gambar chat" on storage.objects for select using (bucket_id = 'chat-attachments');
         //   3. Jika tabel live_chat_messages sudah dibuat sebelumnya (belum punya kolom image_url), jalankan:
         //      alter table live_chat_messages add column image_url text;
+        //
+        // UNTUK FITUR AI AUTOMATION (BALASAN AWAL OTOMATIS SEBELUM DIAMBIL ALIH ADMIN):
+        //   Tambahkan kolom "is_bot" pada tabel live_chat_messages agar sistem bisa membedakan
+        //   balasan otomatis Asisten AI dari balasan Admin Instansi yang sesungguhnya:
+        //      alter table live_chat_messages add column is_bot boolean not null default false;
+        //   Cara kerja: begitu pengunjung mengirim pesan pertama (dan admin manusia belum pernah
+        //   membalas pada sesi tersebut), sistem otomatis mengirim balasan awal dari "Asisten AI"
+        //   yang mencocokkan pesan pengunjung dengan data FAQ (lihat defaultFaqs di bawah). Begitu
+        //   Admin Instansi membalas secara manual lewat menu Admin Live Chat, otomatisasi AI untuk
+        //   sesi tersebut berhenti dan percakapan sepenuhnya diambil alih oleh admin.
+        const AI_AUTOREPLY_ENABLED = true; // set ke false untuk mematikan balasan otomatis AI
         let liveChatSessionId = null;
         let liveChatChannel = null;
         let liveChatUnread = 0;
@@ -588,9 +599,15 @@
                 const imageHtml = r.image_url ? `<a href="${r.image_url}" target="_blank" rel="noopener"><img src="${r.image_url}" alt="Lampiran gambar" class="max-w-full rounded-lg ${r.message ? 'mb-1.5' : ''} border border-white/10" loading="lazy"></a>` : '';
                 const textHtml = r.message ? escapeHtmlChat(r.message) : '';
                 if (r.is_admin) {
+                    const isBot = !!r.is_bot;
+                    const bubbleClass = isBot
+                        ? 'bg-indigo-950/60 border border-indigo-800/60 text-indigo-100'
+                        : 'bg-slate-800 border border-slate-700 text-slate-100';
+                    const labelClass = isBot ? 'text-indigo-400' : 'text-slate-500';
+                    const label = isBot ? '🤖 Asisten AI &middot; Otomatis' : 'Admin Instansi';
                     return `<div class="flex flex-col items-start">
-                        <div class="max-w-[85%] bg-slate-800 border border-slate-700 text-slate-100 text-xs rounded-2xl rounded-tl-sm px-3.5 py-2.5 leading-relaxed">${imageHtml}${textHtml}</div>
-                        <span class="text-[9px] text-slate-500 mt-1 ml-1">Admin Instansi &middot; ${jam}</span>
+                        <div class="max-w-[85%] ${bubbleClass} text-xs rounded-2xl rounded-tl-sm px-3.5 py-2.5 leading-relaxed whitespace-pre-line">${imageHtml}${textHtml}</div>
+                        <span class="text-[9px] ${labelClass} mt-1 ml-1">${label} &middot; ${jam}</span>
                     </div>`;
                 }
                 return `<div class="flex flex-col items-end">
@@ -645,7 +662,7 @@
                     if (row && row.is_admin) {
                         liveChatUnread++;
                         updateLiveChatBadge();
-                        showToast('Admin Instansi membalas pesan Anda di Live Chat.', 'success');
+                        showToast(row.is_bot ? 'Asisten AI membalas otomatis di Live Chat.' : 'Admin Instansi membalas pesan Anda di Live Chat.', 'success');
                         playNotifySound();
                     }
                 })
@@ -681,6 +698,107 @@
             }
             loadLiveChatMessages();
             notifyAdminEmail(liveChatSessionId, text);
+            maybeSendAiAutoReply(liveChatSessionId, text);
+        }
+
+        // --- AI AUTOMATION LIVE CHAT (BALASAN AWAL OTOMATIS SEBELUM DIAMBIL ALIH ADMIN) ---
+        // Memakai data FAQ yang sudah ada (defaultFaqs) sebagai "basis pengetahuan" sederhana:
+        // pesan pengunjung dicocokkan kata-kuncinya dengan setiap FAQ, lalu jawaban FAQ yang
+        // paling relevan dikirim sebagai balasan otomatis. Jika tidak ada FAQ yang cukup cocok,
+        // sistem mengirim balasan umum bahwa pesan sudah diteruskan ke Admin Instansi.
+        const CHAT_STOPWORDS_ID = new Set([
+            'yang', 'untuk', 'dengan', 'pada', 'dan', 'atau', 'ini', 'itu', 'saya', 'anda',
+            'apa', 'apakah', 'bagaimana', 'kenapa', 'mengapa', 'adalah', 'akan', 'bisa', 'gak',
+            'tidak', 'dari', 'ke', 'di', 'ada', 'jika', 'saat', 'ketika', 'cara', 'kalau',
+            'mohon', 'tolong', 'min', 'admin', 'gimana', 'knp', 'gmn', 'nya', 'kok', 'lagi',
+            'juga', 'sudah', 'belum', 'saja', 'kami', 'kita', 'dia', 'nya', 'para', 'oleh'
+        ]);
+
+        function tokenizeChatText(text) {
+            return (text || '')
+                .toLowerCase()
+                .normalize('NFKD')
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .split(/\s+/)
+                .filter(w => w.length >= 3 && !CHAT_STOPWORDS_ID.has(w));
+        }
+
+        function stripHtmlToPlainText(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html || '';
+            return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function findBestFaqMatch(userText) {
+            const userTokens = new Set(tokenizeChatText(userText));
+            if (userTokens.size === 0 || typeof defaultFaqs === 'undefined') return null;
+            let best = null;
+            let bestScore = 0;
+            defaultFaqs.forEach(f => {
+                const answerTokens = tokenizeChatText(stripHtmlToPlainText(f.answer));
+                const questionTokens = tokenizeChatText(f.question);
+                let score = 0;
+                answerTokens.forEach(t => { if (userTokens.has(t)) score += 1; });
+                questionTokens.forEach(t => { if (userTokens.has(t)) score += 1.5; });
+                if (score > bestScore) { bestScore = score; best = f; }
+            });
+            return bestScore >= 2 ? best : null; // ambang batas kecocokan minimal
+        }
+
+        function buildAiAutoReplyText(userText) {
+            const lower = (userText || '').toLowerCase();
+            const tokenCount = tokenizeChatText(userText).length;
+            const greetingWords = ['halo', 'hai', 'pagi', 'siang', 'sore', 'malam', 'permisi', 'assalamualaikum'];
+            const isJustGreeting = tokenCount <= 2 && greetingWords.some(g => lower.includes(g));
+
+            if (isJustGreeting) {
+                return 'Halo, terima kasih telah menghubungi KABAS MEAN 👋 Saya Asisten AI otomatis yang membantu menjawab pertanyaan awal Anda. Silakan sampaikan kendala atau pertanyaan seputar SRIKANDI, nanti Admin Instansi akan segera mengambil alih untuk membantu lebih lanjut.';
+            }
+
+            const match = findBestFaqMatch(userText);
+            if (match) {
+                const jawaban = stripHtmlToPlainText(match.answer);
+                return `Halo, terima kasih atas pertanyaannya. Ini balasan otomatis dari Asisten AI berdasarkan FAQ kami:\n\n"${match.question}"\n${jawaban}\n\nJika jawaban ini belum menyelesaikan kendala Anda, mohon tunggu sebentar — Admin Instansi akan segera mengambil alih percakapan ini secara langsung.`;
+            }
+
+            return 'Terima kasih atas pesan Anda. Ini balasan otomatis dari Asisten AI KABAS MEAN. Pertanyaan Anda sudah kami terima dan diteruskan ke Admin Instansi, mohon ditunggu sebentar — admin akan segera membalas secara langsung. Anda juga bisa memeriksa menu FAQ untuk jawaban cepat seputar SRIKANDI.';
+        }
+
+        async function maybeSendAiAutoReply(sessionId, userText) {
+            if (!AI_AUTOREPLY_ENABLED || !supabaseClient || !sessionId) return;
+            try {
+                const { data: priorRows, error } = await supabaseClient
+                    .from('live_chat_messages')
+                    .select('is_admin, is_bot')
+                    .eq('session_id', sessionId);
+                if (error) { console.error('Gagal memeriksa status sesi live chat:', error); return; }
+
+                // Jika Admin Instansi (manusia) sudah pernah membalas sesi ini, hentikan otomatisasi AI.
+                const hasHumanAdmin = (priorRows || []).some(r => r.is_admin && !r.is_bot);
+                if (hasHumanAdmin) return;
+
+                const replyText = buildAiAutoReplyText(userText);
+                await new Promise(resolve => setTimeout(resolve, 600)); // jeda singkat agar terasa alami
+
+                const { error: insertError } = await supabaseClient.from('live_chat_messages').insert({
+                    session_id: sessionId,
+                    sender_name: 'Asisten AI (Otomatis)',
+                    message: replyText,
+                    image_url: null,
+                    is_admin: true,
+                    is_bot: true
+                });
+                if (insertError) {
+                    // Kemungkinan besar kolom is_bot belum ditambahkan di Supabase, lewati diam-diam.
+                    console.error('Gagal mengirim balasan otomatis AI (pastikan kolom is_bot sudah dibuat):', insertError);
+                    return;
+                }
+
+                if (sessionId === liveChatSessionId && isLiveChatPanelOpen()) loadLiveChatMessages();
+                if (currentSection === 'admin-livechat') loadAdminChatSessions();
+            } catch (err) {
+                console.error('Kesalahan saat memproses balasan otomatis AI:', err);
+            }
         }
 
         // --- AKSES HALAMAN ADMIN (VIA SUPABASE AUTH LOGIN) ---
@@ -2287,7 +2405,8 @@
                     session_id: sid,
                     last_message: last.message,
                     last_time: last.created_at,
-                    needs_reply: !last.is_admin,
+                    needs_reply: !last.is_admin || !!last.is_bot,
+                    last_is_bot: !!last.is_bot,
                     total: rows.length
                 };
             }).sort((a, b) => new Date(b.last_time) - new Date(a.last_time));
@@ -2315,6 +2434,7 @@
                         <div class="flex items-center justify-between gap-2">
                             <p class="text-xs font-bold text-slate-200 truncate">Pengunjung &middot; ${s.session_id.slice(6, 14)}</p>
                             <div class="flex items-center gap-1.5 flex-shrink-0">
+                                ${s.last_is_bot ? '<span class="text-[8px] font-bold text-indigo-300 bg-indigo-950/50 border border-indigo-800/60 rounded-full px-1.5 py-0.5">AI</span>' : ''}
                                 ${s.needs_reply ? '<span class="w-2 h-2 rounded-full bg-rose-500"></span>' : ''}
                                 <button onclick="event.stopPropagation(); confirmDeleteChatSession('${s.session_id}')" title="Hapus percakapan" class="opacity-60 hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 rounded-lg hover:bg-rose-950/40"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                             </div>
@@ -2400,10 +2520,14 @@
                 const textHtml = r.message ? escapeHtmlChat(r.message) : '';
 
                 if (sender === 'admin') {
+                    const isBot = !!r.is_bot;
                     const tailClass = isLastInGroup ? 'wa-bubble-out-tail' : '';
+                    const bubbleColor = isBot ? 'bg-indigo-600' : 'bg-rose-600';
+                    const botLabel = (!grouped && isBot) ? `<div class="flex justify-end mb-0.5 mr-1"><span class="text-[9px] font-bold text-indigo-400 flex items-center gap-1"><i data-lucide="bot" class="w-3 h-3"></i> Asisten AI (Otomatis)</span></div>` : '';
                     html += `<div class="flex flex-col items-end ${grouped ? 'mt-0.5' : 'mt-2.5'}">
-                        <div class="wa-bubble ${tailClass} max-w-[78%] bg-rose-600 text-white text-xs px-2.5 py-[7px] leading-relaxed shadow-sm">
-                            ${imageHtml}<span class="wa-msg-text">${textHtml}</span><span class="wa-meta text-rose-100/80">${jam} <i data-lucide="check-check" class="w-3 h-3"></i></span>
+                        ${botLabel}
+                        <div class="wa-bubble ${tailClass} max-w-[78%] ${bubbleColor} text-white text-xs px-2.5 py-[7px] leading-relaxed shadow-sm">
+                            ${imageHtml}<span class="wa-msg-text whitespace-pre-line">${textHtml}</span><span class="wa-meta text-white/70">${jam} <i data-lucide="check-check" class="w-3 h-3"></i></span>
                         </div>
                     </div>`;
                 } else {
@@ -2442,7 +2566,8 @@
                 sender_name: 'Admin Instansi',
                 message: text,
                 image_url: imageUrl,
-                is_admin: true
+                is_admin: true,
+                is_bot: false
             });
             if (error) {
                 console.error('Gagal mengirim balasan:', error);
