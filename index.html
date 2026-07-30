@@ -729,39 +729,99 @@
             return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
         }
 
-        function findBestFaqMatch(userText) {
+        // Menggabungkan seluruh "referensi" yang dipakai sebagai basis pengetahuan balasan
+        // otomatis AI: data FAQ (defaultFaqs) DAN data Balasan Cepat Admin (defaultCannedReplies).
+        // Supaya balasan cepat yang sudah dibuat admin ikut termanfaatkan sebagai jawaban AI,
+        // bukan cuma dipakai manual oleh admin di panel Live Chat.
+        function buildKnowledgeSources() {
+            const sources = [];
+            if (typeof defaultFaqs !== 'undefined') {
+                defaultFaqs.forEach(f => sources.push({
+                    type: 'faq',
+                    question: f.question,
+                    text: stripHtmlToPlainText(f.answer)
+                }));
+            }
+            if (typeof defaultCannedReplies !== 'undefined') {
+                defaultCannedReplies.forEach(c => sources.push({
+                    type: 'canned',
+                    question: c.label,
+                    text: c.text
+                }));
+            }
+            return sources;
+        }
+
+        function findBestKnowledgeMatch(userText) {
             const userTokens = new Set(tokenizeChatText(userText));
-            if (userTokens.size === 0 || typeof defaultFaqs === 'undefined') return null;
+            if (userTokens.size === 0) return null;
             let best = null;
             let bestScore = 0;
-            defaultFaqs.forEach(f => {
-                const answerTokens = tokenizeChatText(stripHtmlToPlainText(f.answer));
-                const questionTokens = tokenizeChatText(f.question);
+            buildKnowledgeSources().forEach(s => {
+                const answerTokens = tokenizeChatText(s.text);
+                const questionTokens = tokenizeChatText(s.question);
                 let score = 0;
                 answerTokens.forEach(t => { if (userTokens.has(t)) score += 1; });
                 questionTokens.forEach(t => { if (userTokens.has(t)) score += 1.5; });
-                if (score > bestScore) { bestScore = score; best = f; }
+                if (score > bestScore) { bestScore = score; best = s; }
             });
             return bestScore >= 2 ? best : null; // ambang batas kecocokan minimal
         }
 
-        function buildAiAutoReplyText(userText) {
+        // --- DETEKSI SAPAAN / SALAM AWAL ---
+        // Mengenali berbagai bentuk sapaan pembuka (salam agama, "selamat pagi/siang/sore/malam",
+        // "halo/hai/hi", "permisi", dll) memakai pencocokan kata utuh (regex \b) supaya tidak
+        // salah kena kata lain yang kebetulan mengandung potongan huruf serupa.
+        const GREETING_REGEX = /\b(assalamu\s*'?alaikum|assalamualaikum|waalaikumsalam|salam sejahtera|salam|selamat pagi|selamat siang|selamat sore|selamat malam|met pagi|met siang|met sore|met malam|pagi min|siang min|sore min|malam min|halo+|hallo+|hai+|helo+|hi+|permisi|shalom|om swastiastu)\b/i;
+
+        function detectGreeting(userText) {
+            const lower = (userText || '').toLowerCase().trim();
+            return GREETING_REGEX.test(lower);
+        }
+
+        function getTimeBasedGreetingWord() {
+            const hour = new Date().getHours();
+            if (hour >= 4 && hour < 11) return 'pagi';
+            if (hour >= 11 && hour < 15) return 'siang';
+            if (hour >= 15 && hour < 19) return 'sore';
+            return 'malam';
+        }
+
+        function buildGreetingReply(userText) {
+            const waktu = getTimeBasedGreetingWord();
+            // Jika pengunjung memakai salam keagamaan, balas dengan salam yang senada.
             const lower = (userText || '').toLowerCase();
+            let bukaSalam = `Selamat ${waktu}!`;
+            if (/assalamu\s*'?alaikum/i.test(lower)) {
+                bukaSalam = "Wa'alaikumsalam warahmatullahi wabarakatuh.";
+            } else if (/shalom/i.test(lower)) {
+                bukaSalam = 'Shalom.';
+            } else if (/om swastiastu/i.test(lower)) {
+                bukaSalam = 'Om Swastiastu.';
+            }
+            return `${bukaSalam} 👋 Terima kasih telah menghubungi KABAS MEAN. Saya Asisten AI otomatis yang siap membantu pertanyaan awal Anda seputar SRIKANDI. Silakan sampaikan kendala atau pertanyaan Anda, nanti Admin Instansi akan segera mengambil alih untuk membantu lebih lanjut.`;
+        }
+
+        function buildAiAutoReplyText(userText) {
             const tokenCount = tokenizeChatText(userText).length;
-            const greetingWords = ['halo', 'hai', 'pagi', 'siang', 'sore', 'malam', 'permisi', 'assalamualaikum'];
-            const isJustGreeting = tokenCount <= 2 && greetingWords.some(g => lower.includes(g));
+            const isGreeting = detectGreeting(userText);
 
-            if (isJustGreeting) {
-                return 'Halo, terima kasih telah menghubungi KABAS MEAN 👋 Saya Asisten AI otomatis yang membantu menjawab pertanyaan awal Anda. Silakan sampaikan kendala atau pertanyaan seputar SRIKANDI, nanti Admin Instansi akan segera mengambil alih untuk membantu lebih lanjut.';
+            // Sapaan murni (tanpa pertanyaan lain yang menyertainya) -> balas salam saja.
+            if (isGreeting && tokenCount <= 2) {
+                return buildGreetingReply(userText);
             }
 
-            const match = findBestFaqMatch(userText);
-            if (match) {
-                const jawaban = stripHtmlToPlainText(match.answer);
-                return `Halo, terima kasih atas pertanyaannya. Ini balasan otomatis dari Asisten AI berdasarkan FAQ kami:\n\n"${match.question}"\n${jawaban}\n\nJika jawaban ini belum menyelesaikan kendala Anda, mohon tunggu sebentar — Admin Instansi akan segera mengambil alih percakapan ini secara langsung.`;
+            const match = findBestKnowledgeMatch(userText);
+            const sapaanAwal = isGreeting ? `${buildGreetingReply(userText).split('👋')[0].trim()} 👋 ` : 'Halo, terima kasih atas pesan Anda. ';
+
+            if (match && match.type === 'faq') {
+                return `${sapaanAwal}Ini balasan otomatis dari Asisten AI berdasarkan FAQ kami:\n\n"${match.question}"\n${match.text}\n\nJika jawaban ini belum menyelesaikan kendala Anda, mohon tunggu sebentar — Admin Instansi akan segera mengambil alih percakapan ini secara langsung.`;
+            }
+            if (match && match.type === 'canned') {
+                return `${sapaanAwal}Ini balasan otomatis dari Asisten AI KABAS MEAN:\n\n${match.text}\n\nJika masih ada yang perlu dibantu lebih lanjut, mohon tunggu sebentar — Admin Instansi akan segera mengambil alih percakapan ini secara langsung.`;
             }
 
-            return 'Terima kasih atas pesan Anda. Ini balasan otomatis dari Asisten AI KABAS MEAN. Pertanyaan Anda sudah kami terima dan diteruskan ke Admin Instansi, mohon ditunggu sebentar — admin akan segera membalas secara langsung. Anda juga bisa memeriksa menu FAQ untuk jawaban cepat seputar SRIKANDI.';
+            return `${sapaanAwal}Pesan Anda sudah kami terima dan diteruskan ke Admin Instansi, mohon ditunggu sebentar — admin akan segera membalas secara langsung. Anda juga bisa memeriksa menu FAQ untuk jawaban cepat seputar SRIKANDI.`;
         }
 
         async function maybeSendAiAutoReply(sessionId, userText) {
