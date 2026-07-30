@@ -218,6 +218,7 @@
     </style>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-amber-500 focus:text-slate-950 focus:font-bold focus:px-4 focus:py-2 focus:rounded-lg">Langsung ke konten utama</a>
 
     <script>
         // Variabel Global
@@ -325,7 +326,43 @@
             { id: 'faq-10', question: 'Bagaimana pengguna bisa memanfaatkan SRIKANDI versi Bimtek untuk belajar?', answer: '<p>Siapkan akun gmail yang aktif, lalu kirim pesan melalui Live Chat atau WhatsApp agar Admin Instansi bisa membuat akun Admin Satker.</p>' },
             { id: 'faq-11', question: 'Bagaimana solusi ketika ingin menandatangani naskah, muncul peringatan: Pengguna Belum Terdaftar dari BSrE?', answer: '<p>Sesuaikan NIK di akun SRIKANDI dengan NIK yang ada di akun BSrE.</p>' },
             { id: 'faq-12', question: 'Apakah seorang Arsiparis bisa memiliki banyak role/hak akses dalam satu akun?', answer: '<p>Sangat bisa. SRIKANDI Versi 3 ini sudah menyediakan multi role. Hak-hak akses tersebut dapat ditambahkan melalui Admin Satker.</p>' },
-            
+
+            // ====== FAQ tambahan (dirangkum dari Layanan Helpdesk Nasional SRIKANDI - layanan.arsip.go.id/helpdesk) ======
+            { id: 'faq-13', question: 'Apa dasar hukum penerapan SRIKANDI?', answer: '<p>Penerapan SRIKANDI mengacu pada <strong>Peraturan Presiden Nomor 95 Tahun 2018</strong> tentang Sistem Pemerintahan Berbasis Elektronik, serta <strong>Keputusan Menteri PANRB Nomor 679 Tahun 2020</strong> tentang Aplikasi Umum Bidang Kearsipan Dinamis.</p>' },
+            { id: 'faq-14', question: 'Bagaimana prosedur pengajuan akun Administrator Instansi SRIKANDI bagi instansi yang belum pernah menggunakannya?', answer: '<p>Instansi mengajukan surat permohonan akun administrator instansi kepada Kepala Arsip Nasional Republik Indonesia (ANRI), ditandatangani oleh Kepala Instansi/Kepala Daerah, dengan menunjuk pegawai ASN sebagai administrator instansi serta melampirkan kontak person yang bersangkutan.</p>' },
+            { id: 'faq-15', question: 'Apa saja yang perlu disiapkan sebelum sebuah instansi mulai menerapkan SRIKANDI?', answer: '<p>Beberapa hal yang perlu disiapkan antara lain: perangkat komputer/laptop untuk pengguna, koneksi internet yang memadai, softcopy instrumen kearsipan (Tata Naskah Dinas, Klasifikasi Arsip, Jadwal Retensi Arsip, dan SKKAAD), serta scanner di bagian penerimaan surat (opsional).</p>' },
+            { id: 'faq-16', question: 'Apa saja fitur unggulan pada SRIKANDI Versi 3?', answer: '<p>Di antaranya arsitektur berbasis microservices, perbaikan proses bisnis kearsipan, dukungan multi role/hak akses, text editor online, notifikasi via email, manajemen API, migrasi data dari SRIKANDI versi 2, versioning dokumen, perbaikan multiple TTE, penomoran otomatis, perbaikan menu tindak lanjut, hingga peningkatan tampilan UI/UX.</p>' },
+            { id: 'faq-17', question: 'Bagaimana cara mengajukan pelatihan atau bimbingan teknis (bimtek) SRIKANDI ke ANRI?', answer: '<p>Ajukan permohonan dengan mengirimkan tiket melalui Layanan Helpdesk Nasional SRIKANDI di <strong>layanan.arsip.go.id</strong>, dengan melampirkan rencana waktu dan jadwal kegiatan yang diinginkan.</p>' },
+            { id: 'faq-18', question: 'Apakah aplikasi SRIKANDI bisa dipasang di server milik instansi sendiri?', answer: '<p>Saat ini tidak. Aplikasi SRIKANDI ditempatkan secara terpusat di Pusat Data Nasional yang dikelola Kementerian Komunikasi dan Digital, sementara pengembangan SRIKANDI Versi 3 dikelola oleh ANRI.</p>' },
+            { id: 'faq-19', question: 'Apa saja peran (role) pengguna yang tersedia di SRIKANDI?', answer: '<p>Terdapat lima role utama: <strong>Administrator Nasional</strong> (ANRI), <strong>Administrator Instansi</strong> (Admin Instansi dan Admin Satker/OPD/UPT), <strong>Unit Kearsipan</strong>, <strong>Tata Usaha/Sekretaris</strong> (unit persuratan), dan <strong>User</strong> (pejabat struktural, JFT/JFU, staf, maupun non-ASN).</p>' },
+            { id: 'faq-20', question: 'Bagaimana cara mereset password akun Administrator Instansi (bukan akun pengguna biasa)?', answer: '<p>Ajukan tiket melalui Layanan Helpdesk Nasional SRIKANDI di layanan.arsip.go.id dengan melampirkan data kontak person administrator instansi yang sudah terdaftar sebelumnya, agar dapat diverifikasi oleh Admin Nasional (ANRI).</p>' },
+            { id: 'faq-21', question: 'Apakah pengguna aplikasi SRIKANDI harus berstatus ASN?', answer: '<p>Tidak wajib. Kebijakan mengenai siapa saja yang berhak memiliki akses di SRIKANDI diserahkan sepenuhnya kepada masing-masing instansi.</p>' },
+            { id: 'faq-22', question: 'Apakah SRIKANDI sudah mempunyai aplikasi versi mobile?', answer: '<p>Untuk versi mobile, silakan pantau pengumuman resmi dari ANRI melalui Layanan Helpdesk Nasional SRIKANDI karena rencana pengembangannya dapat berubah mengikuti kebijakan terbaru.</p>' },
+            { id: 'faq-23', question: 'Muncul error terkait NIK ($nik) saat proses Tanda Tangan Elektronik (TTE), bagaimana solusinya?', answer: '<p>Kendala error NIK saat TTE umumnya dapat diatasi dengan melakukan <strong>logout lalu login kembali (relogin)</strong> ke akun SRIKANDI. Jika masih bermasalah, koordinasikan dengan koordinator TTE instansi.</p>' },
+            { id: 'faq-24', question: 'Bagaimana cara mengaktifkan/menerapkan Tanda Tangan Elektronik (TTE) di instansi yang belum memilikinya?', answer: '<p>Instansi dapat menghubungi <strong>Balai Sertifikasi Elektronik (BSrE)</strong>, unit pelaksana teknis di bawah Badan Siber dan Sandi Negara (BSSN), untuk proses pengadaan dan aktivasi sertifikat elektronik.</p>' },
+            { id: 'faq-25', question: 'Kenapa login SRIKANDI tetap gagal padahal username dan password sudah benar?', answer: '<p>Penyebab umum meliputi akun berstatus nonaktif, akun terkunci akibat percobaan login gagal berulang, data jabatan/unit kerja/role belum diperbarui, atau email/nomor pemulihan tidak aktif. Pastikan koneksi internet stabil, coba logout lalu login kembali atau gunakan fitur "Lupa Password". Jika masih gagal, hubungi Admin Instansi/Satker untuk pengecekan status akun.</p>' },
+            { id: 'faq-26', question: 'Muncul pesan "Terjadi Kesalahan" saat mencoba login, apa penyebab dan solusinya?', answer: '<p>Biasanya disebabkan akun nonaktif/terkunci, sesi login tidak valid, atau gangguan sistem sementara. Coba periksa koneksi internet, tutup dan buka kembali browser/aplikasi, lalu logout dan login ulang. Jika tetap gagal, hubungi Admin Instansi/Satker.</p>' },
+            { id: 'faq-27', question: 'Kenapa akun otomatis logout tidak lama setelah berhasil login?', answer: '<p>Hal ini bisa terjadi karena akun nonaktif, akun terkunci (lockout), atau token/sesi login tidak valid. Coba login kembali; jika masalah berulang, minta Admin Instansi melakukan pengecekan status akun.</p>' },
+            { id: 'faq-28', question: 'Apa itu lockout/cooldown pada akun SRIKANDI dan bagaimana cara mengatasinya?', answer: '<p><strong>Lockout</strong> adalah penguncian sementara akun akibat terlalu banyak percobaan login gagal, sebagai mekanisme perlindungan dari akses tidak sah. Cirinya antara lain muncul pesan "Terlalu banyak percobaan login" dan diminta menunggu beberapa menit. Solusinya: tunggu hingga masa cooldown selesai dan hindari mencoba login berulang kali. Perlu diketahui, lockout bisa berlaku per perangkat/IP, sehingga akun bisa saja terkunci di laptop namun masih bisa login di HP.</p>' },
+            { id: 'faq-29', question: 'Kenapa kode OTP tidak kunjung diterima saat reset password atau login?', answer: '<p>Penyebab umum: email/nomor HP tidak aktif, data pemulihan belum diperbarui, atau akun masih dalam status lockout. Pastikan email dan nomor HP aktif, periksa folder spam, dan jika data tidak sesuai minta Admin Instansi memperbarui data pemulihan.</p>' },
+            { id: 'faq-30', question: 'Sudah berhasil reset password, tetapi tetap tidak bisa login. Kenapa?', answer: '<p>Kemungkinan akun masih berstatus lockout, nonaktif, atau sesi lama belum diperbarui. Tunggu beberapa menit, lakukan logout dari semua perangkat lalu login kembali menggunakan password terbaru. Jika tetap gagal, hubungi Admin Instansi/Satker.</p>' },
+            { id: 'faq-31', question: 'Muncul error 401 saat menggunakan aplikasi SRIKANDI versi mobile, apa solusinya?', answer: '<p>Error ini umumnya disebabkan token autentikasi kedaluwarsa atau sesi login tidak valid. Logout dari aplikasi mobile, tutup aplikasi sepenuhnya, lalu buka kembali dan login ulang dengan koneksi internet yang stabil.</p>' },
+            { id: 'faq-32', question: 'Kenapa akun SRIKANDI bisa menjadi nonaktif, dan bagaimana cara mengaktifkannya kembali?', answer: '<p>Akun bisa nonaktif karena lama tidak digunakan, kebijakan keamanan sistem, atau perubahan jabatan/data yang belum diperbarui. Untuk akun pengguna biasa, aktivasi ulang dilakukan oleh Admin Instansi/Satker. Untuk akun Administrator Instansi, perlu mengajukan tiket ke Admin Nasional (ANRI) melalui Helpdesk Nasional SRIKANDI.</p>' },
+            { id: 'faq-33', question: 'Bagaimana cara mengganti email atau nomor HP yang terdaftar di akun SRIKANDI?', answer: '<p>Selama masih bisa login, buka menu <strong>Profil Akun</strong>, perbarui email dan/atau nomor HP, simpan perubahan, lalu logout dan login kembali agar data tersinkronisasi. Jika sudah tidak bisa login, pembaruan data untuk akun pengguna biasa dibantu oleh Admin Instansi/Satker, sedangkan untuk akun Administrator Instansi diajukan melalui tiket Helpdesk Nasional SRIKANDI.</p>' },
+            { id: 'faq-34', question: 'Bagaimana prosedur jika ada perubahan jabatan atau perpindahan unit kerja pengguna?', answer: '<p>Perubahan jabatan dan unit kerja tidak bisa dilakukan mandiri oleh pengguna, melainkan harus melalui Admin Instansi. Hal ini wajib dilakukan bila ada SK jabatan baru atau perpindahan unit kerja, karena jika tidak diperbarui, jabatan tidak akan muncul dalam proses persuratan dan hak akses bisa tidak sesuai.</p>' },
+            { id: 'faq-35', question: 'Bagaimana proses penomoran otomatis surat bekerja di SRIKANDI?', answer: '<p>Pada kondisi normal, penomoran dilakukan otomatis oleh sistem saat tahap penandatanganan, melalui klik tombol <strong>"Ambil Nomor"</strong> oleh penandatangan pertama atau role Tata Usaha (TU). Jika fitur otomatis bermasalah, TU dapat melakukan penomoran manual/konvensional sesuai ketentuan instansi.</p>' },
+            { id: 'faq-36', question: 'Kenapa tombol "Ambil Nomor" pada naskah tidak bisa diklik/tidak aktif?', answer: '<p>Pengambilan nomor hanya bisa dilakukan oleh penandatangan pertama atau role Tata Usaha (TU), bukan oleh konseptor saat proses penyuntingan naskah. Pastikan naskah sudah berada pada tahap penandatanganan dan dilakukan oleh pihak yang berwenang.</p>' },
+            { id: 'faq-37', question: 'Kenapa nomor surat masih tertulis "xxx" atau placeholder "xx"?', answer: '<p>Ini terjadi karena proses pengambilan nomor belum dilakukan oleh penandatangan pertama atau TU. Nomor definitif akan muncul setelah tombol "Ambil Nomor" diklik. Jika penomoran otomatis tidak berjalan, nomor dapat diisi secara manual.</p>' },
+            { id: 'faq-38', question: 'Kenapa bisa muncul nomor surat yang loncat/tidak berurutan atau bahkan nomor ganda?', answer: '<p>Nomor bisa loncat karena pengambilan nomor dilakukan lebih dari satu kali/pengguna, sedangkan sistem tetap mencatat nomor yang sudah terambil meski naskah tidak jadi diterbitkan. Untuk nomor ganda, SRIKANDI akan menolak proses TTE apabila mendeteksi nomor yang sama, sehingga nomor perlu diubah atau diambil ulang.</p>' },
+            { id: 'faq-39', question: 'Di mana bisa mendapatkan atau mereset keyphrase/passphrase TTE jika lupa?', answer: '<p>Keyphrase/passphrase TTE dikelola melalui portal resmi BSrE (BSSN) di <strong>bsre.bssn.go.id</strong>. Jika lupa, pengguna dapat melakukan reset mandiri dengan login menggunakan akun TTE dan mengikuti petunjuk reset yang tersedia di portal tersebut.</p>' },
+            { id: 'faq-40', question: 'Bagaimana cara mengakses dokumen digital hasil TTE melalui QR Code pada naskah?', answer: '<p>Pindai (scan) QR Code yang tercantum pada naskah yang sudah ditandatangani secara elektronik menggunakan kamera ponsel, kemudian buka tautan hasil scan tersebut untuk melihat dokumen PDF elektronik aslinya.</p>' },
+            { id: 'faq-41', question: 'Kenapa QR Code, nomor, atau tanggal pada dokumen masih berwarna merah setelah proses TTE?', answer: '<p>Kondisi ini terjadi karena dokumen PDF belum diperbarui sehingga hasil validasi TTE belum tersinkron. Solusinya, lakukan <strong>Perbarui/Update PDF</strong> pada naskah tersebut (termasuk dari sisi penerima untuk naskah masuk).</p>' },
+            { id: 'faq-42', question: 'Bagaimana mekanisme Multiple TTE jika sebuah naskah harus ditandatangani lebih dari satu pejabat?', answer: '<p>Untuk naskah dengan dua atau lebih penandatangan, role Tata Usaha (TU) perlu melakukan persetujuan dan pengambilan nomor untuk masing-masing naskah sesuai alur, kemudian setiap penandatangan melakukan TTE secara berurutan hingga proses selesai.</p>' },
+            { id: 'faq-43', question: 'Muncul pesan seperti "upstream server is timing out" saat proses TTE atau kirim naskah, apa artinya?', answer: '<p>Pesan ini menandakan gangguan sementara pada server pendukung (misalnya server BSrE), umumnya karena beban sistem sedang tinggi. Coba klik <strong>Perbarui PDF</strong>, lakukan logout dan login kembali, lalu ulangi proses setelah beberapa saat.</p>' },
+            { id: 'faq-44', question: 'Kenapa nama pengguna berstatus aktif tidak muncul pada kolom tujuan disposisi?', answer: '<p>Penyebabnya bisa karena pengguna yang akan mendisposisikan tidak memiliki bawahan pada struktur jabatan, status akun belum aktif, atau struktur jabatan belum terbentuk dengan benar. Pastikan struktur jabatan dan status akun sudah sesuai; data tujuan akan muncul otomatis tanpa perlu sinkronisasi manual.</p>' },
+            { id: 'faq-45', question: 'Muncul status "Perlu Pembaruan" saat memilih penerima naskah, bagaimana solusinya?', answer: '<p>Status ini biasanya muncul karena pengguna mengalami mutasi unit kerja sehingga data belum tersinkron. Solusinya, masuk ke menu <strong>Pengguna &gt; Tujuan Naskah</strong>, lalu klik tombol <strong>Sinkronisasi</strong> untuk memperbarui data.</p>' },
+            { id: 'faq-46', question: 'Kenapa aplikasi SRIKANDI tidak bisa diakses lewat WiFi kantor, tetapi bisa lewat hotspot HP?', answer: '<p>Hal ini bisa disebabkan reputasi IP publik jaringan kantor yang kurang baik, IP publik terblokir, atau kebijakan firewall/ISP internal. Coba bandingkan dengan jaringan lain, koordinasikan dengan ISP untuk pengecekan reputasi IP, atau ajukan whitelist IP melalui Dinas Kominfo setempat (PDNS Komdigi) bila diperlukan.</p>' },
+            { id: 'faq-47', question: 'Muncul error 502/504 saat membuka naskah atau mengunggah lampiran, apa solusinya?', answer: '<p>Error ini umumnya terjadi karena beban server sedang tinggi atau ada penurunan kinerja sistem sementara. Tunggu beberapa saat lalu coba kembali, dan jika berulang laporkan waktu kejadiannya ke Admin Instansi atau Helpdesk Nasional SRIKANDI untuk pemantauan lebih lanjut.</p>' },
         ];
 
         // Data Balasan Cepat (Canned Reply) untuk Admin Live Chat
@@ -895,7 +932,7 @@
 
         <aside id="sidebar" class="bg-slate-900 text-slate-300 w-72 flex-shrink-0 flex flex-col border-r border-slate-800 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 shadow-2xl min-h-0 md:overflow-hidden">
             <div class="p-6 border-b border-slate-800/80 bg-slate-950/40 flex flex-col items-center text-center relative">
-                <button onclick="toggleThemeMode()" id="theme-toggle-btn" title="Ganti mode terang/gelap" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition text-slate-300">
+                <button onclick="toggleThemeMode()" id="theme-toggle-btn" title="Ganti mode terang/gelap" aria-label="Ganti mode terang/gelap" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition text-slate-300">
                     <i data-lucide="sun" class="w-4 h-4" id="theme-toggle-icon"></i>
                 </button>
                 <div id="site-logo-container" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
@@ -1049,7 +1086,7 @@
                         <p class="text-emerald-100 text-[10px] leading-tight flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block"></span> Kirim pertanyaan, admin akan membalas</p>
                     </div>
                 </div>
-                <button onclick="closeLiveChat()" class="text-white/80 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="closeLiveChat()" aria-label="Tutup Live Chat" title="Tutup" class="text-white/80 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
             <div id="livechat-messages" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-950/40">
@@ -1075,8 +1112,11 @@
             </form>
         </div>
 
-        <main class="flex-grow flex flex-col min-h-0 overflow-y-auto overflow-x-hidden bg-[#0d121f] custom-scrollbar">
-            
+        <main id="main-content" onscroll="handleMainScroll()" class="relative flex-grow flex flex-col min-h-0 overflow-y-auto overflow-x-hidden bg-[#0d121f] custom-scrollbar">
+            <button id="back-to-top-btn" onclick="scrollMainToTop()" aria-label="Kembali ke atas halaman" title="Kembali ke atas" class="no-print hidden fixed md:absolute bottom-20 md:bottom-6 right-4 md:right-6 z-[55] w-10 h-10 rounded-full bg-slate-800/90 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 shadow-xl flex items-center justify-center transition text-slate-200">
+                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+            </button>
+
             <div class="flex-grow p-4 md:p-8 flex justify-center">
                 <div class="max-w-4xl w-full bg-slate-900/60 border border-slate-800/80 rounded-2xl shadow-2xl p-6 md:p-10 flex flex-col justify-between" id="main-card-pane">
                     <div id="content-container" class="space-y-6">
@@ -1087,6 +1127,7 @@
             <footer class="bg-slate-950 text-slate-500 text-center py-6 text-xs border-t border-slate-800/80 flex-shrink-0">
                 <p>&copy; 2026 <span class="dynamic-site-name text-slate-300 font-bold">KABAS MEAN</span> - Kanal Bantuan, Sumber Informasi & Media Panduan SRIKANDI</p>
                 <p class="mt-1">Dibuat dengan penuh dedikasi oleh <span class="text-amber-500 font-bold">Stanislaus Bria, S.Fil</span></p>
+                <button onclick="scrollMainToTop()" class="no-print mt-2 text-slate-500 hover:text-amber-400 underline underline-offset-2 transition">Kembali ke atas</button>
             </footer>
         </main>
     </div>
@@ -1314,8 +1355,25 @@
             if (icon) icon.style.transform = 'rotate(180deg)';
         }
 
+        // --- TOMBOL KEMBALI KE ATAS ---
+        // Muncul otomatis setelah pengguna scroll ke bawah pada area konten (<main>),
+        // memudahkan kembali ke judul/menu tanpa perlu scroll manual, terutama pada
+        // halaman panduan yang isinya panjang.
+        function handleMainScroll() {
+            const main = document.getElementById('main-content');
+            const btn = document.getElementById('back-to-top-btn');
+            if (!main || !btn) return;
+            if (main.scrollTop > 400) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
+        }
+        function scrollMainToTop() {
+            const main = document.getElementById('main-content');
+            if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function navigate(section) {
             currentSection = section;
+            scrollMainToTop();
             document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('nav-active'));
             const activeBtn = document.getElementById('menu-btn-' + section);
             if (activeBtn) activeBtn.classList.add('nav-active');
@@ -1461,10 +1519,13 @@
                     </div>`;
             }
             html += `
-                <div class="border-b border-slate-800/80 pb-4 flex justify-between items-center">
+                <div class="border-b border-slate-800/80 pb-4 flex justify-between items-center gap-3">
                     <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
                         <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> ${pageData.title}
                     </h2>
+                    <button onclick="window.print()" title="Cetak atau simpan halaman ini sebagai PDF" aria-label="Cetak atau simpan halaman ini sebagai PDF" class="no-print flex-shrink-0 flex items-center gap-1.5 bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 text-slate-300 text-[11px] font-semibold px-3 py-2 rounded-xl transition">
+                        <i data-lucide="printer" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Cetak/PDF</span>
+                    </button>
                 </div>
                 <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base space-y-4">${pageData.body}</div>`;
 
@@ -2727,12 +2788,12 @@
     </script>
 
     <!-- TOMBOL MENGAMBANG (anak langsung <body> supaya posisi fixed murni relatif ke layar, selalu tampil di kanan bawah) -->
-    <button id="livechat-fab" onclick="openLiveChat()" class="fixed bottom-4 right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
+    <button id="livechat-fab" onclick="openLiveChat()" aria-label="Buka Live Chat" title="Buka Live Chat" class="fixed bottom-4 right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
         <i data-lucide="message-circle-more" class="w-5 h-5 text-white"></i>
         <span id="livechat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
 
-    <button id="adminchat-fab" onclick="navigate('admin-livechat')" class="hidden fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-500 shadow-xl shadow-rose-600/40 items-center justify-center transition hover:scale-105">
+    <button id="adminchat-fab" onclick="navigate('admin-livechat')" aria-label="Buka Live Chat Admin" title="Buka Live Chat Admin" class="hidden fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-500 shadow-xl shadow-rose-600/40 items-center justify-center transition hover:scale-105">
         <i data-lucide="message-square-more" class="w-5 h-5 text-white"></i>
         <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
