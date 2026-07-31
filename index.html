@@ -254,11 +254,11 @@
         const defaultContent = {
             'beranda': { title: 'Sambutan', body: defaultHomeText, links: [] },
             'informasi': { title: 'Informasi Umum', body: `<p><strong>SRIKANDI (Sistem Informasi Kearsipan Dinamis Terintegrasi)</strong> adalah aplikasi kearsipan dinamis yang diluncurkan berdasarkan Peraturan Presiden Nomor 95 Tahun 2018 tentang Sistem Pemerintahan Berbasis Elektronik (SPBE). SRIKANDI yang diluncurkan oleh Arsip Nasional Republik Indonesia (ANRI) terdiri dari 2 versi: Versi Bimtek untuk latihan dan Versi 3/Live untuk penggunaan yang sesungguhnya. Untuk mengakses kedua versi SRIKANDI tersebut, silahkan klik pada tautan berikut:</p>`, links: [{ text: 'AKSES SRIKANDI BIMTEK', url: 'https://srikandi-v3-bimtek.arsip.go.id/auth/login' },{ text: 'AKSES SRIKANDI V3 LIVE', url: 'https://srikandi.arsip.go.id/auth/login' }], after: `<p>SRIKANDI Versi 3.0 saat ini mewajibkan setiap pengguna untuk mengaktifkan Multi Factor Authentication (MFA) untuk menjaga keamanan akun saat login.</p>` },
-            'admin-instansi': { title: 'Admin Instansi', body: '<p>Admin Instansi adalah pemeran "di balik layar" yang bertugas menyiapkan pondasi sistem sebelum aplikasi bisa digunakan oleh pegawai. Tugas utamanya adalah membuat Unit Kerja, mendaftarkan akun pegawai (User), mengatur Jabatan, dan mengunggah Logo Instansi. Ciri khasnya, Admin Instansi memiliki akses penuh ke menu Master (Pengguna, Jabatan, Unit Kerja). Admin Instansi berwenang menyusun struktur organisasi instansi dari induk hingga unit terkecil, mengunggah/mengubah logo resmi instansi yang otomatis muncul pada QR Code Tanda Tangan Elektronik, mendaftarkan akun user dan jabatan baru, serta mereset password dan MFA semua pengguna SRIKANDI.</p>', links: [{ text: 'Panduan PDF Admin Instansi', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Instansi.pdf' }] },
-            'admin-satker': { title: 'Admin Satker', body: '<p>Admin Satker memiliki hak akses untuk membuat dan mengelola struktur organisasi pengguna aplikasi SRIKANDI pada level Satker/OPD, membuat dan mengelola akun pengguna umum, akun Sekretaris/Tata Usaha, akun Unit Persuratan/Tata Usaha, serta akun Unit Kearsipan — semuanya pada level Satker/OPD. Jika ada kendala lupa password atau Kode Authenticator terhapus, bisa direset oleh Admin Satker.</p>', links: [{ text: 'Panduan PDF Admin Satker', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Satker.pdf' }] },
-            'tata-usaha': { title: 'Tata Usaha (TU)', body: '<p>Role TU/Sekretaris berperan penuh dalam siklus tata naskah dinas — mulai dari pengaturan data master (penandatangan, tujuan naskah, verifikator, tembusan), pembuatan template & penomoran otomatis, registrasi dan pengelolaan naskah masuk maupun keluar (termasuk disposisi, koordinasi, arahan), hingga pemberkasan/pemeliharaan arsip aktif.</p>', links: [{ text: 'Panduan PDF Tata Usaha', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/TU_Sekretaris.pdf' }] },
-            'pencatat-surat': { title: 'Pencatat Surat', body: '<p>Role Pencatat Surat Satker ini berfokus pada pencatatan dan administrasi surat masuk/keluar di tingkat satuan kerja (Satker), lengkap dengan kewenangan mengelola data master pendukung (penandatangan, tujuan naskah, verifikator, tembusan) dan instrumen kearsipan (klasifikasi, template naskah dinas) yang dibutuhkan dalam proses registrasi surat.</p>', links: [{ text: 'Panduan PDF Pencatat Surat', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Pencatat_Surat_Satker.pdf' }] },
-            'user': { title: 'User/Pengguna', body: '<p>Role User di sini berperan sebagai operator naskah dinas tingkat unit kerja — mengelola surat masuk dan keluar, memverifikasi serta menandatangani naskah, mengatur data pendukung persuratan (penandatangan/verifikator/tujuan), sampai mengurus peminjaman arsip inaktif.</p>', links: [{ text: 'Panduan PDF User/Pengguna', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/User.pdf' }] },
+            'admin-instansi': { title: 'Admin Instansi', body: '<p>Admin Instansi adalah pemeran "di balik layar" yang bertugas menyiapkan pondasi sistem sebelum aplikasi bisa digunakan oleh pegawai. Tugas utamanya adalah membuat Unit Kerja, mendaftarkan akun pegawai (User), mengatur Jabatan, dan mengunggah Logo Instansi. Ciri khasnya, Admin Instansi memiliki akses penuh ke menu Master (Pengguna, Jabatan, Unit Kerja). Admin Instansi berwenang menyusun struktur organisasi instansi dari induk hingga unit terkecil, mengunggah/mengubah logo resmi instansi yang otomatis muncul pada QR Code Tanda Tangan Elektronik, mendaftarkan akun user dan jabatan baru, serta mereset password dan MFA semua pengguna SRIKANDI.</p>', links: [{ text: 'Panduan PDF Admin Instansi', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Instansi.pdf' }, { text: 'Flipbook Panduan Admin Instansi', url: 'https://s.id/admininstansiv3' }] },
+            'admin-satker': { title: 'Admin Satker', body: '<p>Admin Satker memiliki hak akses untuk membuat dan mengelola struktur organisasi pengguna aplikasi SRIKANDI pada level Satker/OPD, membuat dan mengelola akun pengguna umum, akun Sekretaris/Tata Usaha, akun Unit Persuratan/Tata Usaha, serta akun Unit Kearsipan — semuanya pada level Satker/OPD. Jika ada kendala lupa password atau Kode Authenticator terhapus, bisa direset oleh Admin Satker.</p>', links: [{ text: 'Panduan PDF Admin Satker', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Admin_Satker.pdf' }, { text: 'Flipbook Panduan Admin Satker', url: 'https://s.id/adminsatkerv3' }] },
+            'tata-usaha': { title: 'Tata Usaha (TU)', body: '<p>Role TU/Sekretaris berperan penuh dalam siklus tata naskah dinas — mulai dari pengaturan data master (penandatangan, tujuan naskah, verifikator, tembusan), pembuatan template & penomoran otomatis, registrasi dan pengelolaan naskah masuk maupun keluar (termasuk disposisi, koordinasi, arahan), hingga pemberkasan/pemeliharaan arsip aktif.</p>', links: [{ text: 'Panduan PDF Tata Usaha', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/TU_Sekretaris.pdf' }, { text: 'Flipbook Panduan Tata Usaha/Sekretaris', url: 'https://s.id/tusekretarisv3' }] },
+            'pencatat-surat': { title: 'Pencatat Surat', body: '<p>Role Pencatat Surat Satker ini berfokus pada pencatatan dan administrasi surat masuk/keluar di tingkat satuan kerja (Satker), lengkap dengan kewenangan mengelola data master pendukung (penandatangan, tujuan naskah, verifikator, tembusan) dan instrumen kearsipan (klasifikasi, template naskah dinas) yang dibutuhkan dalam proses registrasi surat.</p>', links: [{ text: 'Panduan PDF Pencatat Surat', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/Pencatat_Surat_Satker.pdf' }, { text: 'Flipbook Panduan Pencatat Surat Utama', url: 'https://s.id/psutamav3' }] },
+            'user': { title: 'User/Pengguna', body: '<p>Role User di sini berperan sebagai operator naskah dinas tingkat unit kerja — mengelola surat masuk dan keluar, memverifikasi serta menandatangani naskah, mengatur data pendukung persuratan (penandatangan/verifikator/tujuan), sampai mengurus peminjaman arsip inaktif.</p>', links: [{ text: 'Panduan PDF User/Pengguna', url: 'https://cdn.jsdelivr.net/gh/kabasmean/SRIKANDI@c34a262d6af1eb61d5996d5459c39c53aa9b58dc/dokumen/PDF/User.pdf' }, { text: 'Flipbook Panduan User/Pengguna', url: 'https://s.id/userv3' }] },
             'tte-pengajuan': { title: 'Pengajuan Email Dinas', body: '<p>Proses pembuatan email dinas pribadi sebagai langkah awal pengajuan TTE dimulai dengan mendaftar akun di Layanan Bantuan/servicedesk.layanan.go.id dari Kementerian Komunikasi dan Digital menggunakan tipe akun "Umum" (karena belum memiliki email dinas pribadi) dengan mengisi data Nama, NIK, Email, dan Nomor Telepon, kemudian akun diverifikasi melalui tautan yang dikirim ke email terdaftar hingga sistem mengirimkan username dan password untuk login, dilanjutkan dengan autentikasi menggunakan OTP via Email atau Authenticator SPBE; setelah berhasil login, pemohon membuat tiket pengajuan dengan mengisi formulir "Pembuatan Email Dinas Pribadi" pada aplikasi Mail Pemerintahan (mail.go.id) di bawah Kementerian Komunikasi dan Digital, melengkapi data diri (Nomor Telepon, Nama, NIP, Instansi) serta mengunggah dokumen pendukung berupa foto Kartu Pegawai dan foto selfie sambil memegang kartu pegawai, lalu mengirimkan tiket tersebut; tiket kemudian diproses oleh tim WAH dengan status berubah dari "Dibuat" menjadi "Sedang Dalam Pengerjaan" hingga akhirnya "Selesai", di mana pemohon menerima link akses email dinas (mail.pemerintah.go.id), username (@mail.go.id), dan password, dengan catatan penting agar segera mengganti password demi keamanan akun.</p>', links: [{ text: 'Layanan Servicedesk Komdigi', url: 'https://servicedesk.layanan.go.id/user/sign-up/pelanggan' }] },
             'tte-aktivasi': { title: 'Aktivasi Email Dinas', body: '<p>Untuk mengaktifkan email dinas, pertama login ke https://surel.mail.go.id/mailgoid/ menggunakan username dan password yang diberikan pada email pendaftaran. Selanjutnya, login ke asndigital.bkn.go.id, pilih menu Layanan Individu ASN, kemudian MyASN, klik Update Data, lalu Riwayat Ubah Profil pada bagian Kontak Pribadi, masukkan alamat email dinas pribadi pada kolom Email Dinas, dan klik Verifikasi. Terakhir, kembali ke email dinas pribadi, buka email Aktivasi yang telah dikirim, lalu klik tombol Aktivasi Email Dinas untuk menyelesaikan proses. Pastikan data email yang dimasukkan sudah benar agar aktivasi berhasil, dan jaga kerahasiaan username serta password dengan tidak membagikannya kepada siapa pun.</p>', links: [{ text: 'Surel.Mail', url: 'https://surel.mail.go.id/mailgoid/'}] },
             'tte-registrasi': { title: 'Registrasi Sertifikat BSrE', body: '<p>Untuk registrasi sertifikat BSrE, langkah pertama adalah login ke ASNdigital, memastikan Email Dinas sudah "Terverifikasi", lalu klik "Registrasi Sertifikat" hingga muncul notifikasi berhasil. Selanjutnya, buka email di https://surel.mail.go.id/mailgoid/, cari email dari [BsrE] Aktivasi Akun, klik tautan tersebut untuk diarahkan ke halaman aktivasi (https://bsre.bssn.go.id/email/aktivasi/akun/), lalu isi Nama Lengkap, NIP, dan No. HP WhatsApp aktif, kemudian kirim Kode OTP. Terakhir, masukkan kode OTP yang diterima, lengkapi data yang diminta, ambil foto selfie, dan submit — pastikan seluruh data benar sebelum submit dan jangan pernah membagikan kode OTP, username, atau password kepada siapa pun karena keamanan akun sepenuhnya menjadi tanggung jawab pemilik akun.</p>', links: [{ text: 'BSrE', url: 'https://bsre.bssn.go.id/email/aktivasi/akun/'}] },
@@ -363,7 +363,18 @@
             { id: 'faq-45', question: 'Muncul status "Perlu Pembaruan" saat memilih penerima naskah, bagaimana solusinya?', answer: '<p>Status ini biasanya muncul karena pengguna mengalami mutasi unit kerja sehingga data belum tersinkron. Solusinya, masuk ke menu <strong>Pengguna &gt; Tujuan Naskah</strong>, lalu klik tombol <strong>Sinkronisasi</strong> untuk memperbarui data.</p>' },
             { id: 'faq-46', question: 'Kenapa aplikasi SRIKANDI tidak bisa diakses lewat WiFi kantor, tetapi bisa lewat hotspot HP?', answer: '<p>Hal ini bisa disebabkan reputasi IP publik jaringan kantor yang kurang baik, IP publik terblokir, atau kebijakan firewall/ISP internal. Coba bandingkan dengan jaringan lain, koordinasikan dengan ISP untuk pengecekan reputasi IP, atau ajukan whitelist IP melalui Dinas Kominfo setempat (PDNS Komdigi) bila diperlukan.</p>' },
             { id: 'faq-47', question: 'Muncul error 502/504 saat membuka naskah atau mengunggah lampiran, apa solusinya?', answer: '<p>Error ini umumnya terjadi karena beban server sedang tinggi atau ada penurunan kinerja sistem sementara. Tunggu beberapa saat lalu coba kembali, dan jika berulang laporkan waktu kejadiannya ke Admin Instansi atau Helpdesk Nasional SRIKANDI untuk pemantauan lebih lanjut.</p>' },
+
+            // ====== FAQ tambahan (dirangkum dari halaman FAQ resmi layanan.arsip.go.id/helpdesk/faq,
+            //         yaitu artikel "FAQ (Frequently Asked Questions)" & "Penanganan Error Pada Aplikasi SRIKANDI") ======
+            { id: 'faq-48', question: 'Saat registrasi naskah, parameter yang tampil pada preview tidak sesuai dengan konsep yang sudah dibuat, bagaimana solusinya?', answer: '<p>Ini biasanya disebut <strong>Error Parameter QR Code</strong>. Silakan lakukan perbaikan pada parameter naskah tersebut, lalu coba lakukan preview kembali sebelum melanjutkan proses tanda tangan elektronik (TTE).</p>' },
+            { id: 'faq-49', question: 'Saat TTE muncul peringatan "Gagal, nomor sudah digunakan, mohon ambil ulang nomor naskah", bagaimana solusinya?', answer: '<p>Ini disebut <strong>Error Nomor Tidak Boleh Sama</strong>. Silakan lakukan perubahan atau pengambilan ulang nomor pada naskah tersebut, karena SRIKANDI menolak nomor yang sudah pernah dipakai.</p>' },
+            { id: 'faq-50', question: 'Bagaimana solusi jika saat preview konsep naskah muncul pesan error "Gagal melakukan replace content pdf"?', answer: '<p>Ini disebut <strong>Error Replace Content</strong>. Solusinya, silakan lakukan unggah (upload) konsep naskah dalam bentuk berkas PDF.</p>' },
+            { id: 'faq-51', question: 'Bagaimana solusi jika saat preview konsep naskah muncul pesan "Terjadi kesalahan saat mengkonvert naskah"?', answer: '<p>Ini disebut <strong>Error Gagal Konvert</strong>. Solusinya sama seperti error replace content, yaitu dengan mengunggah (upload) konsep naskah dalam bentuk berkas PDF.</p>' },
+            { id: 'faq-52', question: 'Bagaimana solusi jika proses Tanda Tangan Elektronik (TTE) gagal karena koordinat TTE tidak ditemukan?', answer: '<p>Ini disebut <strong>Error Koordinat TTE Tidak Ditemukan</strong>. Silakan periksa kembali apakah parameter penandatangan pada naskah sudah sesuai dengan yang ada di SRIKANDI. Jika sudah sesuai, klik tombol <strong>Perbarui PDF</strong>.</p>' },
+            { id: 'faq-53', question: 'Muncul pesan "Terjadi Kesalahan" saat login pada akun Admin Instansi (bukan akun pengguna biasa), bagaimana penanganannya?', answer: '<p>Untuk akun <strong>Administrator Instansi</strong>, penanganannya berbeda dari akun pengguna biasa. Silakan hubungi <strong>Admin Nasional di Arsip Nasional Republik Indonesia (ANRI)</strong> melalui Layanan Helpdesk Nasional SRIKANDI di layanan.arsip.go.id, karena admin instansi/satker tidak dapat mereset akun sesama administrator instansi.</p>' },
+            { id: 'faq-54', question: 'Tampilan antarmuka (UI) SRIKANDI terlihat rusak, berantakan, atau tidak normal, apa solusinya?', answer: '<p>Coba lakukan <strong>hard reload</strong> secara berkala dengan menekan tombol <strong>F5</strong> pada keyboard (atau Ctrl+F5 untuk memaksa memuat ulang tanpa cache). Jika tampilan tetap bermasalah, laporkan ke Admin Instansi atau Helpdesk Nasional SRIKANDI.</p>' },
         ];
+
 
         // Data Balasan Cepat (Canned Reply) untuk Admin Live Chat
         // Tambah/ubah/hapus item pada array ini sesuai kebutuhan. "label" tampil di daftar pilihan,
@@ -375,6 +386,25 @@
             { id: 'cr-4', label: 'Naskah tidak muncul', text: 'Mohon dicek kembali apakah naskah sudah disimpan secara final (bukan hanya draf), karena naskah berstatus draf tidak akan tampil di menu terkait. Jika sudah final namun tetap tidak muncul, mohon informasikan nomor/tanggal naskah agar kami bantu telusuri.' },
             { id: 'cr-5', label: 'Sedang kami tindaklanjuti', text: 'Terima kasih atas laporannya. Kendala Anda sedang kami tindaklanjuti dan akan kami informasikan perkembangan secepatnya. Mohon kesediaannya menunggu.' },
             { id: 'cr-6', label: 'Minta info tambahan', text: 'Baik, agar kami bisa membantu lebih cepat, mohon informasikan nama lengkap, instansi/satker, dan tangkapan layar (screenshot) kendala yang dialami.' },
+        ];
+
+        // Data Balasan Cepat (Quick Reply) untuk PENGUNJUNG di Live Chat.
+        // Berbeda dari "defaultCannedReplies" (dipakai admin), array ini berisi tombol
+        // pertanyaan singkat yang bisa langsung diketuk pengunjung. Teks "question" akan
+        // dikirim sebagai pesan pengunjung, lalu dicocokkan otomatis dengan "defaultFaqs"
+        // (yang sudah dirangkum dari Layanan Helpdesk Nasional SRIKANDI - layanan.arsip.go.id/helpdesk/kb)
+        // oleh sistem Asisten AI (lihat findBestKnowledgeMatch & buildAiAutoReplyText).
+        const defaultQuickReplies = [
+            { id: 'qr-1', icon: 'key-round', label: 'Lupa password', question: 'Bagaimana cara login ke SRIKANDI jika lupa password?' },
+            { id: 'qr-2', icon: 'lock', label: 'Akun terkunci', question: 'Apa itu lockout/cooldown pada akun SRIKANDI dan bagaimana cara mengatasinya?' },
+            { id: 'qr-3', icon: 'shield-check', label: 'Kendala MFA/OTP', question: 'Kenapa Multi Factor Authentication (MFA) saya tidak bisa diaktifkan?' },
+            { id: 'qr-4', icon: 'file-signature', label: 'Lupa passphrase TTE', question: 'Di mana bisa mendapatkan atau mereset keyphrase/passphrase TTE jika lupa?' },
+            { id: 'qr-5', icon: 'qr-code', label: 'QR Code/PDF TTE merah', question: 'Kenapa QR Code, nomor, atau tanggal pada dokumen masih berwarna merah setelah proses TTE?' },
+            { id: 'qr-6', icon: 'hash', label: 'Penomoran surat otomatis', question: 'Bagaimana proses penomoran otomatis surat bekerja di SRIKANDI?' },
+            { id: 'qr-7', icon: 'inbox', label: 'Naskah tidak muncul', question: 'Naskah masuk yang saya input tidak muncul di daftar disposisi pimpinan, kenapa?' },
+            { id: 'qr-8', icon: 'wifi-off', label: 'Tidak bisa diakses/error 502', question: 'Muncul error 502/504 saat membuka naskah atau mengunggah lampiran, apa solusinya?' },
+            { id: 'qr-9', icon: 'user-plus', label: 'Cara ajukan akun SRIKANDI', question: 'Bagaimana prosedur pengajuan akun Administrator Instansi SRIKANDI bagi instansi yang belum pernah menggunakannya?' },
+            { id: 'qr-10', icon: 'scale', label: 'Dasar hukum SRIKANDI', question: 'Apa dasar hukum penerapan SRIKANDI?' },
         ];
 
         // --- KONFIGURASI SUPABASE (Evaluasi Website) ---
@@ -593,6 +623,7 @@
             liveChatUnread = 0;
             updateLiveChatBadge();
             await loadLiveChatMessages();
+            renderLiveChatQuickReplies();
 
             const input = document.getElementById('livechat-input');
             if (input) setTimeout(() => input.focus(), 150);
@@ -736,6 +767,38 @@
             loadLiveChatMessages();
             notifyAdminEmail(liveChatSessionId, text);
             maybeSendAiAutoReply(liveChatSessionId, text);
+        }
+
+        // --- BALASAN CEPAT (QUICK REPLY) UNTUK PENGUNJUNG ---
+        // Menampilkan tombol topik dari "defaultQuickReplies" (dirangkum dari Knowledge Base
+        // Layanan Helpdesk Nasional SRIKANDI). Saat diketuk, pertanyaan langsung dikirim
+        // sebagai pesan pengunjung dan otomatis dijawab oleh Asisten AI (lihat maybeSendAiAutoReply).
+        let liveChatQuickRepliesVisible = true;
+
+        function renderLiveChatQuickReplies() {
+            const list = document.getElementById('livechat-quickreplies-list');
+            if (!list || typeof defaultQuickReplies === 'undefined') return;
+            list.innerHTML = defaultQuickReplies.map(q => `
+                <button type="button" onclick="sendLiveChatQuickReply('${q.id}')"
+                    class="flex-shrink-0 flex items-center gap-1.5 whitespace-nowrap px-2.5 py-1.5 rounded-full bg-slate-800 hover:bg-emerald-700 border border-slate-700 hover:border-emerald-600 text-slate-200 hover:text-white text-[10px] font-medium transition">
+                    <i data-lucide="${q.icon || 'help-circle'}" class="w-3 h-3 flex-shrink-0"></i>${q.label}
+                </button>`).join('');
+            lucide.createIcons();
+        }
+
+        function toggleLiveChatQuickReplies() {
+            const box = document.getElementById('livechat-quickreplies');
+            if (!box) return;
+            liveChatQuickRepliesVisible = !liveChatQuickRepliesVisible;
+            box.classList.toggle('hidden', !liveChatQuickRepliesVisible);
+        }
+
+        async function sendLiveChatQuickReply(id) {
+            const item = (defaultQuickReplies || []).find(q => q.id === id);
+            if (!item) return;
+            const input = document.getElementById('livechat-input');
+            if (input) input.value = item.question;
+            await sendLiveChatMessage({ preventDefault: () => {} });
         }
 
         // --- AI AUTOMATION LIVE CHAT (BALASAN AWAL OTOMATIS SEBELUM DIAMBIL ALIH ADMIN) ---
@@ -1086,11 +1149,20 @@
                         <p class="text-emerald-100 text-[10px] leading-tight flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300 inline-block"></span> Kirim pertanyaan, admin akan membalas</p>
                     </div>
                 </div>
+                <button type="button" onclick="toggleLiveChatQuickReplies()" aria-label="Tampilkan/Sembunyikan Topik Cepat" title="Topik Cepat" class="text-white/80 hover:text-white p-1 mr-0.5"><i data-lucide="list-checks" class="w-[18px] h-[18px]"></i></button>
                 <button onclick="closeLiveChat()" aria-label="Tutup Live Chat" title="Tutup" class="text-white/80 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
             <div id="livechat-messages" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-950/40">
                 <div class="text-center text-[10px] text-slate-500 py-4">Memuat percakapan...</div>
+            </div>
+
+            <!-- BALASAN CEPAT (QUICK REPLY): daftar topik pertanyaan umum berbasis Knowledge Base
+                 Layanan Helpdesk Nasional SRIKANDI (layanan.arsip.go.id/helpdesk/kb). Pengunjung
+                 cukup mengetuk salah satu topik untuk langsung mendapat jawaban dari Asisten AI. -->
+            <div id="livechat-quickreplies" class="flex-shrink-0 border-t border-slate-800 bg-slate-900/80 px-3 pt-2.5 pb-2">
+                <p class="text-[9px] font-bold uppercase tracking-wide text-slate-500 mb-1.5 px-0.5">Topik Bantuan Cepat</p>
+                <div id="livechat-quickreplies-list" class="flex gap-1.5 overflow-x-auto custom-scrollbar pb-1"></div>
             </div>
 
             <div id="livechat-image-preview" class="hidden items-center gap-2 px-3 pt-2.5 bg-slate-900 flex-shrink-0">
@@ -1127,7 +1199,7 @@
             <footer class="bg-slate-950 text-slate-500 text-center py-6 text-xs border-t border-slate-800/80 flex-shrink-0">
                 <p>&copy; 2026 <span class="dynamic-site-name text-slate-300 font-bold">KABAS MEAN</span> - Kanal Bantuan, Sumber Informasi & Media Panduan SRIKANDI</p>
                 <p class="mt-1">Dibuat dengan penuh dedikasi oleh <span class="text-amber-500 font-bold">Stanislaus Bria, S.Fil</span></p>
-                <button onclick="scrollMainToTop()" class="no-print mt-2 text-slate-500 hover:text-amber-400 underline underline-offset-2 transition">Kembali ke atas</button>
+                <button onclick="scrollMainToTop()" class="no-print mt-2 text-red-500 hover:text-red-400 text-sm font-bold underline underline-offset-2 transition">Kembali ke atas</button>
             </footer>
         </main>
     </div>
