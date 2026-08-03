@@ -27,7 +27,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KABAS MEAN">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@400;500;700;800;900&family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -36,8 +36,12 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-family: 'Raleway', sans-serif;
+            font-weight: 400;
             background-color: #0f172a;
+        }
+        h1, h2, h3, h4, h5, h6, .dynamic-site-name {
+            font-family: 'Arima Madurai', cursive;
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -131,15 +135,15 @@
         html.light-mode header .text-white { color: #0f172a !important; }
         html.light-mode header.bg-slate-900 { background-color: #ffffff !important; }
 
-        /* Aksen kuning & merah muda sedikit digelapkan agar tetap terbaca di atas latar putih */
+        /* Aksen kuning & merah muda digelapkan pekat agar ikon sangat kontras di atas latar putih */
         html.light-mode .text-amber-400,
         html.light-mode .text-amber-500,
         html.light-mode .hover\:text-amber-400:hover,
-        html.light-mode .hover\:text-amber-500:hover { color: #b45309 !important; }
+        html.light-mode .hover\:text-amber-500:hover { color: #78350f !important; }
         html.light-mode .text-rose-300,
         html.light-mode .text-rose-400,
         html.light-mode .hover\:text-rose-300:hover,
-        html.light-mode .hover\:text-rose-400:hover { color: #be123c !important; }
+        html.light-mode .hover\:text-rose-400:hover { color: #881337 !important; }
         html.light-mode .bg-rose-950\/40,
         html.light-mode .bg-rose-950\/30,
         html.light-mode .bg-rose-900\/50,
@@ -1018,24 +1022,22 @@
             </div>
 
             <nav class="flex-grow overflow-y-auto p-4 space-y-1.5 custom-scrollbar bg-slate-900/50">
-                <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Layanan Utama</span>
-
                 <button onclick="navigate('beranda')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-beranda">
-                    <i data-lucide="home" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Beranda Utama</span>
+                    <i data-lucide="home" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Beranda Utama</span>
                 </button>
                 <button onclick="navigate('informasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-informasi">
-                    <i data-lucide="info" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Informasi Umum</span>
+                    <i data-lucide="info" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Informasi Umum</span>
                 </button>
                 <button onclick="navigate('mentors')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-mentors">
-                    <i data-lucide="users-2" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Pendamping Teknis</span>
+                    <i data-lucide="users-2" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pendamping Teknis</span>
                 </button>
                 <button onclick="navigate('faq')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-faq">
-                    <i data-lucide="help-circle" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">FAQ</span>
+                    <i data-lucide="help-circle" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">FAQ</span>
                 </button>
 
                 <div>
                     <button onclick="toggleDropdown('hak-akses')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> Hak Akses</span>
+                        <span class="flex items-center gap-3"><i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Hak Akses</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-hak-akses"></i>
                     </button>
                     <div id="drop-hak-akses" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
@@ -1049,7 +1051,7 @@
 
                 <div>
                     <button onclick="toggleDropdown('tte')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="fingerprint" class="w-4 h-4 text-amber-500"></i> Tandatangan Elektronik (TTE)</span>
+                        <span class="flex items-center gap-3"><i data-lucide="fingerprint" class="w-4 h-4 text-amber-400"></i> Tandatangan Elektronik (TTE)</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-tte"></i>
                     </button>
                     <div id="drop-tte" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
@@ -1063,7 +1065,7 @@
 
                 <div>
                     <button onclick="toggleDropdown('naskah-masuk')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="folder-input" class="w-4 h-4 text-amber-500"></i> Naskah Masuk</span>
+                        <span class="flex items-center gap-3"><i data-lucide="folder-input" class="w-4 h-4 text-amber-400"></i> Naskah Masuk</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-masuk"></i>
                     </button>
                     <div id="drop-naskah-masuk" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800 max-h-40 overflow-y-auto custom-scrollbar">
@@ -1080,7 +1082,7 @@
 
                 <div>
                     <button onclick="toggleDropdown('naskah-keluar')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="folder-output" class="w-4 h-4 text-amber-500"></i> Naskah Keluar</span>
+                        <span class="flex items-center gap-3"><i data-lucide="folder-output" class="w-4 h-4 text-amber-400"></i> Naskah Keluar</span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-keluar"></i>
                     </button>
                     <div id="drop-naskah-keluar" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
@@ -1093,26 +1095,26 @@
                 </div>
 
                 <button onclick="navigate('pemberkasan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
-                    <i data-lucide="archive" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
+                    <i data-lucide="archive" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
                 </button>
 
                 <button onclick="navigate('infografis')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-infografis">
-                    <i data-lucide="image" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Infografis</span>
+                    <i data-lucide="image" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Infografis</span>
                 </button>
 
                 <button onclick="navigate('video')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-video">
-                    <i data-lucide="clapperboard" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Video Tutorial</span>
+                    <i data-lucide="clapperboard" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Video Tutorial</span>
                 </button>
 
-                <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2 mt-4">Evaluasi &amp; Umpan Balik</span>
+                <div class="mt-4"></div>
                 <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
-                    <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> <span class="text-xs font-bold">Evaluasi Website</span>
+                    <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Evaluasi Website</span>
                 </button>
                 <button onclick="navigate('admin-evaluasi')" class="hidden items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-evaluasi">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-400"></i> <span class="text-xs font-bold">Admin Evaluasi</span>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-300"></i> <span class="text-xs font-bold">Admin Evaluasi</span>
                 </button>
                 <button onclick="navigate('admin-livechat')" class="hidden relative items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-livechat">
-                    <i data-lucide="message-square-more" class="w-4 h-4 text-rose-400"></i> <span class="text-xs font-bold">Admin Live Chat</span>
+                    <i data-lucide="message-square-more" class="w-4 h-4 text-rose-300"></i> <span class="text-xs font-bold">Admin Live Chat</span>
                     <span id="adminchat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
                 </button>
 
@@ -1127,7 +1129,7 @@
                         <i data-lucide="phone-call" class="w-4 h-4"></i> <span>Hubungi Admin Instansi</span>
                     </a>
                     <div class="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-slate-500 font-semibold">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-500"></i>
+                        <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-400"></i>
                         <span>Jumlah Kunjungan: <span id="visitor-count-value" class="text-amber-400 font-bold">-</span></span>
                     </div>
                 </div>
@@ -2105,7 +2107,7 @@
                 return `
                     <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-mfa-enroll-area">
                         <div class="text-center space-y-1.5">
-                            <i data-lucide="shield-plus" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                            <i data-lucide="shield-plus" class="w-8 h-8 text-rose-300 mx-auto"></i>
                             <h2 class="text-lg font-extrabold text-white">Setup MFA (Wajib)</h2>
                             <p class="text-xs text-slate-500">Pindai QR Code ini dengan aplikasi authenticator (Google Authenticator, Authy, dll), lalu masukkan kode 6 digit untuk mengaktifkan.</p>
                         </div>
@@ -2129,7 +2131,7 @@
                 return `
                     <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-mfa-verify-area">
                         <div class="text-center space-y-1.5">
-                            <i data-lucide="shield-check" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                            <i data-lucide="shield-check" class="w-8 h-8 text-rose-300 mx-auto"></i>
                             <h2 class="text-lg font-extrabold text-white">Verifikasi MFA</h2>
                             <p class="text-xs text-slate-500">Masukkan kode 6 digit dari aplikasi authenticator Anda.</p>
                         </div>
@@ -2145,7 +2147,7 @@
             return `
                 <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-login-area">
                     <div class="text-center space-y-1.5">
-                        <i data-lucide="shield-check" class="w-8 h-8 text-rose-400 mx-auto"></i>
+                        <i data-lucide="shield-check" class="w-8 h-8 text-rose-300 mx-auto"></i>
                         <h2 class="text-lg font-extrabold text-white">Login Admin</h2>
                         <p class="text-xs text-slate-500">Masuk untuk mengelola data evaluasi.</p>
                     </div>
