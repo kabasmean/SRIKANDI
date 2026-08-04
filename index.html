@@ -27,7 +27,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KABAS MEAN">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@400;500;700;800;900&family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@400;500;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -40,8 +40,11 @@
             font-weight: 400;
             background-color: #0f172a;
         }
-        h1, h2, h3, h4, h5, h6, .dynamic-site-name {
+        h1, h2, h3, h4, h5, h6 {
             font-family: 'Arima Madurai', cursive;
+        }
+        .dynamic-site-name {
+            font-family: 'Playfair Display', serif;
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -1035,7 +1038,6 @@
             <div id="mobile-logo-wrapper" onclick="revealAdminMenu()" class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 overflow-hidden shadow-lg shadow-amber-500/10"><img id="mobile-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo"><span id="mobile-logo-txt">KM</span></div>
             <div>
                 <span class="font-black text-sm block tracking-wide uppercase dynamic-site-name">KABAS MEAN</span>
-                <span class="text-[9px] text-slate-400 block tracking-wider dynamic-site-sub">KANAL BANTUAN & MEDIA PANDUAN SRIKANDI</span>
             </div>
         </div>
         <button onclick="toggleMobileSidebar()" class="text-white hover:text-amber-500 transition focus:outline-none p-1">
@@ -1052,7 +1054,6 @@
                     <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo">
                 </div>
                 <h1 class="font-extrabold text-lg tracking-wider text-white dynamic-site-name uppercase">KABAS MEAN</h1>
-                <p class="text-[9px] text-amber-400 font-bold uppercase tracking-widest mt-1.5 dynamic-site-sub">PANDUAN PENGGUNAAN SRIKANDI</p>
             </div>
 
             <div class="px-4 pt-4 pb-1 relative bg-slate-900/50 flex-shrink-0">
