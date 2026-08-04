@@ -984,7 +984,7 @@
 
     <header class="bg-slate-900 border-b border-slate-800 text-white flex justify-between items-center p-4 shadow-md md:hidden">
         <div class="flex items-center space-x-3">
-            <div id="mobile-logo-wrapper" class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 overflow-hidden shadow-lg shadow-amber-500/10"><img id="mobile-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo"><span id="mobile-logo-txt">KM</span></div>
+            <div id="mobile-logo-wrapper" onclick="revealAdminMenu()" class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 overflow-hidden shadow-lg shadow-amber-500/10"><img id="mobile-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo"><span id="mobile-logo-txt">KM</span></div>
             <div>
                 <span class="font-black text-sm block tracking-wide uppercase dynamic-site-name">KABAS MEAN</span>
                 <span class="text-[9px] text-slate-400 block tracking-wider dynamic-site-sub">KANAL BANTUAN & MEDIA PANDUAN SRIKANDI</span>
@@ -999,7 +999,7 @@
 
         <aside id="sidebar" class="bg-slate-900 text-slate-300 w-72 flex-shrink-0 flex flex-col border-r border-slate-800 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 shadow-2xl min-h-0 md:overflow-hidden">
             <div class="p-6 border-b border-slate-800/80 bg-slate-950/40 flex flex-col items-center text-center relative">
-                <div id="site-logo-container" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
+                <div id="site-logo-container" onclick="revealAdminMenu()" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
                     <span id="site-logo-txt" class="font-extrabold text-3xl text-amber-400">KM</span>
                     <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo">
                 </div>
@@ -1107,17 +1107,12 @@
                 <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
                     <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Evaluasi Website</span>
                 </button>
-                <button onclick="navigate('admin-evaluasi')" class="hidden items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-evaluasi">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-rose-300"></i> <span class="text-xs font-bold">Admin Evaluasi</span>
-                </button>
-                <button onclick="navigate('admin-livechat')" class="hidden relative items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-rose-300 hover:text-white hover:bg-rose-900/30 border border-rose-900/50 transition duration-150 mt-1.5" id="menu-btn-admin-livechat">
-                    <i data-lucide="message-square-more" class="w-4 h-4 text-rose-300"></i> <span class="text-xs font-bold">Admin Live Chat</span>
-                    <span id="adminchat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
-                </button>
-
-                <!-- Tombol "KM" (akses admin rahasia) dipindah menjadi tombol mengambang
-                     di kanan bawah, di bawah tombol Live Chat. Elemennya sekarang berada
-                     sebagai anak langsung <body> di akhir file (id="km-btn"). -->
+                <!-- Menu "Admin Evaluasi" dan "Admin Live Chat" SENGAJA tidak ditampilkan
+                     di sidebar, termasuk saat admin sudah login, supaya pengunjung biasa
+                     tidak menyadari keberadaan area admin. Akses dashboard admin dilakukan
+                     lewat klik logo situs (lihat #site-logo-container / #mobile-logo-wrapper,
+                     fungsi revealAdminMenu()). Setelah login, admin bisa berpindah ke Live
+                     Chat lewat tombol mengambang "adminchat-fab" di kanan bawah. -->
 
                 <div class="pt-4 no-print pb-6">
                     <button onclick="openLiveChat()" class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 transition font-bold text-xs shadow-lg shadow-emerald-600/10 mb-2.5">
@@ -1940,18 +1935,20 @@
         //    digit dari aplikasi authenticator setiap kali login (aal1 -> aal2).
         // 4. Akses dashboard admin (isAdminMode = true) HANYA diberikan setelah level
         //    aal2 tercapai. Sesi yang baru aal1 dianggap belum masuk.
-        let manualAdminReveal = false;
         let adminAuthStage = 'login'; // 'login' | 'mfa-enroll' | 'mfa-verify'
         let mfaFactorId = null;
         let mfaEnrollTotp = null; // { qr_code, secret, uri } dari supabase saat enroll
 
+        // Dipicu dengan klik pada logo situs (#site-logo-container di sidebar desktop
+        // atau #mobile-logo-wrapper di header mobile) — TIDAK ada tombol/ikon terpisah
+        // yang terlihat, supaya pengunjung biasa tidak menyadari adanya akses admin.
+        // Cukup arahkan ke halaman admin: kalau belum login akan tampil form Login Admin
+        // (lewat renderAdminGate), kalau sudah login (aal2) langsung tampil dashboard.
         function revealAdminMenu() {
-            manualAdminReveal = true;
-            checkAdminAccess();
             navigate('admin-evaluasi');
         }
 
-        // Hanya mengecek sesi + level MFA untuk tampil/sembunyikan menu di sidebar.
+        // Mengecek sesi + level MFA untuk menentukan status login admin.
         // Tidak pernah memicu dialog MFA di sini, supaya tidak muncul tiba-tiba saat
         // pengguna biasa membuka website.
         async function checkAdminAccess() {
@@ -1967,19 +1964,10 @@
                 isAdminMode = false;
             }
 
-            const showMenu = isAdminMode || manualAdminReveal;
-
-            const adminBtn = document.getElementById('menu-btn-admin-evaluasi');
-            if (adminBtn) {
-                if (showMenu) { adminBtn.classList.remove('hidden'); adminBtn.classList.add('flex'); }
-                else { adminBtn.classList.add('hidden'); adminBtn.classList.remove('flex'); }
-            }
-
-            const adminChatBtn = document.getElementById('menu-btn-admin-livechat');
-            if (adminChatBtn) {
-                if (showMenu) { adminChatBtn.classList.remove('hidden'); adminChatBtn.classList.add('flex'); }
-                else { adminChatBtn.classList.add('hidden'); adminChatBtn.classList.remove('flex'); }
-            }
+            // Menu "Admin Evaluasi" dan "Admin Live Chat" sengaja TIDAK pernah dimunculkan
+            // di sidebar, termasuk saat isAdminMode true. Admin mengakses dashboard lewat
+            // klik logo (revealAdminMenu) dan berpindah ke Live Chat lewat tombol
+            // mengambang "adminchat-fab" di bawah ini.
 
             const adminChatFab = document.getElementById('adminchat-fab');
             if (adminChatFab) {
@@ -2896,10 +2884,8 @@
         <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
 
-    <!-- Tombol "KM" (akses admin rahasia): kini berupa icon administrator polos di kanan atas,
-         tidak lagi berupa tombol mengambang (floating). -->
-    <button id="km-btn" onclick="revealAdminMenu()" aria-label="Akses Admin" title="Akses Admin" class="no-print fixed top-4 right-5 z-[80] w-11 h-11 flex items-center justify-center opacity-70 hover:opacity-100 transition">
-        <img src="https://cdn-icons-png.flaticon.com/128/9119/9119069.png" alt="Akses Admin" class="w-9 h-9 object-contain">
-    </button>
+    <!-- Tombol "km-btn" mengambang di pojok kanan atas sudah DIHAPUS. Akses admin kini
+         disematkan pada klik logo situs saja (#site-logo-container / #mobile-logo-wrapper),
+         supaya tidak ada elemen visual yang menandakan adanya area admin bagi pengunjung. -->
 </body>
 </html>
