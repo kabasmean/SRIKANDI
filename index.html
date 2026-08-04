@@ -57,12 +57,33 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #f59e0b;
         }
+        :root { --sidebar-notch-bg: #0f172a; }
+        html.light-mode { --sidebar-notch-bg: #ffffff; }
         .nav-active {
             background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
             color: #ffffff !important;
             font-weight: 700;
             box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);
+            position: relative;
+            margin-right: -1rem;
+            padding-right: 2rem !important;
+            border-top-right-radius: 0.5rem !important;
+            border-bottom-right-radius: 0.5rem !important;
+            z-index: 1;
         }
+        /* Notch atas & bawah: membuat item menu aktif seolah "menyatu" dengan tepi sidebar,
+           mengikuti MODEL kartu dashboard pada gambar referensi (bukan warnanya). */
+        .nav-active::before, .nav-active::after {
+            content: '';
+            position: absolute;
+            right: -1rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--sidebar-notch-bg);
+            pointer-events: none;
+        }
+        .nav-active::before { top: -0.75rem; border-radius: 0 0 0.85rem 0; }
+        .nav-active::after { bottom: -0.75rem; border-radius: 0 0.85rem 0 0; }
         /* ================== TEKS RATA KIRI-KANAN (JUSTIFY) ==================
            Hanya diterapkan pada paragraf ISI KONTEN tiap menu, yaitu paragraf
            di dalam #content-container (Beranda, FAQ, Infografis, Video,
@@ -1059,64 +1080,21 @@
                     <i data-lucide="help-circle" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">FAQ</span>
                 </button>
 
-                <div>
-                    <button onclick="toggleDropdown('hak-akses')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Hak Akses</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-hak-akses"></i>
-                    </button>
-                    <div id="drop-hak-akses" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
-                        <button onclick="navigate('admin-instansi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-admin-instansi">Admin Instansi</button>
-                        <button onclick="navigate('admin-satker')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-admin-satker">Admin Satker</button>
-                        <button onclick="navigate('tata-usaha')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tata-usaha">Tata Usaha</button>
-                        <button onclick="navigate('pencatat-surat')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-pencatat-surat">Pencatat Surat</button>
-                        <button onclick="navigate('user')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-user">User / Pengguna</button>
-                    </div>
-                </div>
+                <button onclick="navigate('admin-instansi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-hak-akses">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Hak Akses</span>
+                </button>
 
-                <div>
-                    <button onclick="toggleDropdown('tte')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="fingerprint" class="w-4 h-4 text-amber-400"></i> Tandatangan Elektronik (TTE)</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-tte"></i>
-                    </button>
-                    <div id="drop-tte" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
-                        <button onclick="navigate('tte-pengajuan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-pengajuan">Pengajuan Email Dinas</button>
-                        <button onclick="navigate('tte-aktivasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-aktivasi">Aktivasi Email Dinas</button>
-                        <button onclick="navigate('tte-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-registrasi">Registrasi Sertifikat</button>
-                        <button onclick="navigate('tte-passphrase')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-passphrase">Buat Passphrase</button>
-                        <button onclick="navigate('tte-pembubuhan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-tte-pembubuhan">Pembubuhan TTE</button>
-                    </div>
-                </div>
+                <button onclick="navigate('tte-pengajuan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-tte">
+                    <i data-lucide="fingerprint" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Tandatangan Elektronik (TTE)</span>
+                </button>
 
-                <div>
-                    <button onclick="toggleDropdown('naskah-masuk')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="folder-input" class="w-4 h-4 text-amber-400"></i> Naskah Masuk</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-masuk"></i>
-                    </button>
-                    <div id="drop-naskah-masuk" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800 max-h-40 overflow-y-auto custom-scrollbar">
-                        <button onclick="navigate('nm-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-registrasi">Registrasi Naskah Masuk</button>
-                        <button onclick="navigate('nm-daftar')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-daftar">Daftar Naskah Masuk</button>
-                        <button onclick="navigate('nm-agenda')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-agenda">Agenda</button>
-                        <button onclick="navigate('nm-tembusan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-tembusan">Tembusan</button>
-                        <button onclick="navigate('nm-log')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-log">Log Naskah Masuk</button>
-                        <button onclick="navigate('nm-disposisi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-disposisi">Disposisi</button>
-                        <button onclick="navigate('nm-koordinasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-koordinasi">Koordinasi</button>
-                        <button onclick="navigate('nm-arahan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nm-arahan">Arahan</button>
-                    </div>
-                </div>
+                <button onclick="navigate('nm-registrasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-masuk">
+                    <i data-lucide="folder-input" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Naskah Masuk</span>
+                </button>
 
-                <div>
-                    <button onclick="toggleDropdown('naskah-keluar')" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition text-xs font-bold">
-                        <span class="flex items-center gap-3"><i data-lucide="folder-output" class="w-4 h-4 text-amber-400"></i> Naskah Keluar</span>
-                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" id="icon-naskah-keluar"></i>
-                    </button>
-                    <div id="drop-naskah-keluar" class="hidden pl-8 pr-2 py-1 space-y-1 bg-slate-950/20 rounded-xl mt-1 border-l border-slate-800">
-                        <button onclick="navigate('nk-registrasi')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-registrasi">Registrasi Naskah Keluar</button>
-                        <button onclick="navigate('nk-daftar')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-daftar">Daftar Naskah Keluar</button>
-                        <button onclick="navigate('nk-pemberkasan')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-pemberkasan">Pemberkasan Naskah Keluar</button>
-                        <button onclick="navigate('nk-log')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-log">Log Naskah Keluar</button>
-                        <button onclick="navigate('nk-ttd')" class="block w-full text-left py-1.5 px-2 text-xs text-slate-400 hover:text-amber-400" id="menu-btn-nk-ttd">Tandatangan Naskah</button>
-                    </div>
-                </div>
+                <button onclick="navigate('nk-registrasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-keluar">
+                    <i data-lucide="folder-output" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Naskah Keluar</span>
+                </button>
 
                 <button onclick="navigate('pemberkasan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
                     <i data-lucide="archive" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
@@ -1323,24 +1301,51 @@
             else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
         }
 
-        const dropdownIds = ['hak-akses', 'tte', 'naskah-masuk', 'naskah-keluar'];
+        // Submenu kini ditampilkan sebagai tab horizontal DI DALAM halaman konten
+        // (lihat renderSubTabs), bukan lagi dropdown yang membuka/menutup di sidebar.
+        const submenuGroups = {
+            'hak-akses': ['admin-instansi', 'admin-satker', 'tata-usaha', 'pencatat-surat', 'user'],
+            'tte': ['tte-pengajuan', 'tte-aktivasi', 'tte-registrasi', 'tte-passphrase', 'tte-pembubuhan'],
+            'naskah-masuk': ['nm-registrasi', 'nm-daftar', 'nm-agenda', 'nm-tembusan', 'nm-log', 'nm-disposisi', 'nm-koordinasi', 'nm-arahan'],
+            'naskah-keluar': ['nk-registrasi', 'nk-daftar', 'nk-pemberkasan', 'nk-log', 'nk-ttd'],
+        };
+        const submenuGroupLabels = {
+            'hak-akses': 'Hak Akses', 'tte': 'Tandatangan Elektronik (TTE)',
+            'naskah-masuk': 'Naskah Masuk', 'naskah-keluar': 'Naskah Keluar',
+        };
+        const submenuTabLabels = {
+            'admin-instansi': 'Admin Instansi', 'admin-satker': 'Admin Satker', 'tata-usaha': 'Tata Usaha',
+            'pencatat-surat': 'Pencatat Surat', 'user': 'User / Pengguna',
+            'tte-pengajuan': 'Pengajuan Email Dinas', 'tte-aktivasi': 'Aktivasi Email Dinas',
+            'tte-registrasi': 'Registrasi Sertifikat', 'tte-passphrase': 'Buat Passphrase', 'tte-pembubuhan': 'Pembubuhan TTE',
+            'nm-registrasi': 'Registrasi Naskah Masuk', 'nm-daftar': 'Daftar Naskah Masuk', 'nm-agenda': 'Agenda',
+            'nm-tembusan': 'Tembusan', 'nm-log': 'Log Naskah Masuk', 'nm-disposisi': 'Disposisi',
+            'nm-koordinasi': 'Koordinasi', 'nm-arahan': 'Arahan',
+            'nk-registrasi': 'Registrasi Naskah Keluar', 'nk-daftar': 'Daftar Naskah Keluar',
+            'nk-pemberkasan': 'Pemberkasan Naskah Keluar', 'nk-log': 'Log Naskah Keluar', 'nk-ttd': 'Tandatangan Naskah',
+        };
 
-        function toggleDropdown(id) {
-            const elem = document.getElementById('drop-' + id), icon = document.getElementById('icon-' + id);
-            const isCurrentlyOpen = !elem.classList.contains('hidden');
+        function findParentGroup(section) {
+            for (const group in submenuGroups) {
+                if (submenuGroups[group].includes(section)) return group;
+            }
+            return null;
+        }
 
-            // Tutup semua dropdown lain sebelum membuka/menutup yang diklik
-            dropdownIds.forEach(otherId => {
-                if (otherId === id) return;
-                const otherElem = document.getElementById('drop-' + otherId), otherIcon = document.getElementById('icon-' + otherId);
-                if (otherElem && !otherElem.classList.contains('hidden')) {
-                    otherElem.classList.add('hidden');
-                    if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
-                }
-            });
-
-            if (isCurrentlyOpen) { elem.classList.add('hidden'); icon.style.transform = 'rotate(0deg)'; }
-            else { elem.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
+        // Bar tab horizontal untuk submenu (menggantikan dropdown lama). Tab yang
+        // sedang aktif tampil sebagai tombol solid, mengikuti model tata letak
+        // menu + tombol pada gambar referensi kedua, dengan warna khas situs ini.
+        function renderSubTabs(section) {
+            const group = findParentGroup(section);
+            if (!group) return '';
+            const tabs = submenuGroups[group].map(id => {
+                const active = id === section;
+                return `<button onclick="navigate('${id}')" class="px-4 py-2 rounded-full text-[11px] md:text-xs font-bold whitespace-nowrap transition ${active ? 'bg-gradient-to-r from-[#ff0000] to-[#cc0000] text-white shadow-lg shadow-red-600/25' : 'bg-slate-800/60 text-slate-300 border border-slate-700/60 hover:bg-slate-800 hover:text-white'}">${submenuTabLabels[id] || id}</button>`;
+            }).join('');
+            return `<div class="mb-1">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">${submenuGroupLabels[group]}</p>
+                <div class="flex flex-wrap gap-2 pb-2 border-b border-slate-800/80">${tabs}</div>
+            </div>`;
         }
 
         // --- MODE TERANG (selalu aktif, toggle gelap/terang telah dihilangkan) ---
@@ -1495,7 +1500,8 @@
             currentSection = section;
             scrollMainToTop();
             document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('nav-active'));
-            const activeBtn = document.getElementById('menu-btn-' + section);
+            const parentGroup = findParentGroup(section);
+            const activeBtn = document.getElementById(parentGroup ? 'menu-btn-group-' + parentGroup : 'menu-btn-' + section);
             if (activeBtn) activeBtn.classList.add('nav-active');
             if (isMobileSidebarOpen) toggleMobileSidebar();
 
@@ -1632,6 +1638,7 @@
             let pageData = localStateContents[currentSection] || { title: 'Modul Belum Terdaftar', body: '<p>Konten sedang dipersiapkan.</p>', links: [] };
 
             let html = `<div class="space-y-6">`;
+            html += renderSubTabs(currentSection);
             if (currentSection === 'beranda' && homeImageUrl) {
                 html += `
                     <div class="w-full h-72 md:h-[28rem] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group">
