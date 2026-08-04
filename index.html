@@ -1118,7 +1118,9 @@
                     <span id="adminchat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
                 </button>
 
-                <button onclick="revealAdminMenu()" title="Akses Admin" class="w-full text-center py-1 mt-1.5 text-[10px] font-bold text-slate-700 hover:text-rose-400 transition duration-150" id="km-btn">KM</button>
+                <!-- Tombol "KM" (akses admin rahasia) dipindah menjadi tombol mengambang
+                     di kanan bawah, di bawah tombol Live Chat. Elemennya sekarang berada
+                     sebagai anak langsung <body> di akhir file (id="km-btn"). -->
 
                 <div class="pt-4 no-print pb-6">
                     <button onclick="openLiveChat()" class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 transition font-bold text-xs shadow-lg shadow-emerald-600/10 mb-2.5">
@@ -2862,14 +2864,20 @@
     </script>
 
     <!-- TOMBOL MENGAMBANG (anak langsung <body> supaya posisi fixed murni relatif ke layar, selalu tampil di kanan bawah) -->
-    <button id="livechat-fab" onclick="openLiveChat()" aria-label="Buka Live Chat" title="Buka Live Chat" class="fixed bottom-4 right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
+    <button id="livechat-fab" onclick="openLiveChat()" aria-label="Buka Live Chat" title="Buka Live Chat" class="fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
         <i data-lucide="message-circle-more" class="w-5 h-5 text-white"></i>
         <span id="livechat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
 
-    <button id="adminchat-fab" onclick="navigate('admin-livechat')" aria-label="Buka Live Chat Admin" title="Buka Live Chat Admin" class="hidden fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-500 shadow-xl shadow-rose-600/40 items-center justify-center transition hover:scale-105">
+    <button id="adminchat-fab" onclick="navigate('admin-livechat')" aria-label="Buka Live Chat Admin" title="Buka Live Chat Admin" class="hidden fixed bottom-[132px] right-4 z-[80] w-11 h-11 rounded-full bg-rose-600 hover:bg-rose-500 shadow-xl shadow-rose-600/40 items-center justify-center transition hover:scale-105">
         <i data-lucide="message-square-more" class="w-5 h-5 text-white"></i>
         <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
+    </button>
+
+    <!-- Tombol "KM" (akses admin rahasia): kini berupa icon administrator polos di kanan atas,
+         tidak lagi berupa tombol mengambang (floating). -->
+    <button id="km-btn" onclick="revealAdminMenu()" aria-label="Akses Admin" title="Akses Admin" class="no-print fixed top-4 right-5 z-[80] w-11 h-11 flex items-center justify-center opacity-70 hover:opacity-100 transition">
+        <img src="https://cdn-icons-png.flaticon.com/128/9119/9119069.png" alt="Akses Admin" class="w-9 h-9 object-contain">
     </button>
 </body>
 </html>
