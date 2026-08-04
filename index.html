@@ -999,9 +999,6 @@
 
         <aside id="sidebar" class="bg-slate-900 text-slate-300 w-72 flex-shrink-0 flex flex-col border-r border-slate-800 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 shadow-2xl min-h-0 md:overflow-hidden">
             <div class="p-6 border-b border-slate-800/80 bg-slate-950/40 flex flex-col items-center text-center relative">
-                <button onclick="toggleThemeMode()" id="theme-toggle-btn" title="Ganti mode terang/gelap" aria-label="Ganti mode terang/gelap" class="absolute top-3 right-3 w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition text-slate-300">
-                    <i data-lucide="sun" class="w-4 h-4" id="theme-toggle-icon"></i>
-                </button>
                 <div id="site-logo-container" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
                     <span id="site-logo-txt" class="font-extrabold text-3xl text-amber-400">KM</span>
                     <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo">
@@ -1278,30 +1275,9 @@
             else { elem.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
         }
 
-        // --- MODE TERANG / GELAP ---
-        function applyThemeMode(mode) {
-            const icon = document.getElementById('theme-toggle-icon');
-            if (mode === 'light') {
-                document.documentElement.classList.add('light-mode');
-                if (icon) icon.setAttribute('data-lucide', 'moon');
-            } else {
-                document.documentElement.classList.remove('light-mode');
-                if (icon) icon.setAttribute('data-lucide', 'sun');
-            }
-            if (window.lucide) lucide.createIcons();
-        }
-
-        function toggleThemeMode() {
-            const isLight = document.documentElement.classList.contains('light-mode');
-            const next = isLight ? 'dark' : 'light';
-            try { localStorage.setItem('kabasmean-theme', next); } catch (e) { /* diamkan jika storage diblokir */ }
-            applyThemeMode(next);
-        }
-
+        // --- MODE TERANG (selalu aktif, toggle gelap/terang telah dihilangkan) ---
         function initThemeMode() {
-            let saved = null;
-            try { saved = localStorage.getItem('kabasmean-theme'); } catch (e) { /* diamkan */ }
-            applyThemeMode(saved === 'light' ? 'light' : 'dark');
+            document.documentElement.classList.add('light-mode');
         }
 
         // --- PENCARIAN GLOBAL (Menu, Panduan, FAQ) ---
@@ -1590,7 +1566,7 @@
             let html = `<div class="space-y-6">`;
             if (currentSection === 'beranda' && homeImageUrl) {
                 html += `
-                    <div class="w-full h-52 md:h-80 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group">
+                    <div class="w-full h-72 md:h-[28rem] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group">
                         <img src="${homeImageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
                     </div>`;
             }
@@ -1599,9 +1575,6 @@
                     <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
                         <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> ${pageData.title}
                     </h2>
-                    <button onclick="window.print()" title="Cetak atau simpan halaman ini sebagai PDF" aria-label="Cetak atau simpan halaman ini sebagai PDF" class="no-print flex-shrink-0 flex items-center gap-1.5 bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 text-slate-300 text-[11px] font-semibold px-3 py-2 rounded-xl transition">
-                        <i data-lucide="printer" class="w-3.5 h-3.5"></i><span class="hidden sm:inline">Cetak/PDF</span>
-                    </button>
                 </div>
                 <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base space-y-4">${pageData.body}</div>`;
 
@@ -2147,19 +2120,68 @@
             }
 
             return `
-                <div class="max-w-sm mx-auto py-10 space-y-5" id="admin-login-area">
-                    <div class="text-center space-y-1.5">
-                        <i data-lucide="shield-check" class="w-8 h-8 text-rose-300 mx-auto"></i>
-                        <h2 class="text-lg font-extrabold text-white">Login Admin</h2>
-                        <p class="text-xs text-slate-500">Masuk untuk mengelola data evaluasi.</p>
-                    </div>
-                    <div class="space-y-3">
-                        <input id="admin-login-email" type="email" placeholder="Email admin" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
-                        <input id="admin-login-password" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') adminLogin()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
-                        <p id="admin-login-error" class="text-xs text-rose-400 hidden"></p>
-                        <button id="admin-login-btn" onclick="adminLogin()" class="w-full py-2.5 rounded-xl bg-[#ff0000] hover:bg-[#e60000] text-white font-extrabold text-sm transition">Masuk</button>
+                <div class="w-full max-w-4xl mx-auto py-8 px-2" id="admin-login-area">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <!-- Panel dekoratif kiri -->
+                        <div class="hidden md:flex relative h-[440px] rounded-[2rem] overflow-hidden items-center justify-center bg-gradient-to-br from-indigo-100 via-slate-100 to-indigo-200">
+                            <svg viewBox="0 0 400 400" class="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
+                                <path d="M-20,120 C80,60 140,180 240,110 C320,60 380,140 420,90 L420,420 L-20,420 Z" fill="#6366f1" opacity="0.9"/>
+                                <path d="M-20,190 C90,140 150,240 260,180 C330,140 390,210 420,170 L420,420 L-20,420 Z" fill="#4f46e5" opacity="0.85"/>
+                                <path d="M-20,260 C100,220 170,300 260,250 C330,215 390,270 420,240 L420,420 L-20,420 Z" fill="#3730a3" opacity="0.9"/>
+                            </svg>
+                            <div class="relative z-10 flex flex-col items-center gap-3 text-center px-8">
+                                <div class="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+                                    <i data-lucide="shield-check" class="w-10 h-10 text-indigo-700"></i>
+                                </div>
+                                <p class="text-white font-extrabold text-lg drop-shadow">Panel Admin</p>
+                                <p class="text-indigo-100 text-xs max-w-[220px]">Akses khusus pengelola KABAS MEAN untuk memantau evaluasi & Live Chat.</p>
+                            </div>
+                        </div>
+
+                        <!-- Kartu login kuning -->
+                        <div class="relative">
+                            <div class="absolute inset-0 translate-x-2 translate-y-2 rounded-[2rem] bg-slate-950/30 blur-md"></div>
+                            <div class="relative bg-gradient-to-br from-amber-400 to-amber-500 rounded-[2rem] p-7 sm:p-9 shadow-2xl">
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-[#0b1440] text-center mb-6">Login Admin</h2>
+                                <div class="space-y-3.5">
+                                    <div class="flex items-center gap-3 bg-white rounded-full px-4 py-3 shadow-sm">
+                                        <i data-lucide="user" class="w-4 h-4 text-[#0b1440] shrink-0"></i>
+                                        <input id="admin-login-email" type="email" placeholder="Email admin" class="flex-1 min-w-0 bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-3 bg-white rounded-full px-4 py-3 shadow-sm">
+                                        <i data-lucide="lock" class="w-4 h-4 text-[#0b1440] shrink-0"></i>
+                                        <input id="admin-login-password" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') adminLogin()" class="flex-1 min-w-0 bg-transparent text-sm text-slate-800 placeholder-slate-400 focus:outline-none">
+                                        <button type="button" onclick="toggleAdminLoginPassword()" aria-label="Tampilkan/sembunyikan password" class="shrink-0">
+                                            <i id="admin-login-eye-icon" data-lucide="eye" class="w-4 h-4 text-[#0b1440]"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1">
+                                        <label class="flex items-center gap-1.5 text-[#0b1440]/80 cursor-pointer select-none">
+                                            <input id="admin-login-remember" type="checkbox" class="w-3.5 h-3.5 rounded-full accent-[#0b1440]">
+                                            Ingat saya
+                                        </label>
+                                        <button type="button" onclick="showToast('Hubungi Admin Instansi/Super Admin untuk reset password.', 'error')" class="text-[#0b1440]/80 hover:text-[#0b1440] hover:underline font-medium">Lupa password?</button>
+                                    </div>
+
+                                    <p id="admin-login-error" class="text-xs text-rose-900 bg-white/70 rounded-lg px-3 py-2 hidden"></p>
+
+                                    <button id="admin-login-btn" onclick="adminLogin()" class="w-full py-3 rounded-full bg-[#0b1440] hover:bg-[#101b57] text-white font-extrabold text-sm transition shadow-lg mt-1">Masuk</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>`;
+        }
+
+        function toggleAdminLoginPassword() {
+            const passEl = document.getElementById('admin-login-password');
+            const iconEl = document.getElementById('admin-login-eye-icon');
+            if (!passEl || !iconEl) return;
+            const isHidden = passEl.type === 'password';
+            passEl.type = isHidden ? 'text' : 'password';
+            iconEl.setAttribute('data-lucide', isHidden ? 'eye-off' : 'eye');
+            lucide.createIcons();
         }
 
         async function adminLogin() {
