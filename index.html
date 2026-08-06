@@ -858,12 +858,14 @@
 
                     <div id="permohonan-thread-${row.id}" class="space-y-2 pt-1"></div>
 
+                    ${row.status === 'selesai' ? `
+                    <p class="text-[10px] text-slate-500 italic pt-1">Tiket ini sudah ditandai selesai, sehingga tidak dapat dibalas lagi. Jika masih ada kendala, silakan ajukan permohonan baru.</p>` : `
                     <form onsubmit="sendPermohonanReply(event, ${row.id})" class="flex items-end gap-2 pt-1">
                         <textarea id="permohonan-reply-input-${row.id}" required maxlength="2000" rows="1" placeholder="Tulis balasan Anda untuk admin..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
                         <button type="submit" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] shadow">
                             <i data-lucide="send" class="w-3.5 h-3.5"></i> Balas
                         </button>
-                    </form>
+                    </form>`}
                 </div>`).join('');
             lucide.createIcons();
             data.forEach(row => loadPermohonanThread(row.id, false));
@@ -904,6 +906,16 @@
             const input = document.getElementById('permohonan-reply-input-' + requestId);
             const text = input.value.trim();
             if (!text) return;
+
+            // Cek ulang status terbaru tiket (bukan hanya dari tampilan yang mungkin sudah
+            // usang), supaya tiket yang baru saja ditandai "selesai" oleh admin tidak bisa
+            // dibalas lagi meski formnya sempat masih terbuka di layar pengguna.
+            const { data: current } = await supabaseClient.from('help_requests').select('status').eq('id', requestId).single();
+            if (current && current.status === 'selesai') {
+                showToast('Tiket ini sudah selesai dan tidak dapat dibalas lagi.', 'error');
+                loadMyPermohonan();
+                return;
+            }
 
             const { error } = await supabaseClient.from('help_request_messages').insert({
                 request_id: requestId,
@@ -985,10 +997,12 @@
 
                     <div id="admin-permohonan-thread-${row.id}" class="space-y-2"></div>
 
+                    ${row.status === 'selesai' ? `
+                    <p class="text-[10px] text-slate-500 italic">Tiket ini sudah ditandai selesai, sehingga tidak dapat dibalas lagi. Ubah status di bawah jika perlu membukanya kembali.</p>` : `
                     <div class="flex items-end gap-2">
                         <textarea id="admin-permohonan-reply-input-${row.id}" placeholder="Tulis balasan untuk pengguna..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none" rows="2"></textarea>
                         <button onclick="sendAdminPermohonanReply(${row.id})" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold shadow"><i data-lucide="send" class="w-3.5 h-3.5"></i> Balas</button>
-                    </div>
+                    </div>`}
 
                     <div class="flex flex-wrap gap-2 items-center pt-1 border-t border-slate-800/80">
                         <select id="admin-status-${row.id}" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500">
