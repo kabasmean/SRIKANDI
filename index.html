@@ -584,7 +584,6 @@
         // sesuai kebutuhan (huruf besar/kecil tidak masalah, akan dicocokkan otomatis).
         const ADMIN_EMAILS = [
             'kabasmean@gmail.com',
-	    'stanislausbria16@gmail.com',
         ];
 
         // intent: 'public' (default, pengguna biasa mengevaluasi/mengajukan permohonan)
@@ -746,7 +745,7 @@
                 <div class="space-y-6" id="permohonan-area">
                     <div class="border-b border-slate-800/80 pb-4">
                         <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
-                            <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Lacak Permohonan Bantuan
+                            <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Tiket Bantuan
                         </h2>
                         <p class="text-sm text-slate-400 leading-relaxed mt-2">Ajukan permohonan bantuan seputar SRIKANDI di bawah ini, lalu pantau status penanganannya kapan saja. Anda akan tetap dapat menggunakan <strong>Live Chat</strong> untuk percakapan yang lebih cepat.</p>
                     </div>
@@ -1498,7 +1497,7 @@
                     <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
                 </button>
                 <button onclick="navigate('permohonan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-permohonan">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Lacak Permohonan Bantuan</span>
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Tiket Bantuan</span>
                     <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
                 </button>
                 <!-- Menu "Admin Evaluasi" dan "Admin Live Chat" SENGAJA tidak ditampilkan
@@ -3405,7 +3404,7 @@
     </button>
 
     <!-- MODAL "MASUK DIPERLUKAN": muncul saat pengunjung yang belum masuk mencoba membuka
-         Live Chat (fitur Evaluasi & Lacak Permohonan memakai renderUserGate langsung di
+         Live Chat (fitur Evaluasi & Tiket Bantuan memakai renderUserGate langsung di
          halaman kontennya, bukan modal ini). -->
     <div id="login-required-modal" class="hidden fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
