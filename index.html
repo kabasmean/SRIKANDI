@@ -1189,9 +1189,13 @@
 
             input.value = '';
             clearLiveChatImage();
+            const visitorMeta = (currentPublicUser && currentPublicUser.user_metadata) || {};
+            const visitorSenderName = currentPublicUser
+                ? (visitorMeta.full_name || visitorMeta.name || currentPublicUser.email || 'Pengunjung')
+                : 'Pengunjung';
             const { error } = await supabaseClient.from('live_chat_messages').insert({
                 session_id: liveChatSessionId,
-                sender_name: 'Pengunjung',
+                sender_name: visitorSenderName,
                 message: text,
                 image_url: imageUrl,
                 is_admin: false
