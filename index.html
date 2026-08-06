@@ -748,10 +748,13 @@
         //   );
         //   create policy "Admin bisa lihat semua pesan tiket" on help_request_messages for select using ((select auth.jwt()->>'aal') = 'aal2');
         //   create policy "Pengguna bisa membalas tiketnya sendiri" on help_request_messages for insert with check (
-        //     sender_role = 'user' and exists (select 1 from help_requests hr where hr.id = request_id and hr.user_id = auth.uid())
+        //     sender_role = 'user' and exists (
+        //       select 1 from help_requests hr where hr.id = request_id and hr.user_id = auth.uid() and hr.status <> 'selesai'
+        //     )
         //   );
         //   create policy "Admin bisa membalas tiket" on help_request_messages for insert with check (
         //     sender_role = 'admin' and (select auth.jwt()->>'aal') = 'aal2'
+        //     and exists (select 1 from help_requests hr where hr.id = request_id and hr.status <> 'selesai')
         //   );
         //
         const HELP_STATUS_LABELS = { menunggu: 'Menunggu Diproses', diproses: 'Sedang Diproses', selesai: 'Selesai' };
