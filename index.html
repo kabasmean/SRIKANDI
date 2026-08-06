@@ -732,6 +732,28 @@
         //   create policy "Admin bisa lihat semua permohonan" on help_requests for select using ((select auth.jwt()->>'aal') = 'aal2');
         //   create policy "Admin bisa perbarui status/balasan" on help_requests for update using ((select auth.jwt()->>'aal') = 'aal2');
         //
+        // AGAR PENGIRIM TIKET BISA MEMBALAS ADMIN (percakapan dua arah, bukan cuma satu kali
+        // balasan dari admin), buat juga tabel "help_request_messages" di Supabase (SQL Editor):
+        //
+        //   create table help_request_messages (
+        //     id bigint generated always as identity primary key,
+        //     request_id bigint not null references help_requests(id) on delete cascade,
+        //     sender_role text not null default 'user', -- 'user' | 'admin'
+        //     message text not null,
+        //     created_at timestamptz not null default now()
+        //   );
+        //   alter table help_request_messages enable row level security;
+        //   create policy "Pengguna bisa lihat pesan tiketnya" on help_request_messages for select using (
+        //     exists (select 1 from help_requests hr where hr.id = request_id and hr.user_id = auth.uid())
+        //   );
+        //   create policy "Admin bisa lihat semua pesan tiket" on help_request_messages for select using ((select auth.jwt()->>'aal') = 'aal2');
+        //   create policy "Pengguna bisa membalas tiketnya sendiri" on help_request_messages for insert with check (
+        //     sender_role = 'user' and exists (select 1 from help_requests hr where hr.id = request_id and hr.user_id = auth.uid())
+        //   );
+        //   create policy "Admin bisa membalas tiket" on help_request_messages for insert with check (
+        //     sender_role = 'admin' and (select auth.jwt()->>'aal') = 'aal2'
+        //   );
+        //
         const HELP_STATUS_LABELS = { menunggu: 'Menunggu Diproses', diproses: 'Sedang Diproses', selesai: 'Selesai' };
         const HELP_STATUS_COLORS = { menunggu: 'bg-amber-950/40 text-amber-300 border-amber-800', diproses: 'bg-sky-950/40 text-sky-300 border-sky-800', selesai: 'bg-emerald-950/40 text-emerald-300 border-emerald-800' };
 
@@ -833,7 +855,68 @@
                     <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
                     ${row.admin_reply ? `<div class="mt-2 bg-slate-950/60 border border-slate-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin Instansi:</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
                     <p class="text-[10px] text-slate-600">Diajukan: ${new Date(row.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+
+                    <div id="permohonan-thread-${row.id}" class="space-y-2 pt-1"></div>
+
+                    <form onsubmit="sendPermohonanReply(event, ${row.id})" class="flex items-end gap-2 pt-1">
+                        <textarea id="permohonan-reply-input-${row.id}" required maxlength="2000" rows="1" placeholder="Tulis balasan Anda untuk admin..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                        <button type="submit" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] shadow">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i> Balas
+                        </button>
+                    </form>
                 </div>`).join('');
+            lucide.createIcons();
+            data.forEach(row => loadPermohonanThread(row.id, false));
+        }
+
+        // Memuat & menampilkan seluruh pesan balasan (baik dari pengguna maupun admin) pada
+        // sebuah tiket bantuan, dari tabel "help_request_messages". isAdminView menentukan
+        // id kontainer yang dipakai (halaman pengguna vs halaman admin memakai id berbeda).
+        async function loadPermohonanThread(requestId, isAdminView) {
+            const containerId = (isAdminView ? 'admin-permohonan-thread-' : 'permohonan-thread-') + requestId;
+            const container = document.getElementById(containerId);
+            if (!container || !supabaseClient) return;
+
+            const { data, error } = await supabaseClient
+                .from('help_request_messages')
+                .select('*')
+                .eq('request_id', requestId)
+                .order('created_at', { ascending: true });
+
+            if (error) { console.error('Gagal memuat percakapan tiket:', error); return; }
+            if (!data || data.length === 0) { container.innerHTML = ''; return; }
+
+            container.innerHTML = data.map(m => {
+                const isAdmin = m.sender_role === 'admin';
+                return `
+                    <div class="rounded-lg p-2.5 border ${isAdmin ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-950/60 border-slate-800'}">
+                        <p class="text-[10px] font-bold mb-0.5 ${isAdmin ? 'text-rose-300' : 'text-slate-400'}">${isAdmin ? 'Admin Instansi' : 'Anda'} &middot; ${new Date(m.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                        <p class="text-xs text-slate-200 whitespace-pre-line">${escapeHtmlChat(m.message)}</p>
+                    </div>`;
+            }).join('');
+        }
+
+        // Dipakai pengguna (pengirim tiket) untuk membalas admin di tiketnya sendiri.
+        async function sendPermohonanReply(event, requestId) {
+            event.preventDefault();
+            if (!supabaseClient) { showToast('Database belum terkonfigurasi.', 'error'); return; }
+            if (!currentPublicUser) { showToast('Silakan masuk dengan akun Google terlebih dahulu.', 'error'); return; }
+            const input = document.getElementById('permohonan-reply-input-' + requestId);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const { error } = await supabaseClient.from('help_request_messages').insert({
+                request_id: requestId,
+                sender_role: 'user',
+                message: text
+            });
+            if (error) {
+                console.error('Gagal mengirim balasan:', error);
+                showToast('Gagal mengirim balasan: ' + error.message, 'error');
+                return;
+            }
+            input.value = '';
+            loadPermohonanThread(requestId, false);
         }
 
         // Sub-menu berbentuk PIL untuk berpindah antar 3 halaman admin (Live Chat, Evaluasi,
@@ -898,24 +981,54 @@
                         ${helpStatusBadge(row.status)}
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
-                    <textarea id="admin-reply-${row.id}" placeholder="Tulis balasan untuk pengguna (opsional)..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none" rows="2">${row.admin_reply || ''}</textarea>
-                    <div class="flex flex-wrap gap-2 items-center">
+                    ${row.admin_reply ? `<div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin (lama):</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
+
+                    <div id="admin-permohonan-thread-${row.id}" class="space-y-2"></div>
+
+                    <div class="flex items-end gap-2">
+                        <textarea id="admin-permohonan-reply-input-${row.id}" placeholder="Tulis balasan untuk pengguna..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none" rows="2"></textarea>
+                        <button onclick="sendAdminPermohonanReply(${row.id})" class="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-bold shadow"><i data-lucide="send" class="w-3.5 h-3.5"></i> Balas</button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 items-center pt-1 border-t border-slate-800/80">
                         <select id="admin-status-${row.id}" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500">
                             ${Object.keys(HELP_STATUS_LABELS).map(s => `<option value="${s}" ${row.status === s ? 'selected' : ''}>${HELP_STATUS_LABELS[s]}</option>`).join('')}
                         </select>
-                        <button onclick="updatePermohonanStatus(${row.id})" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg">Simpan</button>
+                        <button onclick="updatePermohonanStatus(${row.id})" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg">Perbarui Status</button>
                         <p class="text-[10px] text-slate-600 ml-auto">Diajukan: ${new Date(row.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                     </div>
                 </div>`).join('');
+            lucide.createIcons();
+            data.forEach(row => loadPermohonanThread(row.id, true));
+        }
+
+        // Dipakai admin untuk membalas pengguna pada sebuah tiket, terpisah dari perubahan status.
+        async function sendAdminPermohonanReply(requestId) {
+            if (!supabaseClient) return;
+            const input = document.getElementById('admin-permohonan-reply-input-' + requestId);
+            const text = input.value.trim();
+            if (!text) { showToast('Tulis balasan terlebih dahulu.', 'error'); return; }
+
+            const { error } = await supabaseClient.from('help_request_messages').insert({
+                request_id: requestId,
+                sender_role: 'admin',
+                message: text
+            });
+            if (error) {
+                console.error('Gagal mengirim balasan admin:', error);
+                showToast('Gagal mengirim balasan: ' + error.message, 'error');
+                return;
+            }
+            input.value = '';
+            showToast('Balasan terkirim.', 'success');
+            loadPermohonanThread(requestId, true);
         }
 
         async function updatePermohonanStatus(id) {
             if (!supabaseClient) return;
             const statusEl = document.getElementById('admin-status-' + id);
-            const replyEl = document.getElementById('admin-reply-' + id);
             const { error } = await supabaseClient.from('help_requests').update({
                 status: statusEl.value,
-                admin_reply: replyEl.value.trim() || null,
                 updated_at: new Date().toISOString()
             }).eq('id', id);
             if (error) { showToast('Gagal menyimpan: ' + error.message, 'error'); return; }
