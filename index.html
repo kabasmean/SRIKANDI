@@ -578,13 +578,62 @@
         //      JavaScript origins" supaya proses redirect balik ke halaman ini berjalan lancar.
         let currentPublicUser = null; // null = belum masuk; berisi objek user Supabase jika sudah masuk via Google
 
-        async function signInWithGoogle() {
+        // Daftar email Google yang boleh masuk sebagai ADMIN. Cocok/tidaknya email inilah
+        // yang menggantikan peran "tahu password admin" sebagai gerbang pertama sebelum
+        // proses setup/verifikasi MFA (aal2) dijalankan. Tambahkan/ganti email di sini
+        // sesuai kebutuhan (huruf besar/kecil tidak masalah, akan dicocokkan otomatis).
+        const ADMIN_EMAILS = [
+            'kabasmean@gmail.com',
+	    'stanislausbria16@gmail.com',
+        ];
+
+        // intent: 'public' (default, pengguna biasa mengevaluasi/mengajukan permohonan)
+        // atau 'admin' (dipicu dari tombol Google di halaman Login Admin). Karena proses
+        // OAuth Google memuat ulang halaman, intent disimpan sementara di sessionStorage
+        // supaya masih "diingat" setelah pengguna diarahkan kembali ke situs.
+        async function signInWithGoogle(intent) {
             if (!supabaseClient) { showToast('Fitur masuk dengan Google belum terkonfigurasi.', 'error'); return; }
+            try { sessionStorage.setItem('km_google_intent', intent === 'admin' ? 'admin' : 'public'); } catch (e) { /* abaikan */ }
             const { error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: { redirectTo: window.location.origin + window.location.pathname }
             });
             if (error) showToast('Gagal memulai proses masuk: ' + error.message, 'error');
+        }
+
+        // Dipanggil setiap kali status auth berubah (termasuk saat kembali dari redirect
+        // Google). Kalau intent-nya 'admin': cek apakah email yang login ada di
+        // ADMIN_EMAILS. Kalau cocok -> lanjut ke alur MFA seperti login password biasa.
+        // Kalau tidak cocok -> tolak, sign out, kembalikan ke layar Login Admin. Ini
+        // mencegah sembarang akun Google mendaftarkan MFA-nya sendiri lalu jadi admin.
+        async function handleGoogleAdminIntent() {
+            if (!supabaseClient) return;
+            let intent = null;
+            try { intent = sessionStorage.getItem('km_google_intent'); } catch (e) { /* abaikan */ }
+            if (intent !== 'admin') return;
+            try { sessionStorage.removeItem('km_google_intent'); } catch (e) { /* abaikan */ }
+
+            const { data: sessionData } = await supabaseClient.auth.getSession();
+            const session = sessionData?.session;
+            if (!session) return;
+            if (isAdminMode) return; // sudah aal2 (mis. lanjut proses MFA sebelumnya)
+
+            const email = (session.user?.email || '').trim().toLowerCase();
+            const allowed = ADMIN_EMAILS.some(e => e.trim().toLowerCase() === email);
+
+            if (!allowed) {
+                await supabaseClient.auth.signOut();
+                currentPublicUser = null;
+                showToast('Akun Google ini tidak terdaftar sebagai admin.', 'error');
+                await checkAdminAccess();
+                navigate('admin-evaluasi');
+                return;
+            }
+
+            // Email cocok dengan daftar admin -> pindah ke halaman admin, lalu lanjutkan
+            // seperti sesudah password benar (setup/verifikasi MFA).
+            navigate('admin-evaluasi');
+            await resolveMfaFlow();
         }
 
         async function publicUserLogout() {
@@ -2601,6 +2650,17 @@
                                     <p id="admin-login-error" class="text-xs text-rose-900 bg-white/70 rounded-lg px-3 py-2 hidden"></p>
 
                                     <button id="admin-login-btn" onclick="adminLogin()" class="w-full py-3 rounded-full bg-[#0b1440] hover:bg-[#101b57] text-white font-extrabold text-sm transition shadow-lg mt-1">Masuk</button>
+
+                                    <div class="flex items-center gap-3 pt-1">
+                                        <div class="flex-1 h-px bg-[#0b1440]/20"></div>
+                                        <span class="text-[10px] font-bold text-[#0b1440]/60 uppercase tracking-wide">atau</span>
+                                        <div class="flex-1 h-px bg-[#0b1440]/20"></div>
+                                    </div>
+
+                                    <button type="button" onclick="signInWithGoogle('admin')" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-full text-slate-800 bg-white hover:bg-slate-100 transition font-bold text-xs shadow-lg border border-slate-300">
+                                        ${googleIconSvg('w-4 h-4')} <span>Masuk dengan Google</span>
+                                    </button>
+                                    <p class="text-[10px] text-[#0b1440]/60 text-center px-2">Hanya akun Google yang terdaftar di daftar admin yang bisa masuk lewat cara ini.</p>
                                 </div>
                             </div>
                         </div>
@@ -3324,6 +3384,7 @@
             if (supabaseClient) {
                 supabaseClient.auth.onAuthStateChange(async () => {
                     await checkAdminAccess();
+                    await handleGoogleAdminIntent();
                     if (['evaluasi', 'permohonan', 'admin-evaluasi', 'admin-livechat', 'admin-permohonan'].includes(currentSection)) {
                         renderContent();
                     }
