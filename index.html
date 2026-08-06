@@ -853,7 +853,7 @@
                         ${helpStatusBadge(row.status)}
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
-                    ${row.admin_reply ? `<div class="mt-2 bg-slate-950/60 border border-slate-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin Instansi:</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
+                    ${row.admin_reply ? `<div class="mt-2 bg-amber-950/40 border border-amber-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin Instansi:</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
                     <p class="text-[10px] text-slate-600">Diajukan: ${new Date(row.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
 
                     <div id="permohonan-thread-${row.id}" class="space-y-2 pt-1"></div>
@@ -889,8 +889,8 @@
             container.innerHTML = data.map(m => {
                 const isAdmin = m.sender_role === 'admin';
                 return `
-                    <div class="rounded-lg p-2.5 border ${isAdmin ? 'bg-rose-950/30 border-rose-900/50' : 'bg-slate-950/60 border-slate-800'}">
-                        <p class="text-[10px] font-bold mb-0.5 ${isAdmin ? 'text-rose-300' : 'text-slate-400'}">${isAdmin ? 'Admin Instansi' : 'Anda'} &middot; ${new Date(m.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                    <div class="rounded-lg p-2.5 border ${isAdmin ? 'bg-amber-950/40 border-amber-800' : 'bg-amber-950/20 border-amber-900/40'}">
+                        <p class="text-[10px] font-bold mb-0.5 text-amber-400">${isAdmin ? 'Admin Instansi' : 'Anda'} &middot; ${new Date(m.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
                         <p class="text-xs text-slate-200 whitespace-pre-line">${escapeHtmlChat(m.message)}</p>
                     </div>`;
             }).join('');
@@ -981,7 +981,7 @@
                         ${helpStatusBadge(row.status)}
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
-                    ${row.admin_reply ? `<div class="bg-slate-950/60 border border-slate-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin (lama):</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
+                    ${row.admin_reply ? `<div class="bg-amber-950/40 border border-amber-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin (lama):</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
 
                     <div id="admin-permohonan-thread-${row.id}" class="space-y-2"></div>
 
