@@ -495,17 +495,20 @@
         // dikirim sebagai pesan pengunjung, lalu dicocokkan otomatis dengan "defaultFaqs"
         // (yang sudah dirangkum dari Layanan Helpdesk Nasional SRIKANDI - layanan.arsip.go.id/helpdesk/kb)
         // oleh sistem Asisten AI (lihat findBestKnowledgeMatch & buildAiAutoReplyText).
+        // Diperluas: satu tombol mewakili tiap KATEGORI FAQ (bukan hanya sebagian kecil topik
+        // login/TTE seperti sebelumnya), supaya seluruh cakupan Knowledge Base (defaultFaqs)
+        // terwakili secara merata. "question" tetap memakai teks pertanyaan FAQ apa adanya
+        // agar pencocokan otomatis oleh findBestKnowledgeMatch tetap akurat.
         const defaultQuickReplies = [
-            { id: 'qr-1', icon: 'key-round', label: 'Lupa password', question: 'Bagaimana cara login ke SRIKANDI jika lupa password?' },
-            { id: 'qr-2', icon: 'lock', label: 'Akun terkunci', question: 'Apa itu lockout/cooldown pada akun SRIKANDI dan bagaimana cara mengatasinya?' },
-            { id: 'qr-3', icon: 'shield-check', label: 'Kendala MFA/OTP', question: 'Kenapa Multi Factor Authentication (MFA) saya tidak bisa diaktifkan?' },
-            { id: 'qr-4', icon: 'file-signature', label: 'Lupa passphrase TTE', question: 'Di mana bisa mendapatkan atau mereset keyphrase/passphrase TTE jika lupa?' },
-            { id: 'qr-5', icon: 'qr-code', label: 'QR Code/PDF TTE merah', question: 'Kenapa QR Code, nomor, atau tanggal pada dokumen masih berwarna merah setelah proses TTE?' },
-            { id: 'qr-6', icon: 'hash', label: 'Penomoran surat otomatis', question: 'Bagaimana proses penomoran otomatis surat bekerja di SRIKANDI?' },
-            { id: 'qr-7', icon: 'inbox', label: 'Naskah tidak muncul', question: 'Naskah masuk yang saya input tidak muncul di daftar disposisi pimpinan, kenapa?' },
-            { id: 'qr-8', icon: 'wifi-off', label: 'Tidak bisa diakses/error 502', question: 'Muncul error 502/504 saat membuka naskah atau mengunggah lampiran, apa solusinya?' },
-            { id: 'qr-9', icon: 'user-plus', label: 'Cara ajukan akun SRIKANDI', question: 'Bagaimana prosedur pengajuan akun Administrator Instansi SRIKANDI bagi instansi yang belum pernah menggunakannya?' },
-            { id: 'qr-10', icon: 'scale', label: 'Dasar hukum SRIKANDI', question: 'Apa dasar hukum penerapan SRIKANDI?' },
+            { id: 'qr-1', icon: 'key-round', label: 'Login & Akun', question: 'Bagaimana cara login ke SRIKANDI jika lupa password?' },
+            { id: 'qr-2', icon: 'shield-check', label: 'MFA/OTP', question: 'Kenapa Multi Factor Authentication (MFA) saya tidak bisa diaktifkan?' },
+            { id: 'qr-3', icon: 'file-signature', label: 'Tanda Tangan Elektronik (TTE)', question: 'Di mana bisa mendapatkan atau mereset keyphrase/passphrase TTE jika lupa?' },
+            { id: 'qr-4', icon: 'inbox', label: 'Naskah Dinas & Disposisi', question: 'Naskah masuk yang saya input tidak muncul di daftar disposisi pimpinan, kenapa?' },
+            { id: 'qr-5', icon: 'hash', label: 'Penomoran Surat Otomatis', question: 'Bagaimana proses penomoran otomatis surat bekerja di SRIKANDI?' },
+            { id: 'qr-6', icon: 'wifi-off', label: 'Error Teknis/Akses', question: 'Muncul error 502/504 saat membuka naskah atau mengunggah lampiran, apa solusinya?' },
+            { id: 'qr-7', icon: 'scale', label: 'Kebijakan & Dasar Hukum', question: 'Apa dasar hukum penerapan SRIKANDI?' },
+            { id: 'qr-8', icon: 'user-plus', label: 'Pengajuan Akun & Bimtek', question: 'Bagaimana prosedur pengajuan akun Administrator Instansi SRIKANDI bagi instansi yang belum pernah menggunakannya?' },
+            { id: 'qr-9', icon: 'life-buoy', label: 'Bantuan & Kontak Admin', question: 'Bagaimana cara menghubungi Admin Instansi jika ada kendala teknis?' },
         ];
 
         // --- KONFIGURASI SUPABASE (Evaluasi Website) ---
@@ -1490,6 +1493,20 @@
             return 'malam';
         }
 
+        // --- DAFTAR TOPIK PERTANYAAN (DIKIRIM SAAT AWAL PERCAKAPAN) ---
+        // Ditampilkan sekali sebagai bagian dari balasan sapaan otomatis pertama, supaya
+        // pengunjung tahu topik-topik apa saja yang sudah "dikuasai" Asisten AI (diambil dari
+        // defaultQuickReplies). Dengan pengunjung mengetik ulang salah satu topik/pertanyaan di
+        // daftar ini (atau menekan tombol topik di atas kolom chat), pencocokan kata kunci pada
+        // findBestKnowledgeMatch jadi jauh lebih akurat dibanding pesan bebas yang ambigu.
+        function buildTopicListText() {
+            if (typeof defaultQuickReplies === 'undefined' || !defaultQuickReplies.length) return '';
+            const items = defaultQuickReplies
+                .map((q, i) => `${i + 1}. ${q.label}`)
+                .join('\n');
+            return `Berikut daftar topik pertanyaan yang bisa saya bantu jawab otomatis (bisa juga diketuk lewat tombol topik di atas kolom chat):\n\n${items}\n\nSilakan ketik topik/pertanyaan Anda sesuai daftar di atas agar jawaban otomatis yang saya berikan lebih tepat.`;
+        }
+
         function buildGreetingReply(userText) {
             const waktu = getTimeBasedGreetingWord();
             // Jika pengunjung memakai salam keagamaan, balas dengan salam yang senada.
@@ -1502,14 +1519,16 @@
             } else if (/om swastiastu/i.test(lower)) {
                 bukaSalam = 'Om Swastiastu.';
             }
-            return `${bukaSalam} 👋 Terima kasih telah menghubungi KABAS MEAN. Saya Asisten AI otomatis yang siap membantu pertanyaan awal Anda seputar SRIKANDI. Silakan sampaikan kendala atau pertanyaan Anda, nanti Admin Instansi akan segera mengambil alih untuk membantu lebih lanjut.`;
+            const daftarTopik = buildTopicListText();
+            return `${bukaSalam} 👋 Terima kasih telah menghubungi KABAS MEAN. Saya Asisten AI otomatis yang siap membantu pertanyaan awal Anda seputar SRIKANDI.${daftarTopik ? `\n\n${daftarTopik}` : ''}\n\nJika topik Anda tidak ada di daftar, silakan sampaikan saja kendala/pertanyaan Anda — Admin Instansi akan mengambil alih chat ini untuk membantu lebih lanjut.`;
         }
 
         function buildAiAutoReplyText(userText) {
             const tokenCount = tokenizeChatText(userText).length;
             const isGreeting = detectGreeting(userText);
 
-            // Sapaan murni (tanpa pertanyaan lain yang menyertainya) -> balas salam saja.
+            // Sapaan murni (tanpa pertanyaan lain yang menyertainya) -> balas salam sekaligus
+            // daftar topik pertanyaan supaya pengunjung tahu harus bertanya apa.
             if (isGreeting && tokenCount <= 2) {
                 return buildGreetingReply(userText);
             }
@@ -1524,7 +1543,9 @@
                 return `${sapaanAwal}Ini balasan otomatis dari Asisten AI KABAS MEAN:\n\n${match.text}\n\nJika masih ada yang perlu dibantu lebih lanjut, mohon tunggu sebentar — Admin Instansi akan segera mengambil alih percakapan ini secara langsung.`;
             }
 
-            return `${sapaanAwal}Pesan Anda sudah kami terima dan diteruskan ke Admin Instansi, mohon ditunggu sebentar — admin akan segera membalas secara langsung. Anda juga bisa memeriksa menu FAQ untuk jawaban cepat seputar SRIKANDI.`;
+            // Tidak ada data/FAQ yang cukup cocok dengan pesan pengunjung -> jangan menebak-nebak
+            // jawaban, cukup sampaikan bahwa Admin Instansi akan mengambil alih chat ini.
+            return `${sapaanAwal}Mohon maaf, saat ini saya belum menemukan jawaban otomatis yang sesuai untuk pertanyaan Anda. Admin Instansi akan mengambil alih chat ini untuk membantu Anda lebih lanjut.`;
         }
 
         async function maybeSendAiAutoReply(sessionId, userText) {
