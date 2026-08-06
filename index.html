@@ -78,30 +78,30 @@
             --sidebar-notch-bg: #ffffff;
         }
         .nav-active {
-            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
             color: #ffffff !important;
             font-weight: 700;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);
+            box-shadow: 0 6px 16px -4px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
             position: relative;
-            margin-right: -1rem;
-            padding-right: 2rem !important;
-            border-top-right-radius: 0.5rem !important;
-            border-bottom-right-radius: 0.5rem !important;
-            z-index: 1;
         }
-        /* Notch atas & bawah: membuat item menu aktif seolah "menyatu" dengan tepi sidebar,
-           mengikuti MODEL kartu dashboard pada gambar referensi (bukan warnanya). */
-        .nav-active::before, .nav-active::after {
+        /* Aksen garis vertikal di sisi kiri menu aktif, menggantikan notch putih lama
+           agar tampilan lebih bersih dan modern, konsisten dengan bentuk rounded-xl
+           tombol menu (tanpa perlu memotong sudut sidebar). */
+        .nav-active::before {
             content: '';
             position: absolute;
-            right: -1rem;
-            width: 1rem;
-            height: 1rem;
-            background: var(--sidebar-notch-bg);
-            pointer-events: none;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 55%;
+            background: #ffffff;
+            border-radius: 999px;
+            box-shadow: 0 0 6px rgba(255,255,255,0.7);
         }
-        .nav-active::before { top: -0.75rem; border-radius: 0 0 0.85rem 0; }
-        .nav-active::after { bottom: -0.75rem; border-radius: 0 0.85rem 0 0; }
+        .nav-active i[data-lucide] {
+            color: #ffffff !important;
+        }
         /* ================== TEKS RATA KIRI-KANAN (JUSTIFY) ==================
            Hanya diterapkan pada paragraf ISI KONTEN tiap menu, yaitu paragraf
            di dalam #content-container (Beranda, FAQ, Infografis, Video,
