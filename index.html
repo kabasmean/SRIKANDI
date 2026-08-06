@@ -559,6 +559,290 @@
             }
         }
 
+        // --- MASUK PENGGUNA DENGAN AKUN GOOGLE (SUPABASE AUTH) ---
+        // Memakai sesi Supabase Auth yang SAMA dengan login Admin, tapi dibedakan lewat level
+        // MFA (AAL): admin wajib mencapai aal2 (lihat checkAdminAccess), sedangkan pengunjung
+        // biasa yang masuk lewat Google tetap di aal1 (tidak pernah didaftarkan MFA), sehingga
+        // otomatis dianggap "Pengguna" biasa, bukan admin. Tidak perlu tabel/kolom tambahan
+        // untuk identitas dasar (nama, email, foto) karena semuanya sudah tersedia dari Google
+        // lewat data session.user.
+        //
+        // CARA MENGAKTIFKAN LOGIN GOOGLE DI SUPABASE (sekali setup):
+        //   1. Buka dashboard Supabase > Authentication > Providers > Google, aktifkan.
+        //   2. Buat OAuth Client ID di Google Cloud Console (APIs & Services > Credentials),
+        //      tipe "Web application". Tambahkan Authorized redirect URI sesuai yang ditampilkan
+        //      Supabase di halaman provider Google tadi (formatnya https://<project>.supabase.co/auth/v1/callback).
+        //   3. Salin Client ID & Client Secret dari Google Cloud Console ke kolom yang sama di
+        //      Supabase, lalu simpan.
+        //   4. Di Google Cloud Console, tambahkan juga URL website KABAS MEAN ke "Authorized
+        //      JavaScript origins" supaya proses redirect balik ke halaman ini berjalan lancar.
+        let currentPublicUser = null; // null = belum masuk; berisi objek user Supabase jika sudah masuk via Google
+
+        async function signInWithGoogle() {
+            if (!supabaseClient) { showToast('Fitur masuk dengan Google belum terkonfigurasi.', 'error'); return; }
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin + window.location.pathname }
+            });
+            if (error) showToast('Gagal memulai proses masuk: ' + error.message, 'error');
+        }
+
+        async function publicUserLogout() {
+            if (!supabaseClient) return;
+            await supabaseClient.auth.signOut();
+            currentPublicUser = null;
+            await checkAdminAccess();
+            navigate('beranda');
+            showToast('Anda telah keluar.', 'success');
+        }
+
+        function googleIconSvg(cls) {
+            return `<svg class="${cls}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+                <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
+                <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
+                <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+            </svg>`;
+        }
+
+        function googleLoginButtonHtml(extraClass) {
+            return `<button onclick="signInWithGoogle()" class="flex items-center justify-center gap-2 ${extraClass || ''} py-2.5 rounded-xl text-slate-800 bg-white hover:bg-slate-100 transition font-bold text-xs shadow-lg border border-slate-300">
+                ${googleIconSvg('w-4 h-4')} <span>Masuk dengan Google</span>
+            </button>`;
+        }
+
+        function updateUserAuthUI() {
+            const loginBtn = document.getElementById('user-login-btn-wrap');
+            const profileBlock = document.getElementById('user-profile-block');
+            if (!loginBtn || !profileBlock) return;
+            if (currentPublicUser && !isAdminMode) {
+                loginBtn.classList.add('hidden');
+                profileBlock.classList.remove('hidden');
+                profileBlock.classList.add('flex');
+                const meta = currentPublicUser.user_metadata || {};
+                const nameEl = document.getElementById('user-display-name');
+                const avatarEl = document.getElementById('user-avatar-img');
+                if (nameEl) nameEl.textContent = meta.full_name || meta.name || currentPublicUser.email || 'Pengguna';
+                if (avatarEl) {
+                    if (meta.avatar_url || meta.picture) { avatarEl.src = meta.avatar_url || meta.picture; avatarEl.classList.remove('hidden'); }
+                    else avatarEl.classList.add('hidden');
+                }
+            } else {
+                loginBtn.classList.remove('hidden');
+                profileBlock.classList.add('hidden');
+                profileBlock.classList.remove('flex');
+            }
+        }
+
+        function renderUserGate(renderPage) {
+            if (currentPublicUser || isAdminMode) { renderPage(); return; }
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="max-w-md mx-auto py-14 text-center space-y-5">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto">
+                        <i data-lucide="lock-keyhole" class="w-8 h-8 text-amber-400"></i>
+                    </div>
+                    <h2 class="text-xl font-extrabold text-white">Masuk Diperlukan</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Halaman ini hanya dapat diakses setelah Anda masuk menggunakan akun Google. Ini membantu kami mengaitkan evaluasi/permohonan bantuan Anda dengan identitas yang jelas, sehingga bisa dipantau dan dilacak statusnya.</p>
+                    ${googleLoginButtonHtml('mx-auto px-5')}
+                </div>`;
+            lucide.createIcons();
+        }
+
+        function openLoginRequiredModal() {
+            const modal = document.getElementById('login-required-modal');
+            if (modal) { modal.classList.remove('hidden'); lucide.createIcons(); }
+        }
+        function closeLoginRequiredModal() {
+            const modal = document.getElementById('login-required-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // --- PERMOHONAN BANTUAN (SUPABASE) ---
+        // Fitur ini memungkinkan pengguna yang sudah masuk (Google) mengajukan permohonan
+        // bantuan lewat website, lalu memantau/melacak sendiri status permohonannya. Admin
+        // Instansi dapat melihat seluruh permohonan yang masuk dan memperbarui statusnya lewat
+        // halaman "Admin Permohonan" (diakses dari dashboard Admin Evaluasi).
+        //
+        // Buat dulu tabel "help_requests" di Supabase (SQL Editor) agar fitur ini berfungsi:
+        //
+        //   create table help_requests (
+        //     id bigint generated always as identity primary key,
+        //     user_id uuid not null references auth.users(id) on delete cascade,
+        //     user_email text,
+        //     user_name text,
+        //     subject text not null,
+        //     message text not null,
+        //     status text not null default 'menunggu', -- 'menunggu' | 'diproses' | 'selesai'
+        //     admin_reply text,
+        //     created_at timestamptz not null default now(),
+        //     updated_at timestamptz not null default now()
+        //   );
+        //   alter table help_requests enable row level security;
+        //   create policy "Pengguna bisa lihat permohonan sendiri" on help_requests for select using (auth.uid() = user_id);
+        //   create policy "Pengguna bisa ajukan permohonan" on help_requests for insert with check (auth.uid() = user_id);
+        //   create policy "Admin bisa lihat semua permohonan" on help_requests for select using ((select auth.jwt()->>'aal') = 'aal2');
+        //   create policy "Admin bisa perbarui status/balasan" on help_requests for update using ((select auth.jwt()->>'aal') = 'aal2');
+        //
+        const HELP_STATUS_LABELS = { menunggu: 'Menunggu Diproses', diproses: 'Sedang Diproses', selesai: 'Selesai' };
+        const HELP_STATUS_COLORS = { menunggu: 'bg-amber-950/40 text-amber-300 border-amber-800', diproses: 'bg-sky-950/40 text-sky-300 border-sky-800', selesai: 'bg-emerald-950/40 text-emerald-300 border-emerald-800' };
+
+        function helpStatusBadge(status) {
+            const s = HELP_STATUS_LABELS[status] ? status : 'menunggu';
+            return `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border ${HELP_STATUS_COLORS[s]}">${HELP_STATUS_LABELS[s]}</span>`;
+        }
+
+        function renderPermohonanPage() {
+            return `
+                <div class="space-y-6" id="permohonan-area">
+                    <div class="border-b border-slate-800/80 pb-4">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Lacak Permohonan Bantuan
+                        </h2>
+                        <p class="text-sm text-slate-400 leading-relaxed mt-2">Ajukan permohonan bantuan seputar SRIKANDI di bawah ini, lalu pantau status penanganannya kapan saja. Anda akan tetap dapat menggunakan <strong>Live Chat</strong> untuk percakapan yang lebih cepat.</p>
+                    </div>
+
+                    <form onsubmit="submitPermohonan(event)" class="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 space-y-3.5">
+                        <p class="text-xs font-bold uppercase tracking-wide text-amber-400">Ajukan Permohonan Baru</p>
+                        <input id="permohonan-subject" required maxlength="120" type="text" placeholder="Judul singkat kendala/permohonan" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        <textarea id="permohonan-message" required maxlength="2000" rows="4" placeholder="Jelaskan detail kendala atau permohonan bantuan Anda..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                        <button type="submit" id="permohonan-submit-btn" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i> Ajukan Permohonan
+                        </button>
+                    </form>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-xs font-bold uppercase tracking-wide text-slate-400">Riwayat Permohonan Saya</p>
+                            <button onclick="loadMyPermohonan()" class="text-[10px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Muat Ulang</button>
+                        </div>
+                        <div id="permohonan-list" class="space-y-3">
+                            <p class="text-xs text-slate-500 text-center py-6">Memuat permohonan...</p>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function submitPermohonan(event) {
+            event.preventDefault();
+            if (!supabaseClient || !currentPublicUser) { showToast('Silakan masuk terlebih dahulu.', 'error'); return; }
+            const subjectEl = document.getElementById('permohonan-subject');
+            const messageEl = document.getElementById('permohonan-message');
+            const btn = document.getElementById('permohonan-submit-btn');
+            const subject = subjectEl.value.trim();
+            const message = messageEl.value.trim();
+            if (!subject || !message) return;
+
+            btn.disabled = true; btn.classList.add('opacity-60');
+            const meta = currentPublicUser.user_metadata || {};
+            const { error } = await supabaseClient.from('help_requests').insert([{
+                user_id: currentPublicUser.id,
+                user_email: currentPublicUser.email,
+                user_name: meta.full_name || meta.name || currentPublicUser.email,
+                subject, message, status: 'menunggu'
+            }]);
+            btn.disabled = false; btn.classList.remove('opacity-60');
+
+            if (error) { showToast('Gagal mengirim permohonan: ' + error.message, 'error'); return; }
+            showToast('Permohonan bantuan berhasil diajukan.', 'success');
+            subjectEl.value = ''; messageEl.value = '';
+            loadMyPermohonan();
+        }
+
+        async function loadMyPermohonan() {
+            const list = document.getElementById('permohonan-list');
+            if (!list) return;
+            if (!supabaseClient || !currentPublicUser) { list.innerHTML = `<p class="text-xs text-rose-400 text-center py-6">Permohonan belum dapat dimuat.</p>`; return; }
+
+            const { data, error } = await supabaseClient
+                .from('help_requests')
+                .select('*')
+                .eq('user_id', currentPublicUser.id)
+                .order('created_at', { ascending: false });
+
+            if (error) { list.innerHTML = `<p class="text-xs text-rose-400 text-center py-6">Gagal memuat riwayat permohonan.</p>`; return; }
+            if (!data || data.length === 0) { list.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Anda belum pernah mengajukan permohonan bantuan.</p>`; return; }
+
+            list.innerHTML = data.map(row => `
+                <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-2">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-sm font-bold text-slate-100">${row.subject}</p>
+                        ${helpStatusBadge(row.status)}
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
+                    ${row.admin_reply ? `<div class="mt-2 bg-slate-950/60 border border-slate-800 rounded-lg p-3"><p class="text-[10px] font-bold text-amber-400 mb-1">Balasan Admin Instansi:</p><p class="text-xs text-slate-300 whitespace-pre-line">${row.admin_reply}</p></div>` : ''}
+                    <p class="text-[10px] text-slate-600">Diajukan: ${new Date(row.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                </div>`).join('');
+        }
+
+        function renderAdminPermohonan() {
+            return `
+                <div class="space-y-6" id="admin-permohonan-area">
+                    <div class="border-b border-slate-800/80 pb-4 flex flex-wrap justify-between items-center gap-3">
+                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+                            <span class="w-1.5 h-6 bg-rose-500 rounded-full inline-block"></span> Admin &middot; Permohonan Bantuan
+                        </h2>
+                        <div class="flex gap-2 no-print flex-wrap">
+                            <button onclick="navigate('admin-evaluasi')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="star" class="w-3.5 h-3.5"></i> Evaluasi</button>
+                            <button onclick="navigate('admin-livechat')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="message-circle-more" class="w-3.5 h-3.5"></i> Live Chat</button>
+                            <button onclick="loadAdminPermohonanData()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang</button>
+                            <button onclick="adminLogout()" class="px-3 py-2 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-rose-900/50"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar</button>
+                        </div>
+                    </div>
+                    <div id="admin-permohonan-list" class="space-y-3">
+                        <p class="text-xs text-slate-500 text-center py-6">Memuat data...</p>
+                    </div>
+                </div>`;
+        }
+
+        async function loadAdminPermohonanData() {
+            const list = document.getElementById('admin-permohonan-list');
+            if (!list) return;
+            if (!supabaseClient) { list.innerHTML = `<p class="text-xs text-rose-400 text-center py-6">Database belum terkonfigurasi.</p>`; return; }
+
+            const { data, error } = await supabaseClient
+                .from('help_requests')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) { list.innerHTML = `<p class="text-xs text-rose-400 text-center py-6">Gagal memuat data: ${error.message}</p>`; return; }
+            if (!data || data.length === 0) { list.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Belum ada permohonan bantuan yang masuk.</p>`; return; }
+
+            list.innerHTML = data.map(row => `
+                <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-2.5">
+                    <div class="flex items-start justify-between gap-3 flex-wrap">
+                        <div>
+                            <p class="text-sm font-bold text-slate-100">${row.subject}</p>
+                            <p class="text-[10px] text-slate-500">${row.user_name || ''} &middot; ${row.user_email || ''}</p>
+                        </div>
+                        ${helpStatusBadge(row.status)}
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
+                    <textarea id="admin-reply-${row.id}" placeholder="Tulis balasan untuk pengguna (opsional)..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500 resize-none" rows="2">${row.admin_reply || ''}</textarea>
+                    <div class="flex flex-wrap gap-2 items-center">
+                        <select id="admin-status-${row.id}" class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500">
+                            ${Object.keys(HELP_STATUS_LABELS).map(s => `<option value="${s}" ${row.status === s ? 'selected' : ''}>${HELP_STATUS_LABELS[s]}</option>`).join('')}
+                        </select>
+                        <button onclick="updatePermohonanStatus(${row.id})" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] font-bold rounded-lg">Simpan</button>
+                        <p class="text-[10px] text-slate-600 ml-auto">Diajukan: ${new Date(row.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function updatePermohonanStatus(id) {
+            if (!supabaseClient) return;
+            const statusEl = document.getElementById('admin-status-' + id);
+            const replyEl = document.getElementById('admin-reply-' + id);
+            const { error } = await supabaseClient.from('help_requests').update({
+                status: statusEl.value,
+                admin_reply: replyEl.value.trim() || null,
+                updated_at: new Date().toISOString()
+            }).eq('id', id);
+            if (error) { showToast('Gagal menyimpan: ' + error.message, 'error'); return; }
+            showToast('Status permohonan diperbarui.', 'success');
+            loadAdminPermohonanData();
+        }
+
         // --- LIVE CHAT (SUPABASE REALTIME) ---
         // Buat dulu tabel "live_chat_messages" di Supabase (SQL Editor) agar fitur ini berfungsi:
         //
@@ -715,6 +999,10 @@
         }
 
         async function openLiveChat() {
+            if (!currentPublicUser && !isAdminMode) {
+                openLoginRequiredModal();
+                return;
+            }
             document.getElementById('livechat-panel').classList.remove('hidden');
             document.getElementById('livechat-backdrop').classList.remove('hidden');
             const fab = document.getElementById('livechat-fab');
@@ -1158,6 +1446,11 @@
                 <div class="mt-4"></div>
                 <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
                     <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Evaluasi Website</span>
+                    <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
+                </button>
+                <button onclick="navigate('permohonan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-permohonan">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Lacak Permohonan Bantuan</span>
+                    <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
                 </button>
                 <!-- Menu "Admin Evaluasi" dan "Admin Live Chat" SENGAJA tidak ditampilkan
                      di sidebar, termasuk saat admin sudah login, supaya pengunjung biasa
@@ -1167,6 +1460,24 @@
                      Chat lewat tombol mengambang "adminchat-fab" di kanan bawah. -->
 
                 <div class="pt-4 no-print pb-6">
+                    <div id="user-login-btn-wrap" class="mb-2.5">
+                        <button onclick="signInWithGoogle()" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-slate-800 bg-white hover:bg-slate-100 transition font-bold text-xs shadow-lg border border-slate-300">
+                            <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+                                <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
+                                <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
+                                <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+                            </svg>
+                            <span>Masuk dengan Google</span>
+                        </button>
+                    </div>
+                    <div id="user-profile-block" class="hidden items-center justify-between gap-2 w-full px-3 py-2 rounded-xl bg-slate-800/60 border border-slate-700 mb-2.5">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <img id="user-avatar-img" src="" class="w-7 h-7 rounded-full border border-slate-600 flex-shrink-0 hidden">
+                            <span id="user-display-name" class="text-[11px] font-bold text-slate-200 truncate"></span>
+                        </div>
+                        <button onclick="publicUserLogout()" title="Keluar" class="text-slate-400 hover:text-rose-400 flex-shrink-0 p-1"><i data-lucide="log-out" class="w-3.5 h-3.5"></i></button>
+                    </div>
                     <button onclick="openLiveChat()" class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 transition font-bold text-xs shadow-lg shadow-emerald-600/10 mb-2.5">
                         <i data-lucide="message-circle-more" class="w-4 h-4"></i> <span>Live Chat</span>
                         <span id="livechat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
@@ -1653,10 +1964,28 @@
             const container = document.getElementById('content-container');
             if (currentSection === 'mentors') { container.innerHTML = renderMentorsCRUD(); lucide.createIcons(); return; }
             if (currentSection === 'evaluasi') {
-                container.innerHTML = renderEvaluasiForm();
-                lucide.createIcons();
-                ['kemudahan', 'tampilan', 'konten', 'layanan'].forEach(updateStarUI);
-                loadEvaluasiSummary();
+                renderUserGate(() => {
+                    container.innerHTML = renderEvaluasiForm();
+                    lucide.createIcons();
+                    ['kemudahan', 'tampilan', 'konten', 'layanan'].forEach(updateStarUI);
+                    loadEvaluasiSummary();
+                });
+                return;
+            }
+            if (currentSection === 'permohonan') {
+                renderUserGate(() => {
+                    container.innerHTML = renderPermohonanPage();
+                    lucide.createIcons();
+                    loadMyPermohonan();
+                });
+                return;
+            }
+            if (currentSection === 'admin-permohonan') {
+                renderAdminGate(() => {
+                    container.innerHTML = renderAdminPermohonan();
+                    lucide.createIcons();
+                    loadAdminPermohonanData();
+                });
                 return;
             }
             if (currentSection === 'faq') { container.innerHTML = renderFaqSection(); lucide.createIcons(); return; }
@@ -2084,12 +2413,18 @@
                 if (data?.session) {
                     const { data: aalData } = await supabaseClient.auth.mfa.getAuthenticatorAssuranceLevel();
                     isAdminMode = aalData?.currentLevel === 'aal2';
+                    // Sesi yang belum mencapai aal2 (tidak ada MFA terdaftar) dianggap sebagai
+                    // pengguna biasa yang masuk lewat Google, bukan admin.
+                    currentPublicUser = isAdminMode ? null : data.session.user;
                 } else {
                     isAdminMode = false;
+                    currentPublicUser = null;
                 }
             } else {
                 isAdminMode = false;
+                currentPublicUser = null;
             }
+            updateUserAuthUI();
 
             // Menu "Admin Evaluasi" dan "Admin Live Chat" sengaja TIDAK pernah dimunculkan
             // di sidebar, termasuk saat isAdminMode true. Admin mengakses dashboard lewat
@@ -2384,7 +2719,8 @@
                         <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
                             <span class="w-1.5 h-6 bg-rose-500 rounded-full inline-block"></span> Admin &middot; Data Evaluasi
                         </h2>
-                        <div class="flex gap-2 no-print">
+                        <div class="flex gap-2 no-print flex-wrap">
+                            <button onclick="navigate('admin-permohonan')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> Permohonan Bantuan</button>
                             <button onclick="loadAdminEvaluasiData()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang</button>
                             <button onclick="exportEvaluasiCSV()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-slate-700"><i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor CSV</button>
                             <button onclick="adminLogout()" class="px-3 py-2 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-rose-900/50"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar</button>
@@ -2981,6 +3317,18 @@
 
             liveChatSessionId = getLiveChatSessionId();
             subscribeLiveChat();
+
+            // Menangani perubahan status login (termasuk saat pengguna baru kembali dari
+            // proses redirect Google OAuth) supaya UI (blok profil, halaman terkunci) selalu
+            // sinkron tanpa perlu memuat ulang halaman secara manual.
+            if (supabaseClient) {
+                supabaseClient.auth.onAuthStateChange(async () => {
+                    await checkAdminAccess();
+                    if (['evaluasi', 'permohonan', 'admin-evaluasi', 'admin-livechat', 'admin-permohonan'].includes(currentSection)) {
+                        renderContent();
+                    }
+                });
+            }
         });
     </script>
 
@@ -2994,6 +3342,29 @@
         <i data-lucide="message-square-more" class="w-5 h-5 text-white"></i>
         <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
+
+    <!-- MODAL "MASUK DIPERLUKAN": muncul saat pengunjung yang belum masuk mencoba membuka
+         Live Chat (fitur Evaluasi & Lacak Permohonan memakai renderUserGate langsung di
+         halaman kontennya, bukan modal ini). -->
+    <div id="login-required-modal" class="hidden fixed inset-0 z-[90] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto">
+                <i data-lucide="lock-keyhole" class="w-7 h-7 text-amber-400"></i>
+            </div>
+            <h3 class="text-white font-extrabold text-lg">Masuk Diperlukan</h3>
+            <p class="text-slate-400 text-xs leading-relaxed">Live Chat hanya dapat digunakan setelah Anda masuk menggunakan akun Google.</p>
+            <button onclick="closeLoginRequiredModal(); signInWithGoogle();" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-slate-800 bg-white hover:bg-slate-100 transition font-bold text-xs shadow-lg border border-slate-300">
+                <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+                    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
+                    <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
+                    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+                </svg>
+                <span>Masuk dengan Google</span>
+            </button>
+            <button onclick="closeLoginRequiredModal()" class="w-full py-2 text-slate-500 hover:text-slate-300 text-xs font-semibold">Nanti saja</button>
+        </div>
+    </div>
 
     <!-- Tombol "km-btn" mengambang di pojok kanan atas sudah DIHAPUS. Akses admin kini
          disematkan pada klik logo situs saja (#site-logo-container / #mobile-logo-wrapper),
