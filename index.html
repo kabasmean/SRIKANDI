@@ -51,9 +51,47 @@
             font-family: 'Arima Madurai', cursive;
         }
         .dynamic-site-name {
-            font-family: 'Bobogo', sans-serif;
+            font-family: 'Playfair Display', 'Bobogo', serif;
+            font-weight: 800;
             font-size: 1.35em;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.045em;
+            background: linear-gradient(135deg, #fde68a 0%, #f59e0b 45%, #b45309 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+        }
+        /* Judul utama di header sidebar sedikit lebih besar & dengan aksen garis emas
+           tipis di bawahnya, supaya terasa seperti "logotype" resmi, bukan sekadar teks
+           biasa. Elemen aksen dibuat lewat ::after agar tidak perlu markup tambahan. */
+        h1.dynamic-site-name {
+            font-size: 1.7em;
+            line-height: 1.15;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.35rem;
+        }
+        h1.dynamic-site-name::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 46%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+            border-radius: 999px;
+        }
+        /* Mode terang: gradasi emas tetap kontras di atas latar putih/damask, dibuat
+           sedikit lebih gelap/pekat agar keterbacaannya tetap tinggi. */
+        html.light-mode .dynamic-site-name {
+            background: linear-gradient(135deg, #d97706 0%, #92400e 55%, #78350f 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.4));
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -77,11 +115,12 @@
         html.light-mode {
             --sidebar-notch-bg: #ffffff;
         }
-        .nav-active {
-            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        .nav-active,
+        .nav-active:hover {
+            background: #ef4444;
             color: #ffffff !important;
             font-weight: 700;
-            box-shadow: 0 6px 16px -4px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+            box-shadow: none;
             position: relative;
         }
         /* Aksen garis vertikal di sisi kiri menu aktif, menggantikan notch putih lama
@@ -97,9 +136,28 @@
             height: 55%;
             background: #ffffff;
             border-radius: 999px;
-            box-shadow: 0 0 6px rgba(255,255,255,0.7);
+            box-shadow: none;
         }
-        .nav-active i[data-lucide] {
+        .nav-active i[data-lucide],
+        .nav-active:hover i[data-lucide] {
+            color: #ffffff !important;
+        }
+        .nav-active span {
+            color: #ffffff !important;
+        }
+        /* PERBAIKAN: menu aktif berubah jadi putih polos (ikon & teks putih di atas
+           latar hampir putih) saat kursor lewat, akibat aturan hover mode terang di
+           bawah (html.light-mode ... :hover) yang menimpa latar merah menu aktif.
+           Selector di sini sengaja disertai #sidebar (ID) supaya spesifisitasnya
+           lebih tinggi dan pasti menang melawan aturan-aturan tersebut, baik di mode
+           gelap maupun mode terang, sehingga hover menu aktif konsisten jadi biru
+           cerah dengan teks/ikon tetap putih dan terbaca. */
+        #sidebar .nav-active:hover {
+            background: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+        #sidebar .nav-active:hover i[data-lucide],
+        #sidebar .nav-active:hover span {
             color: #ffffff !important;
         }
         /* ================== TEKS RATA KIRI-KANAN (JUSTIFY) ==================
@@ -181,6 +239,13 @@
         html.light-mode .bg-slate-500,
         html.light-mode .hover\:bg-slate-800\/60:hover,
         html.light-mode .hover\:bg-slate-700:hover { background-color: #eef2f7 !important; }
+
+        /* PERBAIKAN: di mode terang, latar hover menu sidebar berubah jadi terang (#eef2f7)
+           lewat aturan di atas, tapi warna teks/ikon menu (class Tailwind hover:text-white)
+           masih dipaksa putih sehingga tulisan & ikon jadi tidak kelihatan saat kursor
+           berada di atasnya. Aturan ini menimpa warna teks hover khusus di dalam sidebar
+           supaya tetap gelap (kontras) saat mode terang aktif. */
+        html.light-mode #sidebar .hover\:text-white:hover { color: #0f172a !important; }
 
         /* Border gelap -> border terang */
         html.light-mode .border-slate-950,
@@ -1093,11 +1158,38 @@
         //   yang mencocokkan pesan pengunjung dengan data FAQ (lihat defaultFaqs di bawah). Begitu
         //   Admin Instansi membalas secara manual lewat menu Admin Live Chat, otomatisasi AI untuk
         //   sesi tersebut berhenti dan percakapan sepenuhnya diambil alih oleh admin.
+        //
+        // UNTUK FITUR SUB TOPIK LIVE CHAT (supaya pengunjung tidak "kehilangan arah" saat
+        // bertanya, dan Admin Instansi langsung tahu konteks tiap percakapan):
+        //   Tambahkan kolom "topic" pada tabel live_chat_messages:
+        //      alter table live_chat_messages add column topic text;
+        //   Cara kerja: sebelum mulai mengetik, pengunjung diminta memilih salah satu sub topik
+        //   (lihat daftar liveChatTopics di bawah). Sub topik yang dipilih akan disematkan
+        //   (pinned) di bagian atas jendela chat selama sesi berlangsung, ikut disimpan pada
+        //   setiap pesan yang dikirim, dan ditampilkan sebagai label di Admin Live Chat supaya
+        //   percakapan tetap terarah dan admin bisa langsung paham inti pertanyaannya.
         const AI_AUTOREPLY_ENABLED = true; // set ke false untuk mematikan balasan otomatis AI
         let liveChatSessionId = null;
         let liveChatChannel = null;
         let liveChatUnread = 0;
         let liveChatPendingImage = null;
+        let liveChatTopic = null;
+        let liveChatTopicPickerOpen = false;
+
+        // Daftar sub topik live chat. Sengaja memakai kategori yang sama dengan defaultQuickReplies
+        // (dirangkum dari Knowledge Base Layanan Helpdesk Nasional SRIKANDI) supaya konsisten,
+        // ditambah opsi "Topik Lainnya" untuk pertanyaan di luar kategori tersebut.
+        const liveChatTopics = [
+            { id: 'topik-login', icon: 'key-round', label: 'Login & Akun' },
+            { id: 'topik-mfa', icon: 'shield-check', label: 'MFA/OTP' },
+            { id: 'topik-tte', icon: 'file-signature', label: 'Tanda Tangan Elektronik (TTE)' },
+            { id: 'topik-naskah', icon: 'inbox', label: 'Naskah Dinas & Disposisi' },
+            { id: 'topik-nomor', icon: 'hash', label: 'Penomoran Surat' },
+            { id: 'topik-error', icon: 'wifi-off', label: 'Error Teknis/Akses' },
+            { id: 'topik-kebijakan', icon: 'scale', label: 'Kebijakan & Dasar Hukum' },
+            { id: 'topik-akun-bimtek', icon: 'user-plus', label: 'Pengajuan Akun & Bimtek' },
+            { id: 'topik-lain', icon: 'help-circle', label: 'Topik Lainnya' },
+        ];
         const CHAT_IMAGE_BUCKET = 'chat-attachments';
         const CHAT_IMAGE_MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -1182,6 +1274,97 @@
             return !!panel && !panel.classList.contains('hidden');
         }
 
+        // --- SUB TOPIK LIVE CHAT ---
+        // Topik dipilih per sesi (disimpan di localStorage per session_id) supaya tetap
+        // sama walau panel chat ditutup lalu dibuka lagi, tapi bisa diganti kapan saja.
+        function getLiveChatTopicStorageKey() {
+            return 'kabasmean_chat_topic_' + (liveChatSessionId || 'default');
+        }
+
+        function loadStoredLiveChatTopic() {
+            try {
+                const savedId = localStorage.getItem(getLiveChatTopicStorageKey());
+                liveChatTopic = liveChatTopics.find(t => t.id === savedId) || null;
+            } catch (e) {
+                liveChatTopic = null;
+            }
+        }
+
+        function renderLiveChatTopicBar() {
+            const bar = document.getElementById('livechat-topic-bar');
+            if (!bar) return;
+
+            if (!liveChatTopic || liveChatTopicPickerOpen) {
+                // Belum ada topik dipilih (atau pengunjung sedang mengganti topik): tampilkan
+                // pilihan sub topik supaya pengunjung menentukan arah pertanyaan dulu.
+                bar.innerHTML = `
+                    <p class="text-[9px] font-bold uppercase tracking-wide text-amber-400 mb-1.5 px-0.5 flex items-center gap-1">
+                        <i data-lucide="signpost" class="w-3 h-3"></i> Pilih topik pertanyaan Anda dulu
+                    </p>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${liveChatTopics.map(t => `
+                            <button type="button" onclick="selectLiveChatTopic('${t.id}')"
+                                class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-800 hover:bg-amber-600 border border-slate-700 hover:border-amber-500 text-slate-200 hover:text-white text-[10px] font-medium transition">
+                                <i data-lucide="${t.icon || 'help-circle'}" class="w-3 h-3 flex-shrink-0"></i>${t.label}
+                            </button>`).join('')}
+                    </div>`;
+            } else {
+                // Topik sudah dipilih: sematkan (pin) di atas kolom chat sebagai pengingat arah
+                // pembahasan, lengkap dengan tombol untuk menggantinya.
+                bar.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="flex items-center gap-1.5 text-[10px] font-bold text-amber-300">
+                            <i data-lucide="${liveChatTopic.icon || 'help-circle'}" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                            Topik: ${liveChatTopic.label}
+                        </span>
+                        <button type="button" onclick="changeLiveChatTopic()" class="text-[9px] font-bold text-slate-400 hover:text-amber-300 flex items-center gap-1 flex-shrink-0">
+                            <i data-lucide="repeat" class="w-3 h-3"></i> Ganti
+                        </button>
+                    </div>`;
+            }
+            lucide.createIcons();
+        }
+
+        async function selectLiveChatTopic(id) {
+            const topic = liveChatTopics.find(t => t.id === id);
+            if (!topic) return;
+            const isChange = liveChatTopicPickerOpen && liveChatTopic;
+            liveChatTopic = topic;
+            liveChatTopicPickerOpen = false;
+            try { localStorage.setItem(getLiveChatTopicStorageKey(), topic.id); } catch (e) { /* diamkan */ }
+            renderLiveChatTopicBar();
+
+            // Catat perubahan/pemilihan topik sebagai pesan singkat di riwayat percakapan,
+            // supaya Admin Instansi juga melihat kapan & ke topik apa arah pertanyaan berubah.
+            if (supabaseClient && liveChatSessionId) {
+                const visitorMeta = (currentPublicUser && currentPublicUser.user_metadata) || {};
+                const visitorSenderName = currentPublicUser
+                    ? (visitorMeta.full_name || visitorMeta.name || currentPublicUser.email || 'Pengunjung')
+                    : 'Pengunjung';
+                const { error } = await supabaseClient.from('live_chat_messages').insert({
+                    session_id: liveChatSessionId,
+                    sender_name: visitorSenderName,
+                    message: (isChange ? '🔀 Mengganti topik menjadi: ' : '📌 Topik dipilih: ') + topic.label,
+                    image_url: null,
+                    is_admin: false,
+                    topic: topic.id
+                });
+                if (error) {
+                    // Kemungkinan besar kolom "topic" belum ditambahkan di Supabase, lewati diam-diam.
+                    console.error('Gagal mencatat pilihan topik (pastikan kolom topic sudah dibuat):', error);
+                }
+                loadLiveChatMessages();
+            }
+
+            const input = document.getElementById('livechat-input');
+            if (input) setTimeout(() => input.focus(), 100);
+        }
+
+        function changeLiveChatTopic() {
+            liveChatTopicPickerOpen = true;
+            renderLiveChatTopicBar();
+        }
+
         function playNotifySound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1224,6 +1407,9 @@
 
             liveChatUnread = 0;
             updateLiveChatBadge();
+            loadStoredLiveChatTopic();
+            liveChatTopicPickerOpen = false;
+            renderLiveChatTopicBar();
             const existingMessages = await loadLiveChatMessages();
             if (existingMessages.length === 0) {
                 await sendInitialAiGreetingIfNeeded();
@@ -1395,7 +1581,8 @@
                 sender_name: visitorSenderName,
                 message: text,
                 image_url: imageUrl,
-                is_admin: false
+                is_admin: false,
+                topic: liveChatTopic ? liveChatTopic.id : null
             });
             if (error) {
                 console.error('Gagal mengirim pesan:', error);
@@ -1778,6 +1965,11 @@
                 <button type="button" onclick="toggleLiveChatQuickReplies()" aria-label="Tampilkan/Sembunyikan Topik Cepat" title="Topik Cepat" class="text-white/80 hover:text-white p-1 mr-0.5"><i data-lucide="list-checks" class="w-[18px] h-[18px]"></i></button>
                 <button onclick="closeLiveChat()" aria-label="Tutup Live Chat" title="Tutup" class="text-white/80 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
+
+            <!-- SUB TOPIK: pengunjung memilih arah pertanyaan sebelum mengetik, lalu topik yang
+                 dipilih disematkan (pin) di sini selama sesi berlangsung agar percakapan tetap
+                 terarah dan mudah dipahami konteksnya oleh Admin Instansi. -->
+            <div id="livechat-topic-bar" class="flex-shrink-0 border-b border-slate-800 bg-slate-900/60 px-3 pt-2.5 pb-2"></div>
 
             <div id="livechat-messages" class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-950/40">
                 <div class="text-center text-[10px] text-slate-500 py-4">Memuat percakapan...</div>
@@ -3283,6 +3475,7 @@
                                 <div>
                                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Percakapan Aktif</p>
                                     <p id="admin-chat-thread-visitor-name" class="text-xs font-bold text-slate-200 mt-0.5"></p>
+                                    <p id="admin-chat-thread-topic" class="hidden items-center gap-1 text-[9px] font-bold text-amber-300 mt-1"></p>
                                 </div>
                                 <button onclick="confirmDeleteChatSession(adminSelectedSession)" class="px-2.5 py-1.5 bg-rose-950/40 hover:bg-rose-900/50 text-rose-300 text-[10px] font-bold rounded-lg flex items-center gap-1 border border-rose-900/50"><i data-lucide="trash-2" class="w-3 h-3"></i> Hapus Percakapan</button>
                             </div>
@@ -3344,6 +3537,10 @@
                 // Nama pengunjung diambil dari pesan terakhir milik pengunjung (bukan admin/bot),
                 // karena kolom sender_name pada baris admin selalu berisi "Admin Instansi".
                 const lastVisitorRow = [...rows].reverse().find(r => !r.is_admin);
+                // Ambil sub topik TERBARU yang pernah dipilih pengunjung pada sesi ini (bisa berubah
+                // di tengah percakapan lewat tombol "Ganti Topik"), supaya admin tahu arah terkini.
+                const lastTopicId = [...rows].reverse().find(r => r.topic)?.topic || null;
+                const topicInfo = lastTopicId ? liveChatTopics.find(t => t.id === lastTopicId) : null;
                 return {
                     session_id: sid,
                     visitor_name: (lastVisitorRow && lastVisitorRow.sender_name) || 'Pengunjung',
@@ -3351,6 +3548,8 @@
                     last_time: last.created_at,
                     needs_reply: !last.is_admin || !!last.is_bot,
                     last_is_bot: !!last.is_bot,
+                    topic_label: topicInfo ? topicInfo.label : null,
+                    topic_icon: topicInfo ? topicInfo.icon : null,
                     total: rows.length
                 };
             }).sort((a, b) => new Date(b.last_time) - new Date(a.last_time));
@@ -3383,6 +3582,7 @@
                                 <button onclick="event.stopPropagation(); confirmDeleteChatSession('${s.session_id}')" title="Hapus percakapan" class="opacity-60 hover:opacity-100 text-slate-500 hover:text-rose-400 p-1 rounded-lg hover:bg-rose-950/40"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                             </div>
                         </div>
+                        ${s.topic_label ? `<span class="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-full bg-amber-950/40 border border-amber-800/50 text-[8px] font-bold text-amber-300"><i data-lucide="${s.topic_icon || 'help-circle'}" class="w-2.5 h-2.5"></i>${s.topic_label}</span>` : ''}
                         <p class="text-[11px] text-slate-500 truncate mt-0.5">${escapeHtmlChat(s.last_message)}</p>
                         <p class="text-[9px] text-slate-600 mt-1">${jam}</p>
                     </div>`;
@@ -3406,6 +3606,17 @@
             const nameEl = document.getElementById('admin-chat-thread-visitor-name');
             const sessionInfo = adminChatSessions.find(s => s.session_id === sessionId);
             if (nameEl) nameEl.textContent = (sessionInfo && sessionInfo.visitor_name) || 'Pengunjung';
+            const topicEl = document.getElementById('admin-chat-thread-topic');
+            if (topicEl) {
+                if (sessionInfo && sessionInfo.topic_label) {
+                    topicEl.innerHTML = `<i data-lucide="${sessionInfo.topic_icon || 'help-circle'}" class="w-3 h-3"></i> Topik: ${escapeHtmlChat(sessionInfo.topic_label)}`;
+                    topicEl.classList.remove('hidden');
+                    topicEl.classList.add('flex');
+                } else {
+                    topicEl.classList.add('hidden');
+                    topicEl.classList.remove('flex');
+                }
+            }
             lucide.createIcons();
 
             const { data, error } = await supabaseClient
