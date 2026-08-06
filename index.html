@@ -1224,7 +1224,10 @@
 
             liveChatUnread = 0;
             updateLiveChatBadge();
-            await loadLiveChatMessages();
+            const existingMessages = await loadLiveChatMessages();
+            if (existingMessages.length === 0) {
+                await sendInitialAiGreetingIfNeeded();
+            }
             renderLiveChatQuickReplies();
 
             const input = document.getElementById('livechat-input');
@@ -1242,7 +1245,7 @@
             const box = document.getElementById('livechat-messages');
             if (!supabaseClient) {
                 box.innerHTML = `<div class="text-center text-[10px] text-rose-400 py-4">Live chat belum terkonfigurasi. Gunakan tombol "Hubungi Admin Instansi" di bawah.</div>`;
-                return;
+                return [];
             }
             const { data, error } = await supabaseClient
                 .from('live_chat_messages')
@@ -1253,9 +1256,38 @@
             if (error) {
                 console.error('Gagal memuat live chat:', error);
                 box.innerHTML = `<div class="text-center text-[10px] text-rose-400 py-4">Gagal memuat percakapan.</div>`;
-                return;
+                return [];
             }
             renderLiveChatMessages(data || []);
+            return data || [];
+        }
+
+        // --- SAPAAN + DAFTAR TOPIK OTOMATIS SAAT CHAT PERTAMA KALI DIBUKA ---
+        // Begitu pengunjung membuka panel live chat untuk pertama kali (sesi masih kosong,
+        // belum ada satu pun pesan), Asisten AI langsung mengirim sapaan pembuka beserta daftar
+        // topik pertanyaan tanpa menunggu pengunjung mengetik salam terlebih dahulu. Dengan begitu
+        // pengunjung langsung tahu topik apa saja yang bisa dibantu dijawab otomatis.
+        async function sendInitialAiGreetingIfNeeded() {
+            if (!AI_AUTOREPLY_ENABLED || !supabaseClient || !liveChatSessionId) return;
+            try {
+                const replyText = buildGreetingReply('');
+                const { error } = await supabaseClient.from('live_chat_messages').insert({
+                    session_id: liveChatSessionId,
+                    sender_name: 'Asisten AI (Otomatis)',
+                    message: replyText,
+                    image_url: null,
+                    is_admin: true,
+                    is_bot: true
+                });
+                if (error) {
+                    // Kemungkinan besar kolom is_bot belum ditambahkan di Supabase, lewati diam-diam.
+                    console.error('Gagal mengirim sapaan awal otomatis (pastikan kolom is_bot sudah dibuat):', error);
+                    return;
+                }
+                await loadLiveChatMessages();
+            } catch (err) {
+                console.error('Kesalahan saat mengirim sapaan awal otomatis:', err);
+            }
         }
 
         function renderLiveChatMessages(rows) {
