@@ -384,6 +384,28 @@
     </style>
 </head>
 <body class="bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
+    <!-- SPLASH SCREEN: tampilan awal berisi foto beranda, muncul sebelum pengguna
+         mengakses menu web mana pun. Ditutup saat tombol "Masuk" diklik, atau
+         otomatis setelah beberapa detik, dan tidak akan tampil lagi di kunjungan
+         berikutnya pada sesi browser yang sama (sessionStorage). -->
+    <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center bg-[#0b0f19] transition-opacity duration-700">
+        <div class="absolute inset-0">
+            <img id="splash-bg-img" src="" alt="" class="w-full h-full object-cover opacity-25 scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/90 to-[#0b0f19]/70"></div>
+        </div>
+        <div class="relative z-10 flex flex-col items-center text-center px-6 max-w-md mx-auto">
+            <div id="splash-logo-wrap" class="w-32 h-32 md:w-36 md:h-36 rounded-3xl shadow-2xl mb-6 overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center">
+                <img id="splash-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo">
+                <span id="splash-logo-txt" class="font-black text-4xl text-amber-500">KM</span>
+            </div>
+            <h1 class="dynamic-site-name font-extrabold text-3xl md:text-4xl tracking-wider uppercase mb-3">KABAS MEAN</h1>
+            <p class="text-white text-sm md:text-base leading-relaxed mb-8 font-medium" style="text-shadow: 0 2px 6px rgba(0,0,0,0.85), 0 1px 2px rgba(0,0,0,0.9);">Kanal Bantuan, Sumber Informasi, dan Media Panduan SRIKANDI Kabupaten Malaka.</p>
+            <button onclick="closeSplashScreen()" class="px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-xl shadow-amber-500/20 transition duration-150">
+                Masuk ke Website
+            </button>
+        </div>
+    </div>
+
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-amber-500 focus:text-slate-950 focus:font-bold focus:px-4 focus:py-2 focus:rounded-lg">Langsung ke konten utama</a>
 
     <script>
@@ -2105,7 +2127,12 @@
             const imgLogo = document.getElementById('site-logo-img');
             const mobileLogoTxt = document.getElementById('mobile-logo-txt');
             const mobileLogoImg = document.getElementById('mobile-logo-img');
-            
+            const splashLogoTxt = document.getElementById('splash-logo-txt');
+            const splashLogoImg = document.getElementById('splash-logo-img');
+            const splashBgImg = document.getElementById('splash-bg-img');
+
+            if (splashBgImg && homeImageUrl) { splashBgImg.src = homeImageUrl; }
+
             if (logoImageUrl && logoImageUrl.startsWith('http')) {
                 txtLogo.classList.add('hidden');
                 imgLogo.src = logoImageUrl;
@@ -2113,6 +2140,9 @@
 
                 if (mobileLogoTxt) mobileLogoTxt.classList.add('hidden');
                 if (mobileLogoImg) { mobileLogoImg.src = logoImageUrl; mobileLogoImg.classList.remove('hidden'); }
+
+                if (splashLogoTxt) splashLogoTxt.classList.add('hidden');
+                if (splashLogoImg) { splashLogoImg.src = logoImageUrl; splashLogoImg.classList.remove('hidden'); }
 
                 const favicon = document.getElementById('site-favicon');
                 if (favicon) favicon.href = logoImageUrl;
@@ -2123,7 +2153,21 @@
 
                 if (mobileLogoTxt) { mobileLogoTxt.classList.remove('hidden'); mobileLogoTxt.innerText = defaultLogoText; }
                 if (mobileLogoImg) mobileLogoImg.classList.add('hidden');
+
+                if (splashLogoTxt) { splashLogoTxt.classList.remove('hidden'); splashLogoTxt.innerText = defaultLogoText; }
+                if (splashLogoImg) splashLogoImg.classList.add('hidden');
             }
+        }
+
+        // Menutup splash screen: fade-out lalu dilepas dari DOM, dan tandai di
+        // sessionStorage supaya tidak muncul berulang kali selama sesi tab ini
+        // masih terbuka (akan muncul lagi jika tab/browser ditutup lalu dibuka ulang).
+        function closeSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            if (!splash) return;
+            splash.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => splash.remove(), 700);
+            try { sessionStorage.setItem('kabasmean_splash_shown', '1'); } catch (e) {}
         }
 
         function toggleMobileSidebar() {
@@ -3835,6 +3879,17 @@
         window.addEventListener('DOMContentLoaded', async () => {
             initThemeMode();
             applyStaticIdentity();
+
+            // Splash screen hanya ditampilkan sekali per sesi tab (sessionStorage).
+            // Jika pengguna sudah pernah menutupnya di tab ini, langsung sembunyikan
+            // tanpa animasi supaya tidak mengganggu saat pindah antar menu/refresh.
+            try {
+                if (sessionStorage.getItem('kabasmean_splash_shown') === '1') {
+                    const splash = document.getElementById('splash-screen');
+                    if (splash) splash.remove();
+                }
+            } catch (e) {}
+
             registerServiceWorker();
             initOfflineIndicator();
             await checkAdminAccess();
