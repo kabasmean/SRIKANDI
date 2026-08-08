@@ -787,6 +787,7 @@
         //     user_id uuid not null references auth.users(id) on delete cascade,
         //     user_email text,
         //     user_name text,
+        //     user_instansi text,
         //     subject text not null,
         //     message text not null,
         //     status text not null default 'menunggu', -- 'menunggu' | 'diproses' | 'selesai'
@@ -834,6 +835,8 @@
         }
 
         function renderPermohonanPage() {
+            const meta = (currentPublicUser && currentPublicUser.user_metadata) || {};
+            const prefillNama = meta.full_name || meta.name || '';
             return `
                 <div class="space-y-6" id="permohonan-area">
                     <div class="border-b border-slate-800/80 pb-4">
@@ -845,6 +848,10 @@
 
                     <form onsubmit="submitPermohonan(event)" class="bg-slate-900/40 border border-slate-800 rounded-2xl p-5 space-y-3.5">
                         <p class="text-xs font-bold uppercase tracking-wide text-amber-400">Ajukan Permohonan Baru</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <input id="permohonan-nama" required maxlength="120" type="text" value="${prefillNama.replace(/"/g, '&quot;')}" placeholder="Nama Lengkap" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                            <input id="permohonan-instansi" required maxlength="150" type="text" placeholder="Asal Instansi" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                        </div>
                         <input id="permohonan-subject" required maxlength="120" type="text" placeholder="Judul singkat kendala/permohonan" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
                         <textarea id="permohonan-message" required maxlength="2000" rows="4" placeholder="Jelaskan detail kendala atau permohonan bantuan Anda..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500 resize-none"></textarea>
                         <button type="submit" id="permohonan-submit-btn" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg">
@@ -868,20 +875,24 @@
             event.preventDefault();
             if (!supabaseClient) { showToast('Database belum terkonfigurasi. Tiket bantuan tidak dapat dikirim.', 'error'); return; }
             if (!currentPublicUser) { showToast('Silakan masuk dengan akun Google terlebih dahulu.', 'error'); return; }
+            const namaEl = document.getElementById('permohonan-nama');
+            const instansiEl = document.getElementById('permohonan-instansi');
             const subjectEl = document.getElementById('permohonan-subject');
             const messageEl = document.getElementById('permohonan-message');
             const btn = document.getElementById('permohonan-submit-btn');
+            const nama = namaEl.value.trim();
+            const instansi = instansiEl.value.trim();
             const subject = subjectEl.value.trim();
             const message = messageEl.value.trim();
-            if (!subject || !message) { showToast('Judul dan detail permohonan wajib diisi.', 'error'); return; }
+            if (!nama || !instansi || !subject || !message) { showToast('Nama, asal instansi, judul, dan detail permohonan wajib diisi.', 'error'); return; }
 
             btn.disabled = true; btn.classList.add('opacity-60');
             try {
-                const meta = currentPublicUser.user_metadata || {};
                 const { error } = await supabaseClient.from('help_requests').insert([{
                     user_id: currentPublicUser.id,
                     user_email: currentPublicUser.email,
-                    user_name: meta.full_name || meta.name || currentPublicUser.email,
+                    user_name: nama,
+                    user_instansi: instansi,
                     subject, message, status: 'menunggu'
                 }]);
 
@@ -892,6 +903,7 @@
                 }
                 showToast('Permohonan bantuan berhasil diajukan.', 'success');
                 subjectEl.value = ''; messageEl.value = '';
+                instansiEl.value = '';
                 loadMyPermohonan();
             } catch (err) {
                 // Menangkap error tak terduga (mis. koneksi terputus) supaya tombol tidak
@@ -920,7 +932,10 @@
             list.innerHTML = data.map(row => `
                 <div class="bg-slate-900/40 border border-slate-800 rounded-xl p-4 space-y-2">
                     <div class="flex items-start justify-between gap-3">
-                        <p class="text-sm font-bold text-slate-100">${row.subject}</p>
+                        <div>
+                            <p class="text-sm font-bold text-slate-100">${row.subject}</p>
+                            <p class="text-[10px] text-slate-500">${row.user_name || ''}${row.user_instansi ? ' &middot; ' + row.user_instansi : ''}</p>
+                        </div>
                         ${helpStatusBadge(row.status)}
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed whitespace-pre-line">${row.message}</p>
@@ -1059,7 +1074,7 @@
                     <div class="flex items-start justify-between gap-3 flex-wrap">
                         <div>
                             <p class="text-sm font-bold text-slate-100">${row.subject}</p>
-                            <p class="text-[10px] text-slate-500">${row.user_name || ''} &middot; ${row.user_email || ''}</p>
+                            <p class="text-[10px] text-slate-500">${row.user_name || ''}${row.user_instansi ? ' &middot; ' + row.user_instansi : ''} &middot; ${row.user_email || ''}</p>
                         </div>
                         ${helpStatusBadge(row.status)}
                     </div>
