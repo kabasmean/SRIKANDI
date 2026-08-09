@@ -385,9 +385,10 @@
 </head>
 <body class="bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
     <!-- SPLASH SCREEN: tampilan awal berisi foto beranda, muncul sebelum pengguna
-         mengakses menu web mana pun. Ditutup saat tombol "Masuk" diklik, atau
-         otomatis setelah beberapa detik, dan tidak akan tampil lagi di kunjungan
-         berikutnya pada sesi browser yang sama (sessionStorage). -->
+         mengakses menu web mana pun. Tampil sebentar lalu hilang OTOMATIS sendiri
+         (lihat closeSplashScreen(), dipanggil via setTimeout di initialisasi), dan
+         tidak akan tampil lagi di kunjungan berikutnya pada sesi browser yang sama
+         (sessionStorage). Tidak ada tombol untuk menutup manual. -->
     <div id="splash-screen" class="fixed inset-0 z-[200] flex items-center justify-center bg-[#0b0f19] transition-opacity duration-700">
         <div class="absolute inset-0">
             <img id="splash-bg-img" src="" alt="" class="w-full h-full object-cover opacity-25 scale-105">
@@ -399,10 +400,7 @@
                 <span id="splash-logo-txt" class="font-black text-4xl text-amber-500">KM</span>
             </div>
             <h1 class="dynamic-site-name font-extrabold text-3xl md:text-4xl tracking-wider uppercase mb-3">KABAS MEAN</h1>
-            <p class="text-white text-sm md:text-base leading-relaxed mb-8 font-medium" style="text-shadow: 0 2px 6px rgba(0,0,0,0.85), 0 1px 2px rgba(0,0,0,0.9);">Kanal Bantuan, Sumber Informasi, dan Media Panduan SRIKANDI Kabupaten Malaka.</p>
-            <button onclick="closeSplashScreen()" class="px-8 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-xl shadow-amber-500/20 transition duration-150">
-                Masuk ke Website
-            </button>
+            <p class="text-white text-sm md:text-base leading-relaxed font-medium" style="text-shadow: 0 2px 6px rgba(0,0,0,0.85), 0 1px 2px rgba(0,0,0,0.9);">Kanal Bantuan, Sumber Informasi, dan Media Panduan SRIKANDI Kabupaten Malaka.</p>
         </div>
     </div>
 
@@ -3893,10 +3891,14 @@
             // Splash screen hanya ditampilkan sekali per sesi tab (sessionStorage).
             // Jika pengguna sudah pernah menutupnya di tab ini, langsung sembunyikan
             // tanpa animasi supaya tidak mengganggu saat pindah antar menu/refresh.
+            // Jika belum, splash tetap tampil sebentar lalu HILANG OTOMATIS sendiri
+            // (splash tidak punya tombol, tertutup sepenuhnya otomatis).
             try {
                 if (sessionStorage.getItem('kabasmean_splash_shown') === '1') {
                     const splash = document.getElementById('splash-screen');
                     if (splash) splash.remove();
+                } else {
+                    setTimeout(closeSplashScreen, 3000);
                 }
             } catch (e) {}
 
