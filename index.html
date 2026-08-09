@@ -466,8 +466,6 @@
             'nk-log': { title: 'Log Naskah Keluar', body: '<p>Melacak jejak audit draf surat keluar. Menu Log Naskah Keluar adalah halaman riwayat/pelacakan yang menampilkan seluruh naskah keluar beserta status perjalanannya secara transparan, mulai dari tanggal naskah, nomor naskah, perihal, asal naskah, hingga status verifikasi dan status penandatanganan (ditandai warna hijau "Setuju" atau oranye "Belum"). Fitur ini sangat penting bagi **konseptor surat, karena melalui menu inilah konseptor dapat memantau naskah yang telah ia buat dan kirimkan untuk diproses lebih lanjut — apakah sudah diverifikasi oleh verifikator dan sudah ditandatangani oleh pejabat berwenang atau masih dalam antrean persetujuan. Dengan kata lain, Log Naskah Keluar berfungsi sebagai alat kontrol bagi konseptor untuk memastikan setiap surat/naskah dinas yang dibuatnya tidak "hilang" dalam alur kerja, sehingga ia dapat menindaklanjuti atau melakukan pengecekan jika suatu naskah masih berstatus "Belum" disetujui/ditandatangani dalam waktu yang lama.</p>', links: [] },
             'nk-ttd': { title: 'Tandatangan Naskah', body: '<p>Laman khusus pejabat penandatangan. Menu Tandatangan Naskah adalah "meja kerja digital" bagi pejabat penandatangan untuk memantau dan menyelesaikan proses pengesahan naskah dinas secara elektronik, di mana setiap surat yang masuk ke sini menampilkan status penandatanganannya secara jelas—label hijau "Setuju" menandakan naskah sudah ditandatangani, sementara label abu-abu "Belum" menunjukkan naskah masih menunggu tanda tangan pejabat berwenang. Menu ini juga dilengkapi kolom Status Kirim yang menginformasikan apakah naskah sudah "Sudah" atau "Belum" dikirimkan ke tujuan setelah proses tanda tangan selesai, sehingga alur naskah dinas—dari penandatanganan hingga pengiriman—dapat dipantau secara transparan dan real-time. Dengan fitur ini, tidak ada lagi surat yang "tersangkut" tanpa kejelasan; setiap pengguna, baik penandatangan maupun konseptor, dapat langsung mengetahui sejauh mana progres suatu naskah tanpa perlu bertanya-tanya atau mengecek secara manual.</p>', links: [] },
             'pemberkasan': { title: 'Pemberkasan Arsip Aktif', body: '<p>Panduan mengenai tata cara manajemen pemberkasan pada aplikasi SRIKANDI. Fungsinya adalah mengelola berkas-berkas arsip aktif — yaitu arsip yang masih sering digunakan dan berada di unit pengolah/kerja. Untuk mengisi form Tambah Baru pada Pemberkasan Arsip Aktif, pengguna (Tata Usaha/Konseptor) mengklik tombol tersebut lalu melengkapi data berkas sesuai kolom yang tampak pada tabel, yaitu memilih Kode Klasifikasi/Nomor Berkas sesuai skema klasifikasi arsip yang berlaku di instansi, mengisi Nama Berkas yang mencerminkan isi/subjek arsip (misalnya "Surat Pemberitahuan 2026"), menentukan Tanggal Buat Berkas, menetapkan Total Retensi Aktif (jangka waktu berkas harus disimpan sebagai arsip aktif) yang otomatis akan menghasilkan Akhir Retensi Aktif, serta memilih Klasifikasi Keamanan (misalnya Terbuka, Terbatas, atau Rahasia) dan unit kerja pemilik berkas, kemudian menyimpan data sehingga berkas baru muncul dalam daftar dengan status "Belum Ditutup"; selama berkas berstatus ini, arsip/naskah terkait masih bisa dimasukkan ke dalamnya, dan begitu seluruh arsip di dalam berkas selesai serta tidak akan ditambah lagi, pengguna menutup berkas melalui tombol Pilih Berkas untuk Ditutup, lalu ketika masa retensi aktifnya telah habis (sesuai Akhir Retensi Aktif), berkas tersebut dipilih dan diajukan lewat tombol Pilih Berkas untuk Diusul Pemindahan, yang membawanya masuk ke tahap Penyusutan Arsip — di mana usulan pemindahan tersebut akan diverifikasi melalui menu Verifikasi Penyusutan, dan setelah disetujui, berkas secara resmi berpindah status menjadi arsip inaktif serta muncul pada menu Daftar Arsip Inaktif untuk pengelolaan lebih lanjut (retensi inaktif, pemusnahan, atau penyerahan ke lembaga kearsipan).</p>', links: [] },
-            'infografis': { title: 'Infografis Panduan', body: '<p>Kumpulan materi infografis tata cara penggunaan sistem.</p>', links: [] },
-            'video': { title: 'Video Tutorial', body: '<p>Silakan akses beberapa video tutorial panduan SRIKANDI melalui tautan eksternal di bawah ini.</p>', links: [] }
         };
 
         let localStateContents = { ...defaultContent };
@@ -498,6 +496,21 @@
             { id: 'vid-3', title: 'Naskah Dinas Keluar', youtubeId: 'L-ud2PUkAj0' },
             { id: 'vid-4', title: 'Pemberkasan Arsip Aktif', youtubeId: 'QHYoQdegoi8' },
         ];
+
+        // Peta keterkaitan Infografis & Video Tutorial dengan menu terkait. Menggantikan
+        // menu terpisah "Infografis" dan "Video Tutorial" yang sudah dihapus dari sidebar:
+        // setiap section id di bawah ini akan menampilkan kartu infografis/video yang
+        // relevan di bagian bawah halaman menu tersebut (lihat renderRelatedMedia()).
+        const sectionMediaMap = {
+            'tte-pengajuan': { infografis: ['ig-1', 'ig-2', 'ig-3', 'ig-4'], videos: ['vid-1'] },
+            'tte-aktivasi': { infografis: ['ig-5'] },
+            'tte-registrasi': { infografis: ['ig-6'] },
+            'tte-passphrase': { infografis: ['ig-7'] },
+            'tte-pembubuhan': { infografis: ['ig-8'] },
+            'nm-registrasi': { infografis: ['ig-10'], videos: ['vid-2'] },
+            'nk-registrasi': { infografis: ['ig-9'], videos: ['vid-3'] },
+            'pemberkasan': { infografis: ['ig-11'], videos: ['vid-4'] },
+        };
 
         // Data FAQ (Pertanyaan yang Sering Diajukan)
         // Tambah/ubah/hapus item pada array ini sesuai kebutuhan. Field "answer" mendukung HTML sederhana.
@@ -1926,14 +1939,11 @@
                     <i data-lucide="archive" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
                 </button>
 
-                <button onclick="navigate('infografis')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-infografis">
-                    <i data-lucide="image" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Infografis</span>
-                </button>
-
-                <button onclick="navigate('video')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-video">
-                    <i data-lucide="clapperboard" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Video Tutorial</span>
-                </button>
-
+                <!-- Menu "Infografis" dan "Video Tutorial" SENGAJA dihapus dari sini.
+                     Kontennya (lihat defaultInfografis, defaultVideos & sectionMediaMap)
+                     kini ditampilkan langsung di halaman menu yang berhubungan, misalnya
+                     infografis/video TTE muncul di halaman-halaman submenu TTE, infografis/
+                     video Naskah Masuk di halaman Registrasi Naskah Masuk, dst. -->
                 <div class="mt-4"></div>
                 <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
                     <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Evaluasi Website</span>
@@ -2507,8 +2517,6 @@
                 return;
             }
             if (currentSection === 'faq') { container.innerHTML = renderFaqSection(); lucide.createIcons(); return; }
-            if (currentSection === 'infografis') { container.innerHTML = renderInfografisGrid(); lucide.createIcons(); return; }
-            if (currentSection === 'video') { container.innerHTML = renderVideoGrid(); lucide.createIcons(); return; }
             if (currentSection === 'admin-evaluasi') {
                 renderAdminGate(() => {
                     container.innerHTML = renderAdminEvaluasi();
@@ -2556,13 +2564,17 @@
             if (pageData.afterLinks && pageData.afterLinks.length > 0) {
                 html += renderLinkCards(pageData.afterLinks);
             }
+            html += renderRelatedMedia(currentSection);
             html += `</div>`;
             container.innerHTML = html; lucide.createIcons();
         }
 
-        // --- INFOGRAFIS (Kartu -> Klik -> Tampil Full) ---
-        function renderInfografisGrid() {
-            let cards = defaultInfografis.map(item => `
+        // --- INFOGRAFIS & VIDEO TERKAIT ---
+        // Ditampilkan otomatis di bagian bawah halaman menu yang berhubungan (lihat
+        // sectionMediaMap), menggantikan menu terpisah "Infografis" dan "Video Tutorial"
+        // yang sebelumnya berdiri sendiri di sidebar.
+        function renderInfografisCard(item) {
+            return `
                 <button onclick="openImageModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
                     <div class="aspect-video w-full overflow-hidden bg-slate-950">
                         <img src="${item.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
@@ -2571,16 +2583,49 @@
                         <p class="font-bold text-sm text-slate-100">${item.title}</p>
                         <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Lihat Full <i data-lucide="expand" class="w-3.5 h-3.5"></i></p>
                     </div>
-                </button>`).join('');
+                </button>`;
+        }
 
+        function renderVideoCard(item) {
             return `
-                <div class="space-y-6">
-                    <div class="border-b border-slate-800/80 pb-4">
-                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Infografis Panduan SRIKANDI</h2>
+                <button onclick="openVideoModal('${item.youtubeId}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
+                    <div class="aspect-video w-full overflow-hidden bg-slate-950 relative">
+                        <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <div class="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-xl"><i data-lucide="play" class="w-5 h-5 text-slate-950"></i></div>
+                        </div>
                     </div>
-                    <p class="text-sm text-slate-400 leading-relaxed">Kumpulan infografis berikut disusun secara berurutan untuk memudahkan Anda memahami setiap tahapan penggunaan SRIKANDI, mulai dari pendaftaran akun hingga pemberkasan arsip aktif. Klik salah satu kartu di bawah ini untuk menampilkan gambar infografis secara penuh. Supaya bisa diperbesar atau diperkecil, klik kanan pada gambar lalu buka di tab baru.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards || '<p class="text-slate-500 text-sm">Belum ada infografis.</p>'}</div>
+                    <div class="p-4">
+                        <p class="font-bold text-sm text-slate-100">${item.title}</p>
+                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Putar Video <i data-lucide="play-circle" class="w-3.5 h-3.5"></i></p>
+                    </div>
+                </button>`;
+        }
+
+        function renderRelatedMedia(section) {
+            const map = sectionMediaMap[section];
+            if (!map) return '';
+            const igItems = (map.infografis || []).map(id => defaultInfografis.find(i => i.id === id)).filter(Boolean);
+            const vidItems = (map.videos || []).map(id => defaultVideos.find(v => v.id === id)).filter(Boolean);
+            if (igItems.length === 0 && vidItems.length === 0) return '';
+
+            let html = `<div class="pt-6 border-t border-slate-800/85 space-y-5">
+                <h3 class="text-base md:text-lg font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-5 bg-amber-500 rounded-full inline-block"></span> Infografis &amp; Video Terkait</h3>`;
+
+            if (igItems.length > 0) {
+                html += `<div class="space-y-3">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Infografis</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${igItems.map(renderInfografisCard).join('')}</div>
                 </div>`;
+            }
+            if (vidItems.length > 0) {
+                html += `<div class="space-y-3">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Video Tutorial</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${vidItems.map(renderVideoCard).join('')}</div>
+                </div>`;
+            }
+            html += `</div>`;
+            return html;
         }
 
         function openImageModal(url, title) {
@@ -2596,32 +2641,6 @@
                 </div>`;
             document.body.appendChild(modal);
             lucide.createIcons();
-        }
-
-        // --- VIDEO TUTORIAL (Kartu -> Klik -> Putar di dalam website, tanpa forward) ---
-        function renderVideoGrid() {
-            let cards = defaultVideos.map(item => `
-                <button onclick="openVideoModal('${item.youtubeId}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
-                    <div class="aspect-video w-full overflow-hidden bg-slate-950 relative">
-                        <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                            <div class="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-xl"><i data-lucide="play" class="w-5 h-5 text-slate-950"></i></div>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <p class="font-bold text-sm text-slate-100">${item.title}</p>
-                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Putar Video <i data-lucide="play-circle" class="w-3.5 h-3.5"></i></p>
-                    </div>
-                </button>`).join('');
-
-            return `
-                <div class="space-y-6">
-                    <div class="border-b border-slate-800/80 pb-4">
-                        <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> Video Tutorial Penggunaan</h2>
-                    </div>
-                    <p class="text-sm text-slate-400 leading-relaxed">Berikut adalah kumpulan video tutorial yang dapat Anda tonton langsung di halaman ini untuk membantu memahami alur kerja dan fitur-fitur pada aplikasi SRIKANDI secara lebih mendalam. Klik salah satu video di bawah untuk mulai memutar. Jika ingin menontonnya di Youtube, klik pada logo Youtube di bagian kanan bawah.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards || '<p class="text-slate-500 text-sm">Belum ada video.</p>'}</div>
-                </div>`;
         }
 
         function openVideoModal(youtubeId, title) {
