@@ -500,7 +500,7 @@
         // Peta keterkaitan Infografis & Video Tutorial dengan menu terkait. Menggantikan
         // menu terpisah "Infografis" dan "Video Tutorial" yang sudah dihapus dari sidebar:
         // setiap section id di bawah ini akan menampilkan kartu infografis/video yang
-        // relevan di bagian bawah halaman menu tersebut (lihat renderRelatedMedia()).
+        // relevan di bagian bawah halaman menu tersebut (lihat renderPrimaryCardsGrid()).
         const sectionMediaMap = {
             'tte-pengajuan': { infografis: ['ig-1', 'ig-2', 'ig-3', 'ig-4'], videos: ['vid-1'] },
             'tte-aktivasi': { infografis: ['ig-5'] },
@@ -2462,29 +2462,49 @@
                 </svg>`;
         }
 
+        function buildLinkCardHtml(link) {
+            const isPdf = /\.pdf(\?.*)?$/i.test(link.url || '');
+            const icon = isPdf ? 'file-text' : 'external-link';
+            const label = isPdf ? 'Buka PDF' : 'Buka Tautan';
+            const category = linkPreviewCategory(link, isPdf);
+            const uid = `${category}-${Math.random().toString(36).slice(2, 7)}`;
+
+            return `
+                <a href="${link.url}" target="_blank" rel="noopener" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg flex flex-col">
+                    <div class="h-36 sm:h-40 w-full overflow-hidden bg-slate-950 relative">
+                        ${buildLinkPreviewSvg(category, uid)}
+                        <div class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur flex items-center justify-center border border-white/10">
+                            <i data-lucide="${icon}" class="w-3.5 h-3.5 text-white"></i>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="font-bold text-sm text-slate-100">${link.text}</p>
+                        <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">${label} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></p>
+                    </div>
+                </a>`;
+        }
+
         function renderLinkCards(links) {
             if (!links || links.length === 0) return '';
-            let cards = links.map((link, idx) => {
-                const isPdf = /\.pdf(\?.*)?$/i.test(link.url || '');
-                const icon = isPdf ? 'file-text' : 'external-link';
-                const label = isPdf ? 'Buka PDF' : 'Buka Tautan';
-                const category = linkPreviewCategory(link, isPdf);
-                const uid = `${category}-${idx}-${Math.random().toString(36).slice(2, 7)}`;
+            const cards = links.map(buildLinkCardHtml).join('');
+            return `<div class="pt-6 border-t border-slate-800/85 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>`;
+        }
 
-                return `
-                    <a href="${link.url}" target="_blank" rel="noopener" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg flex flex-col">
-                        <div class="h-36 sm:h-40 w-full overflow-hidden bg-slate-950 relative">
-                            ${buildLinkPreviewSvg(category, uid)}
-                            <div class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur flex items-center justify-center border border-white/10">
-                                <i data-lucide="${icon}" class="w-3.5 h-3.5 text-white"></i>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <p class="font-bold text-sm text-slate-100">${link.text}</p>
-                            <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">${label} <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></p>
-                        </div>
-                    </a>`;
-            }).join('');
+        // Kartu tautan eksternal (kalau ada) + kartu infografis + kartu video yang
+        // berhubungan dengan menu ini digabung sejajar dalam SATU grid yang sama,
+        // supaya tidak lagi terpisah jadi beberapa blok/grid berbeda.
+        function renderPrimaryCardsGrid(section, links) {
+            const map = sectionMediaMap[section] || {};
+            const igItems = (map.infografis || []).map(id => defaultInfografis.find(i => i.id === id)).filter(Boolean);
+            const vidItems = (map.videos || []).map(id => defaultVideos.find(v => v.id === id)).filter(Boolean);
+
+            const cards = [
+                ...(links || []).map(buildLinkCardHtml),
+                ...igItems.map(renderInfografisCard),
+                ...vidItems.map(renderVideoCard),
+            ].join('');
+
+            if (!cards) return '';
             return `<div class="pt-6 border-t border-slate-800/85 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>`;
         }
 
@@ -2555,24 +2575,21 @@
                 </div>
                 <div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base space-y-4">${pageData.body}</div>`;
 
-            if (pageData.links && pageData.links.length > 0) {
-                html += renderLinkCards(pageData.links);
-            }
+            html += renderPrimaryCardsGrid(currentSection, pageData.links);
             if (pageData.after) {
                 html += `<div class="prose prose-invert max-w-none text-slate-300 leading-relaxed text-sm md:text-base">${pageData.after}</div>`;
             }
             if (pageData.afterLinks && pageData.afterLinks.length > 0) {
                 html += renderLinkCards(pageData.afterLinks);
             }
-            html += renderRelatedMedia(currentSection);
             html += `</div>`;
             container.innerHTML = html; lucide.createIcons();
         }
 
         // --- INFOGRAFIS & VIDEO TERKAIT ---
-        // Ditampilkan otomatis di bagian bawah halaman menu yang berhubungan (lihat
-        // sectionMediaMap), menggantikan menu terpisah "Infografis" dan "Video Tutorial"
-        // yang sebelumnya berdiri sendiri di sidebar.
+        // Kartu infografis & video digabung sejajar dengan kartu link eksternal dalam satu
+        // grid oleh renderPrimaryCardsGrid() di atas, menggantikan menu terpisah
+        // "Infografis" dan "Video Tutorial" yang sebelumnya berdiri sendiri di sidebar.
         function renderInfografisCard(item) {
             return `
                 <button onclick="openImageModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
@@ -2600,32 +2617,6 @@
                         <p class="text-[11px] text-amber-400 font-semibold mt-1 flex items-center gap-1">Putar Video <i data-lucide="play-circle" class="w-3.5 h-3.5"></i></p>
                     </div>
                 </button>`;
-        }
-
-        function renderRelatedMedia(section) {
-            const map = sectionMediaMap[section];
-            if (!map) return '';
-            const igItems = (map.infografis || []).map(id => defaultInfografis.find(i => i.id === id)).filter(Boolean);
-            const vidItems = (map.videos || []).map(id => defaultVideos.find(v => v.id === id)).filter(Boolean);
-            if (igItems.length === 0 && vidItems.length === 0) return '';
-
-            let html = `<div class="pt-6 border-t border-slate-800/85 space-y-5">
-                <h3 class="text-base md:text-lg font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-5 bg-amber-500 rounded-full inline-block"></span> Infografis &amp; Video Terkait</h3>`;
-
-            if (igItems.length > 0) {
-                html += `<div class="space-y-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Infografis</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${igItems.map(renderInfografisCard).join('')}</div>
-                </div>`;
-            }
-            if (vidItems.length > 0) {
-                html += `<div class="space-y-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Video Tutorial</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${vidItems.map(renderVideoCard).join('')}</div>
-                </div>`;
-            }
-            html += `</div>`;
-            return html;
         }
 
         function openImageModal(url, title) {
