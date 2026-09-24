@@ -742,10 +742,12 @@
 
         function updateUserAuthUI() {
             const loginBtn = document.getElementById('user-login-btn-wrap');
+            const loginMenuBtn = document.getElementById('menu-btn-google-login');
             const profileBlock = document.getElementById('user-profile-block');
             if (!loginBtn || !profileBlock) return;
             if (currentPublicUser && !isAdminMode) {
                 loginBtn.classList.add('hidden');
+                if (loginMenuBtn) loginMenuBtn.classList.add('hidden');
                 profileBlock.classList.remove('hidden');
                 profileBlock.classList.add('flex');
                 const meta = currentPublicUser.user_metadata || {};
@@ -758,6 +760,7 @@
                 }
             } else {
                 loginBtn.classList.remove('hidden');
+                if (loginMenuBtn) loginMenuBtn.classList.remove('hidden');
                 profileBlock.classList.add('hidden');
                 profileBlock.classList.remove('flex');
             }
@@ -1887,35 +1890,76 @@
                 <button onclick="navigate('beranda')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-beranda">
                     <i data-lucide="home" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Beranda Utama</span>
                 </button>
-                <button onclick="navigate('informasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-informasi">
-                    <i data-lucide="info" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Informasi Umum</span>
+                <!-- Menu "Layanan": grup induk (accordion) yang menaungi seluruh menu
+                     layanan utama sebagai submenu. Tombol ini hanya membuka/menutup
+                     daftar submenu (tidak memuat konten sendiri), sedangkan navigasi
+                     tetap ditangani oleh masing-masing tombol submenu di bawahnya. -->
+                <button onclick="toggleLayananMenu()" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-layanan">
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Layanan KABAS MEAN</span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 ml-auto text-slate-500 transition-transform duration-200" id="layanan-chevron"></i>
                 </button>
-                <button onclick="navigate('mentors')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-mentors">
-                    <i data-lucide="users-2" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pendamping Teknis</span>
-                </button>
-                <button onclick="navigate('faq')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-faq">
-                    <i data-lucide="help-circle" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">FAQ</span>
-                </button>
+                <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" target="_blank" rel="noopener" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-panduan-singkat-srikandi">
+                    <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Panduan Singkat SRIKANDI</span>
+                </a>
+                <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" target="_blank" rel="noopener" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-srikandi-track">
+                    <i data-lucide="route" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">SRIKANDI Track</span>
+                </a>
+                <div id="layanan-submenu" class="hidden flex-col space-y-1 pl-3.5 ml-[1.15rem] border-l border-slate-800">
+                    <button onclick="navigate('informasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-informasi">
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Informasi Umum</span>
+                    </button>
+                    <button onclick="navigate('mentors')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-mentors">
+                        <i data-lucide="users-2" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Pendamping Teknis</span>
+                    </button>
+                    <button onclick="navigate('faq')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-faq">
+                        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">FAQ</span>
+                    </button>
 
-                <button onclick="navigate('admin-instansi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-hak-akses">
-                    <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Hak Akses</span>
-                </button>
+                    <button onclick="navigate('admin-instansi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-hak-akses">
+                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Hak Akses</span>
+                    </button>
 
-                <button onclick="navigate('tte-pengajuan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-tte">
-                    <i data-lucide="fingerprint" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Tandatangan Elektronik (TTE)</span>
-                </button>
+                    <button onclick="navigate('tte-pengajuan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-tte">
+                        <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Tandatangan Elektronik (TTE)</span>
+                    </button>
 
-                <button onclick="navigate('nm-registrasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-masuk">
-                    <i data-lucide="folder-input" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Naskah Masuk</span>
-                </button>
+                    <button onclick="navigate('nm-registrasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-masuk">
+                        <i data-lucide="folder-input" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Naskah Masuk</span>
+                    </button>
 
-                <button onclick="navigate('nk-registrasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-keluar">
-                    <i data-lucide="folder-output" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Naskah Keluar</span>
-                </button>
+                    <button onclick="navigate('nk-registrasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-keluar">
+                        <i data-lucide="folder-output" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Naskah Keluar</span>
+                    </button>
 
-                <button onclick="navigate('pemberkasan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
-                    <i data-lucide="archive" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Pemberkasan Arsip Aktif</span>
-                </button>
+                    <button onclick="navigate('pemberkasan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
+                        <i data-lucide="archive" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Pemberkasan Arsip Aktif</span>
+                    </button>
+
+                    <button onclick="signInWithGoogle()" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-800 bg-white hover:bg-slate-100 transition duration-150" id="menu-btn-google-login">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+                            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
+                            <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
+                            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+                        </svg>
+                        <span class="text-[11px] font-bold">Masuk dengan Google</span>
+                    </button>
+                    <button onclick="navigate('evaluasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150" id="menu-btn-evaluasi">
+                        <i data-lucide="star" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Evaluasi Website</span>
+                        <i data-lucide="lock" class="w-3 h-3 text-white/70 ml-auto" title="Perlu masuk"></i>
+                    </button>
+                    <button onclick="navigate('permohonan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150" id="menu-btn-permohonan">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Tiket Bantuan</span>
+                        <i data-lucide="lock" class="w-3 h-3 text-white/70 ml-auto" title="Perlu masuk"></i>
+                    </button>
+                    <button onclick="openLiveChat()" class="relative flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 transition duration-150">
+                        <i data-lucide="message-circle-more" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Live Chat</span>
+                        <span id="livechat-badge" class="hidden absolute -top-1.5 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
+                    </button>
+                    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150">
+                        <i data-lucide="phone-call" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Hubungi Admin Instansi</span>
+                    </a>
+                </div>
 
                 <!-- Menu "Infografis" dan "Video Tutorial" SENGAJA dihapus dari sini.
                      Kontennya (lihat defaultInfografis, defaultVideos & sectionMediaMap)
@@ -1923,14 +1967,6 @@
                      infografis/video TTE muncul di halaman-halaman submenu TTE, infografis/
                      video Naskah Masuk di halaman Registrasi Naskah Masuk, dst. -->
                 <div class="mt-4"></div>
-                <button onclick="navigate('evaluasi')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-evaluasi">
-                    <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Evaluasi Website</span>
-                    <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
-                </button>
-                <button onclick="navigate('permohonan')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-permohonan">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Tiket Bantuan</span>
-                    <i data-lucide="lock" class="w-3 h-3 text-slate-500 ml-auto" title="Perlu masuk"></i>
-                </button>
                 <!-- Menu "Admin Evaluasi" dan "Admin Live Chat" SENGAJA tidak ditampilkan
                      di sidebar, termasuk saat admin sudah login, supaya pengunjung biasa
                      tidak menyadari keberadaan area admin. Akses dashboard admin dilakukan
@@ -1939,34 +1975,13 @@
                      Chat lewat tombol mengambang "adminchat-fab" di kanan bawah. -->
 
                 <div class="pt-4 no-print pb-6">
-                    <div id="user-login-btn-wrap" class="mb-2.5">
-                        <button onclick="signInWithGoogle()" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-slate-800 bg-white hover:bg-slate-100 transition font-bold text-xs shadow-lg border border-slate-300">
-                            <svg class="w-4 h-4" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
-                                <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
-                                <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
-                                <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
-                            </svg>
-                            <span>Masuk dengan Google</span>
-                        </button>
-                    </div>
+                    <div id="user-login-btn-wrap" class="hidden"></div>
                     <div id="user-profile-block" class="hidden items-center justify-between gap-2 w-full px-3 py-2 rounded-xl bg-slate-800/60 border border-slate-700 mb-2.5">
                         <div class="flex items-center gap-2 min-w-0">
                             <img id="user-avatar-img" src="" class="w-7 h-7 rounded-full border border-slate-600 flex-shrink-0 hidden">
                             <span id="user-display-name" class="text-[11px] font-bold text-slate-200 truncate"></span>
                         </div>
                         <button onclick="publicUserLogout()" title="Keluar" class="text-slate-400 hover:text-rose-400 flex-shrink-0 p-1"><i data-lucide="log-out" class="w-3.5 h-3.5"></i></button>
-                    </div>
-                    <button onclick="openLiveChat()" class="relative flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-500 transition font-bold text-xs shadow-lg shadow-emerald-600/10 mb-2.5">
-                        <i data-lucide="message-circle-more" class="w-4 h-4"></i> <span>Live Chat</span>
-                        <span id="livechat-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
-                    </button>
-                    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white bg-[#ff0000] hover:bg-[#e60000] transition font-bold text-xs shadow-lg shadow-[#ff0000]/10">
-                        <i data-lucide="phone-call" class="w-4 h-4"></i> <span>Hubungi Admin Instansi</span>
-                    </a>
-                    <div class="flex items-center justify-center gap-1.5 mt-3 text-[10px] text-slate-500 font-semibold">
-                        <i data-lucide="eye" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span>Jumlah Kunjungan: <span id="visitor-count-value" class="text-amber-400 font-bold">-</span></span>
                     </div>
                 </div>
             </nav>
@@ -2173,6 +2188,31 @@
             return null;
         }
 
+        // Daftar seluruh section yang berada di bawah menu induk "Layanan" di sidebar
+        // (Informasi Umum, Pendamping Teknis, FAQ, Hak Akses, TTE, Naskah Masuk,
+        // Naskah Keluar, Pemberkasan Arsip Aktif) beserta seluruh submenu tab
+        // horizontal miliknya, supaya submenu sidebar otomatis terbuka & menu
+        // "Layanan" ikut tersorot saat salah satu halaman ini sedang aktif.
+        const layananSections = [
+            'informasi', 'mentors', 'faq', 'pemberkasan',
+            ...submenuGroups['hak-akses'],
+            ...submenuGroups['tte'],
+            ...submenuGroups['naskah-masuk'],
+            ...submenuGroups['naskah-keluar'],
+        ];
+
+        // Membuka/menutup submenu "Layanan" secara manual saat tombol induknya
+        // diklik (accordion), tanpa memicu navigasi/perpindahan halaman.
+        function toggleLayananMenu() {
+            const submenu = document.getElementById('layanan-submenu');
+            const chevron = document.getElementById('layanan-chevron');
+            if (!submenu) return;
+            const isHidden = submenu.classList.contains('hidden');
+            if (isHidden) { submenu.classList.remove('hidden'); submenu.classList.add('flex'); }
+            else { submenu.classList.add('hidden'); submenu.classList.remove('flex'); }
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
         // Bar tab horizontal untuk submenu (menggantikan dropdown lama). Tab yang
         // sedang aktif tampil sebagai tombol solid, mengikuti model tata letak
         // menu + tombol pada gambar referensi kedua, dengan warna khas situs ini.
@@ -2344,6 +2384,24 @@
             const parentGroup = findParentGroup(section);
             const activeBtn = document.getElementById(parentGroup ? 'menu-btn-group-' + parentGroup : 'menu-btn-' + section);
             if (activeBtn) activeBtn.classList.add('nav-active');
+
+            // Jika section yang dituju berada di dalam grup "Layanan", buka otomatis
+            // submenunya di sidebar dan tandai tombol induk "Layanan" sebagai aktif
+            // (memakai gaya highlight lebih halus, bukan nav-active penuh, karena
+            // "Layanan" sendiri bukan halaman melainkan kelompok menu).
+            const layananBtn = document.getElementById('menu-btn-layanan');
+            const layananSubmenu = document.getElementById('layanan-submenu');
+            const layananChevron = document.getElementById('layanan-chevron');
+            if (layananBtn) layananBtn.classList.remove('text-white', 'bg-slate-800/60');
+            if (layananSections.includes(section)) {
+                if (layananBtn) layananBtn.classList.add('text-white', 'bg-slate-800/60');
+                if (layananSubmenu && layananSubmenu.classList.contains('hidden')) {
+                    layananSubmenu.classList.remove('hidden');
+                    layananSubmenu.classList.add('flex');
+                    if (layananChevron) layananChevron.style.transform = 'rotate(180deg)';
+                }
+            }
+
             if (isMobileSidebarOpen) toggleMobileSidebar();
 
             const adminChatFab = document.getElementById('adminchat-fab');
