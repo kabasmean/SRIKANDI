@@ -660,7 +660,7 @@
         /* Kartu layanan di Beranda */
         .home-service-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 1rem;
             margin-top: 1.25rem;
         }
@@ -835,7 +835,8 @@
 
         // Layout navigasi sengaja dipisahkan dari status login.
         // OAuth dapat melakukan redirect/reload, tetapi posisi menu desktop harus tetap topbar.
-        function ensureTopbarLayout() {
+        
+function ensureTopbarLayout() {
             document.body.classList.add('topbar-layout');
             const nav = document.getElementById('sidebar-nav');
             if (nav && window.innerWidth >= 768) {
@@ -2362,32 +2363,14 @@
                     <i data-lucide="home" class="w-4 h-4"></i>
                     <span>Beranda</span>
                 </button>
-
-                <!-- Pencarian: hanya ikon, ditempatkan di tengah bersama menu referensi. -->
-                <div id="global-search-wrap" class="topbar-search-wrap">
-                    <button type="button" id="global-search-toggle" onclick="toggleGlobalSearch()" class="topbar-icon-btn" title="Cari panduan atau FAQ" aria-label="Cari panduan atau FAQ" aria-expanded="false">
-                        <i data-lucide="search" class="w-5 h-5"></i>
-                    </button>
-                    <div id="global-search-panel" class="global-search-panel hidden">
-                        <div class="relative">
-                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                            <input id="global-search-input" type="text" autocomplete="off" placeholder="Cari panduan atau FAQ..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-9 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/50 transition">
-                            <button type="button" onclick="clearGlobalSearch()" id="global-search-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        <div id="global-search-results" class="hidden mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-72 overflow-y-auto custom-scrollbar"></div>
-                    </div>
-                </div>
-
                 <span class="topbar-divider"></span>
 
-                <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" target="_blank" rel="noopener" class="nav-item topbar-nav-link" id="menu-btn-panduan-singkat-srikandi">
+                <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" class="nav-item topbar-nav-link" id="menu-btn-panduan-singkat-srikandi">
                     <i data-lucide="book-open" class="w-5 h-5"></i>
                     <span>Panduan Singkat SRIKANDI</span>
                 </a>
 
-                <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" target="_blank" rel="noopener" class="nav-item topbar-nav-link" id="menu-btn-srikandi-track">
+                <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" class="nav-item topbar-nav-link" id="menu-btn-srikandi-track">
                     <i data-lucide="route" class="w-5 h-5"></i>
                     <span>SRIKANDI Track</span>
                 </a>
@@ -3060,7 +3043,8 @@
                 { section: 'tte-pengajuan', icon: 'fingerprint', title: 'Tandatangan Elektronik (TTE)', desc: 'Panduan lengkap proses TTE dan sertifikat elektronik.' },
                 { section: 'nm-registrasi', icon: 'folder-input', title: 'Naskah Masuk', desc: 'Panduan registrasi dan pengelolaan naskah masuk.' },
                 { section: 'nk-registrasi', icon: 'folder-output', title: 'Naskah Keluar', desc: 'Panduan pembuatan dan pengelolaan naskah keluar.' },
-                { section: 'pemberkasan', icon: 'archive', title: 'Pemberkasan Arsip Aktif', desc: 'Panduan pengelolaan dan pemberkasan arsip aktif.' }
+                { section: 'pemberkasan', icon: 'archive', title: 'Pemberkasan Arsip Aktif', desc: 'Panduan pengelolaan dan pemberkasan arsip aktif.' },
+                { section: 'permohonan', icon: 'clipboard-list', title: 'Tiket Bantuan', desc: 'Ajukan dan pantau tiket bantuan permohonan Anda.' }
             ];
             return `
                 <section class="home-service-grid" aria-label="Layanan KABAS MEAN">
@@ -3136,7 +3120,7 @@
                             <div class="max-w-2xl px-6 md:px-10 text-white">
                                 <p class="text-xs md:text-sm uppercase tracking-[0.22em] text-amber-300 font-bold mb-3">Selamat datang di KABAS MEAN</p>
                                 <h2 class="text-2xl md:text-4xl font-extrabold leading-tight">Kanal Bantuan, Sumber Informasi & Media Panduan <span class="text-amber-300">SRIKANDI</span></h2>
-                                <p class="mt-4 text-sm md:text-base text-slate-200 leading-relaxed max-w-xl">Akses informasi, panduan, dan bantuan terkait penggunaan SRIKANDI Kabupaten Malaka dalam satu tempat.</p>
+                                <p class="mt-4 text-sm md:text-base text-amber-300 leading-relaxed max-w-xl">Akses informasi, panduan, dan bantuan terkait penggunaan SRIKANDI Kabupaten Malaka dalam satu tempat.</p>
                             </div>
                         </div>
                     </div>
@@ -4552,17 +4536,6 @@
          supaya topbar bersih seperti referensi & bantuan tetap terjangkau di halaman
          mana pun. Ditumpuk di atas livechat-fab & adminchat-fab dengan jarak 64px
          supaya tidak pernah tumpang tindih, baik untuk pengunjung biasa maupun admin. -->
-    <button onclick="navigate('evaluasi')" aria-label="Evaluasi Website" title="Evaluasi Website" class="fixed bottom-[196px] right-4 z-[80] w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 shadow-xl shadow-amber-600/40 flex items-center justify-center transition hover:scale-105">
-        <i data-lucide="star" class="w-5 h-5 text-white"></i>
-    </button>
-
-    <button onclick="navigate('permohonan')" aria-label="Tiket Bantuan" title="Tiket Bantuan" class="fixed bottom-[260px] right-4 z-[80] w-11 h-11 rounded-full bg-sky-600 hover:bg-sky-500 shadow-xl shadow-sky-600/40 flex items-center justify-center transition hover:scale-105">
-        <i data-lucide="clipboard-list" class="w-5 h-5 text-white"></i>
-    </button>
-
-    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" aria-label="Hubungi Admin Instansi" title="Hubungi Admin Instansi" class="fixed bottom-[324px] right-4 z-[80] w-11 h-11 rounded-full bg-[#25D366] hover:brightness-95 shadow-xl shadow-black/20 flex items-center justify-center transition hover:scale-105">
-        <i data-lucide="phone-call" class="w-5 h-5 text-white"></i>
-    </a>
 
 
     <!-- MODAL "MASUK DIPERLUKAN": muncul saat pengunjung yang belum masuk mencoba membuka
