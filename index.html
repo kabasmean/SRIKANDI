@@ -116,11 +116,152 @@
         }
         .nav-active,
         .nav-active:hover {
-            background: #ef4444;
+            background: linear-gradient(135deg, #fb7185 0%, #ef4444 55%, #b91c1c 100%);
             color: #ffffff !important;
             font-weight: 700;
-            box-shadow: none;
+            box-shadow: 0 10px 20px -8px rgba(220, 38, 38, 0.55);
             position: relative;
+        }
+        /* --- Redesain menu sidebar: label section, chip ikon, & garis pohon submenu
+           yang lebih elegan, tanpa mengubah struktur/ID yang dipakai JavaScript. --- */
+        #sidebar nav .nav-item {
+            border-radius: 1rem;
+            transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease;
+        }
+        #sidebar nav .nav-item:hover {
+            transform: translateX(3px);
+        }
+        #sidebar nav .sidebar-section-label {
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: #64748b;
+            padding: 0 0.6rem;
+            margin: 1rem 0 0.5rem;
+        }
+        #sidebar nav .sidebar-section-label:first-child { margin-top: 0.15rem; }
+        html.light-mode #sidebar nav .sidebar-section-label { color: #94a3b8; }
+        #sidebar nav i[data-lucide].nav-icon-chip {
+            box-sizing: content-box;
+            border-radius: 0.65rem;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.32rem;
+            margin: -0.32rem 0;
+            transition: background-color 0.2s ease;
+        }
+        #sidebar nav .nav-item:hover i[data-lucide].nav-icon-chip {
+            background: rgba(245, 158, 11, 0.22);
+        }
+        #sidebar nav .nav-active i[data-lucide].nav-icon-chip {
+            background: rgba(255, 255, 255, 0.22) !important;
+        }
+        #sidebar-nav .sidebar-submenu {
+            position: relative;
+        }
+        #sidebar-nav .sidebar-submenu::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 0.2rem;
+            bottom: 0.2rem;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(245,158,11,0.35), rgba(148,163,184,0.08));
+        }
+        #sidebar nav .sidebar-cta-card {
+            border-radius: 0.9rem;
+            box-shadow: 0 6px 16px -8px rgba(0,0,0,0.45);
+            transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+        #sidebar nav .sidebar-cta-card:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.06);
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.5);
+        }
+        /* --- Mode TOPBAR (md ke atas): nav yang semula kolom vertikal di sidebar
+           kini menjadi baris horizontal di bawah baris logo. Submenu "Layanan"
+           berubah dari akordeon inline menjadi dropdown mengambang, dan kartu CTA
+           menyusut jadi ikon bulat agar topbar tetap ringkas & elegan. --- */
+        @media (min-width: 768px) {
+            #sidebar-nav {
+                display: flex !important;
+                flex-direction: row;
+                align-items: center;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                overflow-y: visible;
+                gap: 0.35rem;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 1.5rem 0.85rem;
+                max-height: none;
+            }
+            #sidebar-nav::-webkit-scrollbar { height: 0; }
+            #sidebar-nav > .sidebar-section-label { display: none; }
+            #sidebar-nav .nav-item { white-space: nowrap; }
+            /* --- Tombol nav utama (Beranda, Layanan, Panduan Singkat, SRIKANDI Track)
+               jadi pil bulat penuh ala referensi: abu-abu terang saat nonaktif, solid
+               (memakai gradasi .nav-active yang sudah ada) saat halaman itu aktif,
+               teks saja tanpa ikon supaya ringkas seperti contoh. Class ".nav-pill"
+               sengaja terpisah dari ".nav-item" biasa supaya tombol submenu di dalam
+               dropdown "Layanan" (juga ber-class .nav-item) tidak ikut berubah bentuk. --- */
+            #sidebar-nav .nav-pill {
+                border-radius: 9999px;
+                padding: 0.7rem 1.35rem;
+                background: rgba(148, 163, 184, 0.14);
+                color: #cbd5e1;
+                justify-content: center;
+            }
+            #sidebar-nav .nav-pill:hover {
+                background: rgba(148, 163, 184, 0.24);
+                color: #ffffff;
+                transform: none;
+            }
+            #sidebar-nav .nav-pill i[data-lucide]:not(#layanan-chevron) { display: none; }
+            #sidebar-nav .nav-pill span { color: inherit; }
+            html.light-mode #sidebar-nav .nav-pill {
+                background: #f1f5f9;
+                color: #475569;
+            }
+            html.light-mode #sidebar-nav .nav-pill:hover {
+                background: #e2e8f0;
+                color: #0f172a;
+            }
+            /* .sidebar-submenu (bukan #sidebar-nav .sidebar-submenu): sengaja TANPA
+               ancestor ID, karena saat dropdown dibuka elemen ini dipindah oleh JS
+               menjadi anak langsung <body> (lihat openLayananMenu()) supaya lolos
+               dari overflow-x:auto milik #sidebar-nav (yang diam-diam memaksa
+               overflow-y jadi auto juga & memotong apa pun yang "meluber" ke luar
+               kotaknya). position:fixed di sini hanya fallback; top/left presisi
+               dihitung & di-set langsung oleh JS relatif terhadap tombol pemicunya. */
+            .sidebar-submenu {
+                position: fixed;
+                top: 4.5rem;
+                left: 1rem;
+                margin: 0;
+                padding: 0.5rem;
+                width: 19rem;
+                max-width: calc(100vw - 1.5rem);
+                max-height: 70vh;
+                overflow-y: auto;
+                background: #0f172a;
+                border: 1px solid rgba(148, 163, 184, 0.15);
+                border-radius: 1rem;
+                box-shadow: 0 24px 45px -14px rgba(0, 0, 0, 0.6);
+                z-index: 45;
+            }
+            .sidebar-submenu::before { display: none; }
+            html.light-mode .sidebar-submenu {
+                background: #ffffff;
+                border-color: rgba(15, 23, 42, 0.08);
+            }
+            #sidebar-nav .sidebar-cta-card {
+                padding: 0.6rem !important;
+                border-radius: 9999px;
+            }
+            #sidebar-nav .cta-label,
+            #sidebar-nav .cta-lock { display: none; }
         }
         /* Aksen garis vertikal di sisi kiri menu aktif, menggantikan notch putih lama
            agar tampilan lebih bersih dan modern, konsisten dengan bentuk rounded-xl
@@ -204,26 +345,15 @@
            gelap semi-transparan supaya teks menu tetap kontras dan mudah dibaca.
            background-attachment: fixed dipakai supaya foto tidak ikut scroll dan
            terlihat menyatu antara sidebar & panel-panel di dalamnya. */
-        #sidebar,
-        #sidebar .bg-slate-950\/40,
-        #sidebar .bg-slate-900\/50 {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), var(--app-bg-photo);
-            background-repeat: no-repeat, no-repeat;
-            background-position: center, center;
-            background-size: cover, cover;
-            background-attachment: fixed, fixed;
+        /* Latar topbar: gradien gelap halus (bukan lagi foto penuh) supaya nyaman
+           dipakai sebagai bar tipis di bagian atas, tetap senada dengan tema. */
+        #sidebar {
+            background-color: #0f172a;
+            background-image: linear-gradient(180deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.97));
         }
-
-        /* Mode terang: foto yang sama, overlay putih semi-transparan di atasnya
-           supaya tetap kontras dengan teks gelap pada mode terang. */
-        html.light-mode #sidebar,
-        html.light-mode #sidebar .bg-slate-950\/40,
-        html.light-mode #sidebar .bg-slate-900\/50 {
-            background-image: linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)), var(--app-bg-photo);
-            background-repeat: no-repeat, no-repeat;
-            background-position: center, center;
-            background-size: cover, cover;
-            background-attachment: fixed, fixed;
+        html.light-mode #sidebar {
+            background-color: #ffffff;
+            background-image: linear-gradient(180deg, #ffffff, #f8fafc);
         }
 
         html.light-mode .bg-slate-800,
@@ -381,15 +511,361 @@
         html.light-mode .wa-daydivider span {
             background: rgba(255, 255, 255, 0.85);
         }
+
+        /* ================== TOPBAR SESUAI MOCKUP ================== */
+        #sidebar {
+            background: #ffffff !important;
+            background-image: none !important;
+            color: #334155 !important;
+            min-height: 86px;
+        }
+        .topbar-inner {
+            min-height: 86px;
+            display: grid;
+            grid-template-columns: minmax(245px, 1fr) auto minmax(245px, 1fr);
+            align-items: center;
+            gap: 1.25rem;
+            padding: 0.65rem 1.75rem;
+        }
+        .topbar-brand { min-width: 245px; }
+        .topbar-logo-wrap {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 15px rgba(15,23,42,.16);
+            flex-shrink: 0;
+        }
+        .topbar-brand h1.dynamic-site-name {
+            font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+            color: #92400e;
+            -webkit-text-fill-color: #92400e;
+            background: none;
+            filter: none;
+            padding-bottom: .55rem;
+            letter-spacing: .035em;
+        }
+        .topbar-brand h1.dynamic-site-name::after {
+            width: 42%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+        }
+        .topbar-nav {
+            gap: .15rem;
+            white-space: nowrap;
+        }
+        .topbar-nav-link {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .7rem;
+            padding: .7rem 1.1rem;
+            border-radius: 9999px;
+            color: #334155 !important;
+            background: transparent;
+            font-size: .9rem;
+            font-weight: 700;
+            transition: background .2s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+        }
+        .topbar-nav-link:hover {
+            background: #f8fafc;
+            color: #92400e !important;
+            transform: translateY(-1px);
+        }
+        .topbar-nav-link.nav-active {
+            background: #fff7ed !important;
+            color: #92400e !important;
+            box-shadow: 0 10px 22px -16px rgba(234,88,12,.75);
+        }
+        .topbar-nav-link.nav-active::before { display: none; }
+        .topbar-nav-link.nav-active i,
+        .topbar-nav-link.nav-active span { color: #92400e !important; }
+        .topbar-divider {
+            width: 1px;
+            height: 25px;
+            background: #cbd5e1;
+            margin: 0 .2rem;
+        }
+        .topbar-search-wrap { position: relative; }
+        .topbar-icon-btn {
+            width: 48px;
+            height: 48px;
+            border: 1px solid #f1f5f9;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            background: #f8fafc;
+            box-shadow: 0 5px 16px rgba(15,23,42,.06);
+            transition: .2s ease;
+        }
+        .topbar-icon-btn:hover {
+            color: #92400e;
+            background: #fff7ed;
+            border-color: #fed7aa;
+            transform: translateY(-1px);
+        }
+        .global-search-panel {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(360px, 80vw);
+            padding: .7rem;
+            background: rgba(255,255,255,.98);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 24px 45px -18px rgba(15,23,42,.28);
+            z-index: 60;
+        }
+        .topbar-account {
+            min-width: 245px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .topbar-login-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            min-width: 116px;
+            padding: .72rem 1.35rem;
+            border-radius: 9999px;
+            color: #fff;
+            background: #a44b0c;
+            border: 1px solid #92400e;
+            box-shadow: 0 8px 18px -8px rgba(146,64,14,.6);
+            font-size: .85rem;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+        .topbar-login-btn:hover {
+            background: #7c2d12;
+            transform: translateY(-1px);
+            box-shadow: 0 12px 22px -9px rgba(146,64,14,.7);
+        }
+        html.light-mode #sidebar .topbar-nav-link { color: #334155 !important; }
+        html.light-mode #sidebar .topbar-nav-link:hover { color: #92400e !important; }
+        html.light-mode #sidebar .topbar-nav-link.nav-active { color: #92400e !important; background: #fff7ed !important; }
+
+        /* Kartu layanan di Beranda */
+        .home-service-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1.25rem;
+        }
+        .home-service-card {
+            min-height: 170px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.35rem 1rem;
+            background: rgba(255,255,255,.94);
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(15,23,42,.06);
+            color: #334155;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            cursor: pointer;
+        }
+        .home-service-card:hover {
+            transform: translateY(-4px);
+            border-color: #fed7aa;
+            box-shadow: 0 18px 32px rgba(15,23,42,.10);
+        }
+        .home-service-icon {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff7ed;
+            color: #b45309;
+            margin-bottom: .8rem;
+        }
+        .home-service-card h3 {
+            font-family: 'Raleway', sans-serif;
+            font-size: .9rem;
+            line-height: 1.35;
+            font-weight: 800;
+            color: #334155;
+        }
+        .home-service-card p {
+            margin-top: .35rem;
+            font-size: .72rem;
+            line-height: 1.5;
+            color: #94a3b8;
+        }
+        @media (max-width: 1100px) {
+            .topbar-inner {
+                grid-template-columns: minmax(190px, 1fr) auto minmax(160px, 1fr);
+                gap: .65rem;
+                padding-inline: 1rem;
+            }
+            .topbar-brand, .topbar-account { min-width: 160px; }
+            .topbar-nav-link { padding-inline: .7rem; font-size: .78rem; }
+            .home-service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 767px) {
+            #sidebar { min-height: 70px; }
+            .topbar-inner {
+                min-height: 70px;
+                display: flex;
+                justify-content: space-between;
+                padding: .65rem .9rem;
+            }
+            .topbar-brand { min-width: 0; }
+            .topbar-logo-wrap { width: 44px; height: 44px; }
+            .topbar-brand h1.dynamic-site-name { font-size: 1.05rem; }
+            .topbar-nav {
+                display: none !important;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                padding: .75rem;
+                background: #fff;
+                border-top: 1px solid #e2e8f0;
+                border-bottom: 1px solid #e2e8f0;
+                box-shadow: 0 15px 30px rgba(15,23,42,.12);
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .topbar-nav.mobile-open { display: flex !important; }
+            .topbar-nav-link { justify-content: flex-start; width: 100%; }
+            .topbar-divider { display: none; }
+            .topbar-account { min-width: 0; }
+            .topbar-login-btn { min-width: 0; width: 44px; height: 44px; padding: 0; border-radius: 50%; }
+            .topbar-login-btn .cta-label { display: none; }
+            .home-service-grid { grid-template-columns: 1fr; }
+        }
+
+
+        /* ================== NAVIGASI KONSISTEN SETELAH LOGIN ==================
+           Navigasi utama selalu dipertahankan sebagai TOPBAR pada desktop.
+           Status autentikasi tidak boleh mengubah layout navigasi menjadi sidebar.
+           Kelas .topbar-layout juga dipulihkan setelah OAuth/refresh. */
+        @media (min-width: 768px) {
+            body.topbar-layout #sidebar {
+                width: 100% !important;
+                min-height: 86px !important;
+                height: auto !important;
+                position: relative !important;
+                left: auto !important;
+                right: auto !important;
+                top: auto !important;
+                bottom: auto !important;
+            }
+            body.topbar-layout #sidebar-nav {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: center !important;
+                flex-wrap: nowrap !important;
+                width: auto !important;
+                max-height: none !important;
+                overflow-x: auto !important;
+                overflow-y: visible !important;
+            }
+            body.topbar-layout #sidebar-nav > .sidebar-section-label {
+                display: none !important;
+            }
+            body.topbar-layout #sidebar-nav .nav-item,
+            body.topbar-layout #sidebar-nav .topbar-nav-link {
+                width: auto !important;
+                flex: 0 0 auto !important;
+            }
+        }
+
+        /* Tombol Kembali ke Beranda, otomatis muncul pada setiap halaman selain Beranda. */
+        .home-back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            margin-bottom: 1rem;
+            padding: .65rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 9999px;
+            background: rgba(255,255,255,.92);
+            color: #92400e;
+            font-size: .78rem;
+            font-weight: 800;
+            box-shadow: 0 6px 18px rgba(15,23,42,.08);
+            transition: .2s ease;
+        }
+        .home-back-button:hover {
+            background: #fff7ed;
+            border-color: #fed7aa;
+            transform: translateY(-1px);
+        }
+        html.light-mode .home-back-button {
+            background: rgba(255,255,255,.96);
+            color: #92400e;
+            border-color: #e2e8f0;
+        }
+        @media (max-width: 767px) {
+            .home-back-button {
+                margin-bottom: .75rem;
+                padding: .58rem .9rem;
+            }
+        }
+
     </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
+<body class="topbar-layout bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-amber-500 focus:text-slate-950 focus:font-bold focus:px-4 focus:py-2 focus:rounded-lg">Langsung ke konten utama</a>
 
     <script>
         // Variabel Global
         let currentSection = 'beranda';
         let isMobileSidebarOpen = false;
+
+        // Layout navigasi sengaja dipisahkan dari status login.
+        // OAuth dapat melakukan redirect/reload, tetapi posisi menu desktop harus tetap topbar.
+        function ensureTopbarLayout() {
+            document.body.classList.add('topbar-layout');
+            const nav = document.getElementById('sidebar-nav');
+            if (nav && window.innerWidth >= 768) {
+                nav.classList.remove('hidden');
+                nav.classList.add('md:flex', 'items-center', 'justify-center');
+            }
+        }
+
+        // Tombol kembali yang konsisten untuk SEMUA halaman yang bukan Beranda,
+        // termasuk halaman yang dirender lewat renderUserGate/renderAdminGate.
+        function ensureHomeBackButton() {
+            const container = document.getElementById('content-container');
+            if (!container) return;
+            const old = container.querySelector(':scope > .home-back-button');
+            if (currentSection === 'beranda') {
+                if (old) old.remove();
+                return;
+            }
+            if (old) return;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'home-back-button no-print';
+            button.setAttribute('aria-label', 'Kembali ke Beranda');
+            button.title = 'Kembali ke Beranda';
+            button.innerHTML = '<i data-lucide="arrow-left" class="w-4 h-4"></i><span>Kembali ke Beranda</span>';
+            button.addEventListener('click', () => navigate('beranda'));
+            container.prepend(button);
+            if (window.lucide) lucide.createIcons();
+        }
 
         // Nilai Default Sistem (Bisa diubah langsung di sini)
         const defaultLogoText = 'KM';
@@ -674,9 +1150,16 @@
         async function signInWithGoogle(intent) {
             if (!supabaseClient) { showToast('Fitur masuk dengan Google belum terkonfigurasi.', 'error'); return; }
             try { sessionStorage.setItem('km_google_intent', intent === 'admin' ? 'admin' : 'public'); } catch (e) { /* abaikan */ }
+            // PERBAIKAN: Google OAuth memuat ulang halaman ini lewat navigasi penuh (bukan
+            // navigasi SPA), sehingga permintaannya bisa "ditangkap" oleh Service Worker dan
+            // dijawab dari cache lama (mis. versi tampilan menu sebelum diubah jadi topbar),
+            // bukan dari jaringan. Menambahkan parameter unik ("cache-buster") membuat URL
+            // ini berbeda dari yang pernah di-cache, sehingga Service Worker/browser terpaksa
+            // mengambil index.html yang terbaru dari server, bukan dari cache lama.
+            const redirectUrl = window.location.origin + window.location.pathname + '?_lg=' + Date.now();
             const { error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
-                options: { redirectTo: window.location.origin + window.location.pathname }
+                options: { redirectTo: redirectUrl }
             });
             if (error) showToast('Gagal memulai proses masuk: ' + error.message, 'error');
         }
@@ -753,10 +1236,17 @@
                 const meta = currentPublicUser.user_metadata || {};
                 const nameEl = document.getElementById('user-display-name');
                 const avatarEl = document.getElementById('user-avatar-img');
+                const avatarFallbackEl = document.getElementById('user-avatar-fallback');
                 if (nameEl) nameEl.textContent = meta.full_name || meta.name || currentPublicUser.email || 'Pengguna';
                 if (avatarEl) {
-                    if (meta.avatar_url || meta.picture) { avatarEl.src = meta.avatar_url || meta.picture; avatarEl.classList.remove('hidden'); }
-                    else avatarEl.classList.add('hidden');
+                    if (meta.avatar_url || meta.picture) {
+                        avatarEl.src = meta.avatar_url || meta.picture;
+                        avatarEl.classList.remove('hidden');
+                        if (avatarFallbackEl) avatarFallbackEl.classList.add('hidden');
+                    } else {
+                        avatarEl.classList.add('hidden');
+                        if (avatarFallbackEl) avatarFallbackEl.classList.remove('hidden');
+                    }
                 }
             } else {
                 loginBtn.classList.remove('hidden');
@@ -779,6 +1269,7 @@
                     ${googleLoginButtonHtml('mx-auto px-5')}
                 </div>`;
             lucide.createIcons();
+            ensureHomeBackButton();
         }
 
         function openLoginRequiredModal() {
@@ -1413,7 +1904,7 @@
 
         function updateLiveChatBadge() {
             const text = liveChatUnread > 9 ? '9+' : String(liveChatUnread);
-            ['livechat-badge', 'livechat-fab-badge'].forEach(id => {
+            ['livechat-fab-badge'].forEach(id => {
                 const badge = document.getElementById(id);
                 if (!badge) return;
                 if (liveChatUnread > 0) {
@@ -1852,140 +2343,85 @@
 
     <div id="toast-wrapper" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <header class="bg-slate-900 border-b border-slate-800 text-white flex justify-between items-center p-4 shadow-md md:hidden">
-        <div class="flex items-center space-x-3">
-            <div id="mobile-logo-wrapper" onclick="revealAdminMenu()" class="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center font-black text-slate-950 overflow-hidden shadow-lg shadow-amber-500/10"><img id="mobile-logo-img" class="hidden w-full h-full object-cover" src="" alt="Logo"><span id="mobile-logo-txt">KM</span></div>
-            <div>
-                <span class="font-black text-lg block tracking-wide uppercase dynamic-site-name">KABAS MEAN</span>
-            </div>
-        </div>
-        <button onclick="toggleMobileSidebar()" class="text-white hover:text-amber-500 transition focus:outline-none p-1">
-            <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-    </header>
-
-    <div class="flex flex-1 min-h-0 relative">
-
-        <aside id="sidebar" class="bg-slate-900 text-slate-300 w-72 flex-shrink-0 flex flex-col border-r border-slate-800 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 z-50 shadow-2xl min-h-0 md:overflow-hidden">
-            <div class="p-6 border-b border-slate-800/80 bg-slate-950/40 flex flex-col items-center text-center relative">
-                <div id="site-logo-container" onclick="revealAdminMenu()" class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl mb-4 relative overflow-hidden group border border-slate-700 bg-slate-800">
-                    <span id="site-logo-txt" class="font-extrabold text-3xl text-amber-400">KM</span>
-                    <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo">
+    <header id="sidebar" class="relative z-40 flex-shrink-0 text-slate-700 border-b border-slate-200 shadow-[0_8px_25px_rgba(15,23,42,0.10)] bg-white">
+        <div class="topbar-inner">
+            <div id="site-logo-container" onclick="revealAdminMenu()" class="topbar-brand flex items-center gap-3 cursor-pointer group flex-shrink-0 min-w-0" title="KABAS MEAN">
+                <div class="topbar-logo-wrap">
+                    <span id="site-logo-txt" class="font-extrabold text-lg text-amber-700">KM</span>
+                    <img id="site-logo-img" class="hidden w-full h-full object-cover absolute inset-0" src="" alt="Logo KABAS MEAN">
                 </div>
-                <h1 class="font-extrabold text-2xl tracking-wider text-white dynamic-site-name uppercase">KABAS MEAN</h1>
+                <h1 class="font-extrabold tracking-wider text-slate-800 dynamic-site-name uppercase leading-none truncate">KABAS MEAN</h1>
             </div>
 
-            <div class="px-4 pt-4 pb-1 relative bg-slate-900/50 flex-shrink-0">
-                <div class="relative">
-                    <i data-lucide="search" class="w-3.5 h-3.5 text-black/70 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                    <input id="global-search-input" type="text" autocomplete="off" placeholder="Cari panduan atau FAQ..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" class="w-full bg-white border border-orange-500 rounded-xl pl-8 pr-7 py-2 text-[11px] text-black placeholder-black/60 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button type="button" onclick="clearGlobalSearch()" id="global-search-clear" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
-                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
-                <div id="global-search-results" class="hidden absolute left-4 right-4 mt-1.5 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-72 overflow-y-auto custom-scrollbar z-50"></div>
-            </div>
+            <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-700 hover:text-amber-700 hover:bg-slate-100 transition duration-200 focus:outline-none p-2 rounded-xl flex-shrink-0">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
 
-            <nav class="flex-grow overflow-y-auto p-4 space-y-1.5 custom-scrollbar bg-slate-900/50">
-                <button onclick="navigate('beranda')" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-beranda">
-                    <i data-lucide="home" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Beranda Utama</span>
+            <nav id="sidebar-nav" class="topbar-nav hidden md:flex items-center justify-center">
+                <button onclick="navigate('beranda')" class="nav-item topbar-nav-link nav-active" id="menu-btn-beranda">
+                    <i data-lucide="home" class="w-4 h-4"></i>
+                    <span>Beranda</span>
                 </button>
-                <!-- Menu "Layanan": grup induk (accordion) yang menaungi seluruh menu
-                     layanan utama sebagai submenu. Tombol ini hanya membuka/menutup
-                     daftar submenu (tidak memuat konten sendiri), sedangkan navigasi
-                     tetap ditangani oleh masing-masing tombol submenu di bawahnya. -->
-                <button onclick="toggleLayananMenu()" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-layanan">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Layanan KABAS MEAN</span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 ml-auto text-slate-500 transition-transform duration-200" id="layanan-chevron"></i>
-                </button>
-                <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" target="_blank" rel="noopener" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-panduan-singkat-srikandi">
-                    <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">Panduan Singkat SRIKANDI</span>
-                </a>
-                <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" target="_blank" rel="noopener" class="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-srikandi-track">
-                    <i data-lucide="route" class="w-4 h-4 text-amber-400"></i> <span class="text-xs font-bold">SRIKANDI Track</span>
-                </a>
-                <div id="layanan-submenu" class="hidden flex-col space-y-1 pl-3.5 ml-[1.15rem] border-l border-slate-800">
-                    <button onclick="navigate('informasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-informasi">
-                        <i data-lucide="info" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Informasi Umum</span>
-                    </button>
-                    <button onclick="navigate('mentors')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-mentors">
-                        <i data-lucide="users-2" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Pendamping Teknis</span>
-                    </button>
-                    <button onclick="navigate('faq')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-faq">
-                        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">FAQ</span>
-                    </button>
 
-                    <button onclick="navigate('admin-instansi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-hak-akses">
-                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Hak Akses</span>
+                <!-- Pencarian: hanya ikon, ditempatkan di tengah bersama menu referensi. -->
+                <div id="global-search-wrap" class="topbar-search-wrap">
+                    <button type="button" id="global-search-toggle" onclick="toggleGlobalSearch()" class="topbar-icon-btn" title="Cari panduan atau FAQ" aria-label="Cari panduan atau FAQ" aria-expanded="false">
+                        <i data-lucide="search" class="w-5 h-5"></i>
                     </button>
-
-                    <button onclick="navigate('tte-pengajuan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-tte">
-                        <i data-lucide="fingerprint" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Tandatangan Elektronik (TTE)</span>
-                    </button>
-
-                    <button onclick="navigate('nm-registrasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-masuk">
-                        <i data-lucide="folder-input" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Naskah Masuk</span>
-                    </button>
-
-                    <button onclick="navigate('nk-registrasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-group-naskah-keluar">
-                        <i data-lucide="folder-output" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Naskah Keluar</span>
-                    </button>
-
-                    <button onclick="navigate('pemberkasan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition duration-150" id="menu-btn-pemberkasan">
-                        <i data-lucide="archive" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-[11px] font-bold">Pemberkasan Arsip Aktif</span>
-                    </button>
-
-                    <button onclick="signInWithGoogle()" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-slate-800 bg-white hover:bg-slate-100 transition duration-150" id="menu-btn-google-login">
-                        <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
-                            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.9 29.5 5 24 5 16 5 9.1 9.6 6.3 14.7z"/>
-                            <path fill="#4CAF50" d="M24 44c5.4 0 10.3-1.8 14.1-5l-6.5-5.5C29.6 34.9 26.9 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.1 39.4 16 44 24 44z"/>
-                            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.5l6.5 5.5C40.9 36 44 30.6 44 24c0-1.3-.1-2.7-.4-3.5z"/>
-                        </svg>
-                        <span class="text-[11px] font-bold">Masuk dengan Google</span>
-                    </button>
-                    <button onclick="navigate('evaluasi')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150" id="menu-btn-evaluasi">
-                        <i data-lucide="star" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Evaluasi Website</span>
-                        <i data-lucide="lock" class="w-3 h-3 text-white/70 ml-auto" title="Perlu masuk"></i>
-                    </button>
-                    <button onclick="navigate('permohonan')" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150" id="menu-btn-permohonan">
-                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Tiket Bantuan</span>
-                        <i data-lucide="lock" class="w-3 h-3 text-white/70 ml-auto" title="Perlu masuk"></i>
-                    </button>
-                    <button onclick="openLiveChat()" class="relative flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-emerald-600 hover:bg-emerald-500 transition duration-150">
-                        <i data-lucide="message-circle-more" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Live Chat</span>
-                        <span id="livechat-badge" class="hidden absolute -top-1.5 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-slate-900">0</span>
-                    </button>
-                    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" class="flex items-center gap-2.5 w-full text-left pl-2.5 pr-3 py-2 rounded-lg text-white bg-[#ff0000] hover:bg-[#e60000] transition duration-150">
-                        <i data-lucide="phone-call" class="w-3.5 h-3.5 text-white"></i> <span class="text-[11px] font-bold">Hubungi Admin Instansi</span>
-                    </a>
-                </div>
-
-                <!-- Menu "Infografis" dan "Video Tutorial" SENGAJA dihapus dari sini.
-                     Kontennya (lihat defaultInfografis, defaultVideos & sectionMediaMap)
-                     kini ditampilkan langsung di halaman menu yang berhubungan, misalnya
-                     infografis/video TTE muncul di halaman-halaman submenu TTE, infografis/
-                     video Naskah Masuk di halaman Registrasi Naskah Masuk, dst. -->
-                <div class="mt-4"></div>
-                <!-- Menu "Admin Evaluasi" dan "Admin Live Chat" SENGAJA tidak ditampilkan
-                     di sidebar, termasuk saat admin sudah login, supaya pengunjung biasa
-                     tidak menyadari keberadaan area admin. Akses dashboard admin dilakukan
-                     lewat klik logo situs (lihat #site-logo-container / #mobile-logo-wrapper,
-                     fungsi revealAdminMenu()). Setelah login, admin bisa berpindah ke Live
-                     Chat lewat tombol mengambang "adminchat-fab" di kanan bawah. -->
-
-                <div class="pt-4 no-print pb-6">
-                    <div id="user-login-btn-wrap" class="hidden"></div>
-                    <div id="user-profile-block" class="hidden items-center justify-between gap-2 w-full px-3 py-2 rounded-xl bg-slate-800/60 border border-slate-700 mb-2.5">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <img id="user-avatar-img" src="" class="w-7 h-7 rounded-full border border-slate-600 flex-shrink-0 hidden">
-                            <span id="user-display-name" class="text-[11px] font-bold text-slate-200 truncate"></span>
+                    <div id="global-search-panel" class="global-search-panel hidden">
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input id="global-search-input" type="text" autocomplete="off" placeholder="Cari panduan atau FAQ..." oninput="handleGlobalSearch(this.value)" onfocus="handleGlobalSearch(this.value)" class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-9 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/50 transition">
+                            <button type="button" onclick="clearGlobalSearch()" id="global-search-clear" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
                         </div>
-                        <button onclick="publicUserLogout()" title="Keluar" class="text-slate-400 hover:text-rose-400 flex-shrink-0 p-1"><i data-lucide="log-out" class="w-3.5 h-3.5"></i></button>
+                        <div id="global-search-results" class="hidden mt-2 bg-white border border-slate-200 rounded-xl shadow-xl max-h-72 overflow-y-auto custom-scrollbar"></div>
                     </div>
                 </div>
+
+                <span class="topbar-divider"></span>
+
+                <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" target="_blank" rel="noopener" class="nav-item topbar-nav-link" id="menu-btn-panduan-singkat-srikandi">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span>Panduan Singkat SRIKANDI</span>
+                </a>
+
+                <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" target="_blank" rel="noopener" class="nav-item topbar-nav-link" id="menu-btn-srikandi-track">
+                    <i data-lucide="route" class="w-5 h-5"></i>
+                    <span>SRIKANDI Track</span>
+                </a>
             </nav>
-        </aside>
+
+            <div class="topbar-account flex-shrink-0">
+                <button onclick="signInWithGoogle()" title="Login" class="topbar-login-btn" id="menu-btn-google-login">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span class="cta-label">Login</span>
+                </button>
+
+                <div id="user-login-btn-wrap" class="hidden"></div>
+                <div id="user-profile-block" class="hidden items-center gap-2 px-2 py-1.5 rounded-full bg-slate-50 border border-slate-200">
+                    <img id="user-avatar-img" src="" class="w-8 h-8 rounded-full border border-slate-200 object-cover hidden" alt="Foto pengguna">
+                    <div id="user-avatar-fallback" class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                        <i data-lucide="circle-user" class="w-5 h-5 text-amber-700"></i>
+                    </div>
+                    <div class="hidden lg:block min-w-0 leading-tight max-w-32">
+                        <p id="user-display-name" class="text-[11px] font-bold text-slate-700 truncate"></p>
+                        <p class="text-[10px] text-slate-400">Pengguna</p>
+                    </div>
+                    <button onclick="publicUserLogout()" title="Keluar" class="text-slate-400 hover:text-rose-500 p-1">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layanan KABAS MEAN tidak lagi menjadi menu topbar.
+             Seluruh kelompok layanan ditampilkan sebagai kartu di halaman Beranda. -->
+        <div id="layanan-submenu" class="hidden" aria-hidden="true"></div>
+    </header>
+
+    <div class="flex flex-col flex-1 min-h-0 relative">
 
         <div id="mobile-overlay" onclick="toggleMobileSidebar()" class="hidden fixed inset-0 bg-black/75 backdrop-blur-sm z-30 md:hidden"></div>
 
@@ -2151,10 +2587,17 @@
         }
 
         function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar'), overlay = document.getElementById('mobile-overlay');
+            const nav = document.getElementById('sidebar-nav'), overlay = document.getElementById('mobile-overlay');
             isMobileSidebarOpen = !isMobileSidebarOpen;
-            if (isMobileSidebarOpen) { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); } 
-            else { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
+            if (isMobileSidebarOpen) {
+                nav.classList.remove('hidden');
+                nav.classList.add('flex', 'mobile-open');
+                overlay.classList.remove('hidden');
+            } else {
+                nav.classList.add('hidden');
+                nav.classList.remove('flex', 'mobile-open');
+                overlay.classList.add('hidden');
+            }
         }
 
         // Submenu kini ditampilkan sebagai tab horizontal DI DALAM halaman konten
@@ -2201,17 +2644,95 @@
             ...submenuGroups['naskah-keluar'],
         ];
 
-        // Membuka/menutup submenu "Layanan" secara manual saat tombol induknya
-        // diklik (accordion), tanpa memicu navigasi/perpindahan halaman.
-        function toggleLayananMenu() {
+        // Membuka/menutup submenu "Layanan" saat tombol induknya diklik (accordion
+        // di mobile / dropdown mengambang di desktop), tanpa memicu navigasi.
+        //
+        // Di desktop, elemen #layanan-submenu SENGAJA dipindah menjadi anak
+        // langsung <body> selama dropdown terbuka, lalu dikembalikan lagi ke
+        // posisi semula di DOM saat ditutup. Ini supaya dropdown benar-benar
+        // "mengambang di atas halaman" (fixed, relatif ke viewport) dan tidak
+        // ikut terpotong oleh #sidebar-nav yang overflow-x:auto (yang otomatis
+        // memaksa overflow-y ikut auto juga, sehingga sebelumnya memotong/
+        // menahan apa pun yang meluber keluar dari kotak bar navigasi).
+        function isDesktopNav() {
+            return window.matchMedia('(min-width: 768px)').matches;
+        }
+
+        function positionLayananMenu() {
+            const submenu = document.getElementById('layanan-submenu');
+            const trigger = document.getElementById('menu-btn-layanan');
+            if (!submenu || !trigger || submenu.parentElement !== document.body) return;
+            const rect = trigger.getBoundingClientRect();
+            const menuWidth = submenu.offsetWidth || 304;
+            const maxLeft = window.innerWidth - menuWidth - 12;
+            const left = Math.max(12, Math.min(rect.left, maxLeft));
+            submenu.style.position = 'fixed';
+            submenu.style.top = (rect.bottom + 10) + 'px';
+            submenu.style.left = left + 'px';
+            submenu.style.margin = '0';
+            submenu.style.zIndex = '45';
+        }
+
+        function openLayananMenu() {
             const submenu = document.getElementById('layanan-submenu');
             const chevron = document.getElementById('layanan-chevron');
             if (!submenu) return;
-            const isHidden = submenu.classList.contains('hidden');
-            if (isHidden) { submenu.classList.remove('hidden'); submenu.classList.add('flex'); }
-            else { submenu.classList.add('hidden'); submenu.classList.remove('flex'); }
-            if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (isDesktopNav() && submenu.parentElement !== document.body) {
+                submenu._layananHomeParent = submenu.parentElement;
+                submenu._layananHomeNext = submenu.nextSibling;
+                document.body.appendChild(submenu);
+                positionLayananMenu();
+            }
+            submenu.classList.remove('hidden');
+            submenu.classList.add('flex');
+            if (chevron) chevron.style.transform = 'rotate(180deg)';
         }
+
+        function closeLayananMenu() {
+            const submenu = document.getElementById('layanan-submenu');
+            const chevron = document.getElementById('layanan-chevron');
+            if (!submenu) return;
+            submenu.classList.add('hidden');
+            submenu.classList.remove('flex');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+            if (submenu.parentElement === document.body && submenu._layananHomeParent) {
+                submenu.style.position = '';
+                submenu.style.top = '';
+                submenu.style.left = '';
+                submenu.style.margin = '';
+                submenu.style.zIndex = '';
+                submenu._layananHomeParent.insertBefore(submenu, submenu._layananHomeNext || null);
+                submenu._layananHomeParent = null;
+                submenu._layananHomeNext = null;
+            }
+        }
+
+        function toggleLayananMenu() {
+            const submenu = document.getElementById('layanan-submenu');
+            if (!submenu) return;
+            if (submenu.classList.contains('hidden')) openLayananMenu();
+            else closeLayananMenu();
+        }
+
+        // Tutup dropdown saat klik di luar area submenu/tombol pemicunya.
+        document.addEventListener('click', (e) => {
+            const submenu = document.getElementById('layanan-submenu');
+            const trigger = document.getElementById('menu-btn-layanan');
+            if (!submenu || submenu.classList.contains('hidden')) return;
+            if (submenu.contains(e.target) || (trigger && trigger.contains(e.target))) return;
+            closeLayananMenu();
+        });
+
+        // Reposisi saat ukuran layar berubah selagi dropdown terbuka; jika berubah
+        // ke lebar mobile, tutup saja (karena tampilannya beralih jadi akordeon).
+        window.addEventListener('resize', () => {
+            const submenu = document.getElementById('layanan-submenu');
+            if (!submenu || submenu.classList.contains('hidden')) return;
+            if (submenu.parentElement === document.body) {
+                if (isDesktopNav()) positionLayananMenu();
+                else closeLayananMenu();
+            }
+        });
 
         // Bar tab horizontal untuk submenu (menggantikan dropdown lama). Tab yang
         // sedang aktif tampil sebagai tombol solid, mengikuti model tata letak
@@ -2293,6 +2814,19 @@
                     </button>`).join('');
             }
             resultsBox.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function toggleGlobalSearch() {
+            const panel = document.getElementById('global-search-panel');
+            const toggle = document.getElementById('global-search-toggle');
+            const input = document.getElementById('global-search-input');
+            if (!panel) return;
+            const willOpen = panel.classList.contains('hidden');
+            panel.classList.toggle('hidden', !willOpen);
+            if (toggle) toggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            if (willOpen && input) setTimeout(() => input.focus(), 80);
+            if (!willOpen) clearGlobalSearch();
             lucide.createIcons();
         }
 
@@ -2379,8 +2913,9 @@
 
         function navigate(section) {
             currentSection = section;
+            ensureTopbarLayout();
             scrollMainToTop();
-            document.querySelectorAll('aside nav button').forEach(btn => btn.classList.remove('nav-active'));
+            document.querySelectorAll('#sidebar-nav button').forEach(btn => btn.classList.remove('nav-active'));
             const parentGroup = findParentGroup(section);
             const activeBtn = document.getElementById(parentGroup ? 'menu-btn-group-' + parentGroup : 'menu-btn-' + section);
             if (activeBtn) activeBtn.classList.add('nav-active');
@@ -2389,18 +2924,10 @@
             // submenunya di sidebar dan tandai tombol induk "Layanan" sebagai aktif
             // (memakai gaya highlight lebih halus, bukan nav-active penuh, karena
             // "Layanan" sendiri bukan halaman melainkan kelompok menu).
+            // Menu Layanan tidak lagi menjadi tombol induk di topbar.
+            // Setiap layanan sekarang dapat dibuka langsung dari kartu di Beranda.
             const layananBtn = document.getElementById('menu-btn-layanan');
-            const layananSubmenu = document.getElementById('layanan-submenu');
-            const layananChevron = document.getElementById('layanan-chevron');
             if (layananBtn) layananBtn.classList.remove('text-white', 'bg-slate-800/60');
-            if (layananSections.includes(section)) {
-                if (layananBtn) layananBtn.classList.add('text-white', 'bg-slate-800/60');
-                if (layananSubmenu && layananSubmenu.classList.contains('hidden')) {
-                    layananSubmenu.classList.remove('hidden');
-                    layananSubmenu.classList.add('flex');
-                    if (layananChevron) layananChevron.style.transform = 'rotate(180deg)';
-                }
-            }
 
             if (isMobileSidebarOpen) toggleMobileSidebar();
 
@@ -2411,6 +2938,9 @@
             }
 
             renderContent();
+            // renderContent memiliki beberapa jalur return; tombol dipastikan lagi
+            // setelah DOM selesai diisi oleh renderer masing-masing.
+            requestAnimationFrame(ensureHomeBackButton);
         }
 
         // Kartu link umum (Informasi Umum: Bimtek/Live), kartu PDF (Hak Akses),
@@ -2521,6 +3051,29 @@
             return `<div class="pt-6 border-t border-slate-800/85 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>`;
         }
 
+        function renderHomeServiceCards() {
+            const cards = [
+                { section: 'informasi', icon: 'info', title: 'Informasi Umum', desc: 'Informasi dasar dan referensi penting tentang SRIKANDI.' },
+                { section: 'mentors', icon: 'users-2', title: 'Pendamping Teknis', desc: 'Dapatkan bantuan dan pendampingan teknis SRIKANDI.' },
+                { section: 'faq', icon: 'help-circle', title: 'FAQ', desc: 'Temukan jawaban atas pertanyaan yang sering diajukan.' },
+                { section: 'admin-instansi', icon: 'shield-check', title: 'Hak Akses', desc: 'Panduan hak akses dan peran pengguna SRIKANDI.' },
+                { section: 'tte-pengajuan', icon: 'fingerprint', title: 'Tandatangan Elektronik (TTE)', desc: 'Panduan lengkap proses TTE dan sertifikat elektronik.' },
+                { section: 'nm-registrasi', icon: 'folder-input', title: 'Naskah Masuk', desc: 'Panduan registrasi dan pengelolaan naskah masuk.' },
+                { section: 'nk-registrasi', icon: 'folder-output', title: 'Naskah Keluar', desc: 'Panduan pembuatan dan pengelolaan naskah keluar.' },
+                { section: 'pemberkasan', icon: 'archive', title: 'Pemberkasan Arsip Aktif', desc: 'Panduan pengelolaan dan pemberkasan arsip aktif.' }
+            ];
+            return `
+                <section class="home-service-grid" aria-label="Layanan KABAS MEAN">
+                    ${cards.map(card => `
+                        <button type="button" onclick="navigate('${card.section}')" class="home-service-card">
+                            <span class="home-service-icon"><i data-lucide="${card.icon}" class="w-6 h-6"></i></span>
+                            <h3>${card.title}</h3>
+                            <p>${card.desc}</p>
+                        </button>
+                    `).join('')}
+                </section>`;
+        }
+
         function renderContent() {
             const container = document.getElementById('content-container');
             if (currentSection === 'mentors') { container.innerHTML = renderMentorsCRUD(); lucide.createIcons(); return; }
@@ -2576,9 +3129,18 @@
             html += renderSubTabs(currentSection);
             if (currentSection === 'beranda' && homeImageUrl) {
                 html += `
-                    <div class="w-full h-72 md:h-[28rem] rounded-2xl overflow-hidden shadow-2xl border border-slate-800 relative group">
+                    <div class="w-full h-72 md:h-[28rem] rounded-2xl overflow-hidden shadow-2xl border border-slate-200 relative group">
                         <img src="${homeImageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
-                    </div>`;
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/75 via-slate-950/35 to-transparent"></div>
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="max-w-2xl px-6 md:px-10 text-white">
+                                <p class="text-xs md:text-sm uppercase tracking-[0.22em] text-amber-300 font-bold mb-3">Selamat datang di KABAS MEAN</p>
+                                <h2 class="text-2xl md:text-4xl font-extrabold leading-tight">Kanal Bantuan, Sumber Informasi & Media Panduan <span class="text-amber-300">SRIKANDI</span></h2>
+                                <p class="mt-4 text-sm md:text-base text-slate-200 leading-relaxed max-w-xl">Akses informasi, panduan, dan bantuan terkait penggunaan SRIKANDI Kabupaten Malaka dalam satu tempat.</p>
+                            </div>
+                        </div>
+                    </div>
+                    ${renderHomeServiceCards()}`;
             }
             html += `
                 <div class="border-b border-slate-800/80 pb-4 flex justify-between items-center gap-3">
@@ -2993,7 +3555,11 @@
         // dashboard. Kalau ada sesi tapi belum aal2 (mis. reload di tengah proses MFA)
         // -> lanjutkan proses MFA. Kalau belum login sama sekali -> tampilkan form login.
         async function renderAdminGate(renderDashboard) {
-            if (isAdminMode) { renderDashboard(); return; }
+            if (isAdminMode) {
+                renderDashboard();
+                ensureHomeBackButton();
+                return;
+            }
 
             if (supabaseClient && adminAuthStage === 'login') {
                 const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -3012,6 +3578,7 @@
             const container = document.getElementById('content-container');
             container.innerHTML = renderAdminLogin();
             lucide.createIcons();
+            ensureHomeBackButton();
         }
 
         // Menentukan tahap MFA berikutnya setelah password benar (atau setelah sesi
@@ -3883,8 +4450,28 @@
         function registerServiceWorker() {
             if (!('serviceWorker' in navigator)) return;
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch((err) => {
+                // PERBAIKAN: { updateViaCache: 'none' } memastikan file sw.js sendiri selalu
+                // diambil segar dari jaringan (tidak ikut kena cache HTTP browser), sehingga
+                // Service Worker versi terbaru bisa lebih cepat terdeteksi & terpasang.
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((reg) => {
+                    // Setiap halaman ini dimuat (termasuk saat pengguna kembali dari redirect
+                    // login Google), paksa Service Worker mengecek ke server apakah ada versi
+                    // baru, supaya tampilan yang sempat tersimpan di cache tidak pernah
+                    // tertinggal jauh dari kode yang sebenarnya berlaku saat ini.
+                    reg.update().catch(() => { /* abaikan, biarkan cache lama tetap dipakai */ });
+                }).catch((err) => {
                     console.warn('Gagal mendaftarkan service worker (mode offline tidak aktif):', err);
+                });
+
+                // Kalau Service Worker versi baru mengambil alih kendali halaman (artinya versi
+                // lama baru saja diganti versi baru), muat ulang HALAMAN sekali secara otomatis
+                // supaya pengguna langsung melihat tampilan terbaru, bukan versi lama yang
+                // terlanjur ter-render dari cache sebelum proses redirect login tadi.
+                let swAlreadyReloaded = false;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (swAlreadyReloaded) return;
+                    swAlreadyReloaded = true;
+                    window.location.reload();
                 });
             });
         }
@@ -3898,14 +4485,30 @@
             });
         }
 
+        // Pengaman tambahan: bila ada proses OAuth/komponen lain yang menyentuh DOM,
+        // layout topbar dipulihkan tanpa mengubah section aktif.
+        const topbarLayoutObserver = new MutationObserver(() => {
+            ensureTopbarLayout();
+            ensureHomeBackButton();
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('content-container');
+            if (container) {
+                topbarLayoutObserver.observe(container, { childList: true });
+            }
+            ensureTopbarLayout();
+        });
+
         // --- INISIALISASI ---
         window.addEventListener('DOMContentLoaded', async () => {
+            ensureTopbarLayout();
             initThemeMode();
             applyStaticIdentity();
 
             registerServiceWorker();
             initOfflineIndicator();
             await checkAdminAccess();
+            ensureTopbarLayout();
             navigate('beranda');
             trackSiteVisit();
 
@@ -3917,11 +4520,17 @@
             // sinkron tanpa perlu memuat ulang halaman secara manual.
             if (supabaseClient) {
                 supabaseClient.auth.onAuthStateChange(async () => {
+                    // Login/logout/OAuth tidak boleh mengubah posisi menu.
+                    ensureTopbarLayout();
                     await checkAdminAccess();
                     await handleGoogleAdminIntent();
                     if (['evaluasi', 'permohonan', 'admin-evaluasi', 'admin-livechat', 'admin-permohonan'].includes(currentSection)) {
                         renderContent();
                     }
+                    requestAnimationFrame(() => {
+                        ensureTopbarLayout();
+                        ensureHomeBackButton();
+                    });
                 });
             }
         });
@@ -3937,6 +4546,24 @@
         <i data-lucide="message-square-more" class="w-5 h-5 text-white"></i>
         <span id="adminchat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-amber-400 text-slate-950 text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
+
+    <!-- Tiga tombol berikut sebelumnya berupa baris menu "Akun & Bantuan" di topbar
+         (Evaluasi Website, Tiket Bantuan, Hubungi Admin Instansi); dipindah ke sini
+         supaya topbar bersih seperti referensi & bantuan tetap terjangkau di halaman
+         mana pun. Ditumpuk di atas livechat-fab & adminchat-fab dengan jarak 64px
+         supaya tidak pernah tumpang tindih, baik untuk pengunjung biasa maupun admin. -->
+    <button onclick="navigate('evaluasi')" aria-label="Evaluasi Website" title="Evaluasi Website" class="fixed bottom-[196px] right-4 z-[80] w-11 h-11 rounded-full bg-amber-500 hover:bg-amber-400 shadow-xl shadow-amber-600/40 flex items-center justify-center transition hover:scale-105">
+        <i data-lucide="star" class="w-5 h-5 text-white"></i>
+    </button>
+
+    <button onclick="navigate('permohonan')" aria-label="Tiket Bantuan" title="Tiket Bantuan" class="fixed bottom-[260px] right-4 z-[80] w-11 h-11 rounded-full bg-sky-600 hover:bg-sky-500 shadow-xl shadow-sky-600/40 flex items-center justify-center transition hover:scale-105">
+        <i data-lucide="clipboard-list" class="w-5 h-5 text-white"></i>
+    </button>
+
+    <a href="https://wa.me/message/I5DFQTSJBHCZL1" target="_blank" aria-label="Hubungi Admin Instansi" title="Hubungi Admin Instansi" class="fixed bottom-[324px] right-4 z-[80] w-11 h-11 rounded-full bg-[#25D366] hover:brightness-95 shadow-xl shadow-black/20 flex items-center justify-center transition hover:scale-105">
+        <i data-lucide="phone-call" class="w-5 h-5 text-white"></i>
+    </a>
+
 
     <!-- MODAL "MASUK DIPERLUKAN": muncul saat pengunjung yang belum masuk mencoba membuka
          Live Chat (fitur Evaluasi & Tiket Bantuan memakai renderUserGate langsung di
