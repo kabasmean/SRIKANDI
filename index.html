@@ -886,6 +886,306 @@
             }
         }
 
+
+        /* =====================================================================
+           UPGRADE TOPBAR PROFESIONAL
+           - Header: aksen garis emas di atas, bayangan halus, efek kaca
+           - Menu: "track" pil abu-abu lembut + chip ikon + status aktif putih
+             bergaris emas + indikator titik
+           - Tombol Login: gradien cokelat-amber dengan kilau (shine) saat hover
+           - Mobile: hamburger bergaya, panel menu animasi, baris menu rapi
+           Seluruh blok ini sengaja ditaruh PALING AKHIR & memakai selector
+           ber-ID supaya menimpa aturan topbar lama tanpa mengubah JavaScript.
+           ===================================================================== */
+
+        html body #sidebar {
+            background: rgba(255, 255, 255, 0.92) !important;
+            -webkit-backdrop-filter: saturate(180%) blur(14px);
+            backdrop-filter: saturate(180%) blur(14px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9) !important;
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 10px 30px -18px rgba(15, 23, 42, 0.28) !important;
+        }
+        html body #sidebar::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 3px;
+            background: linear-gradient(90deg, #92400e 0%, #f59e0b 45%, #fbbf24 55%, #92400e 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ---------- Brand ---------- */
+        html body #sidebar .topbar-logo-wrap {
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.55), 0 8px 18px -6px rgba(146, 64, 14, 0.45);
+            transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease;
+        }
+        html body #sidebar .topbar-brand:hover .topbar-logo-wrap {
+            transform: rotate(-6deg) scale(1.06);
+            box-shadow: 0 0 0 2px #f59e0b, 0 12px 22px -6px rgba(146, 64, 14, 0.55);
+        }
+
+        /* ---------- Track menu (desktop) ---------- */
+        @media (min-width: 768px) {
+            html body #sidebar #sidebar-nav.topbar-nav {
+                justify-self: center;
+                width: max-content;
+                max-width: 100%;
+                gap: .2rem;
+                padding: 5px !important;
+                background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 9999px !important;
+                box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06) !important;
+            }
+        }
+
+        html body #sidebar #sidebar-nav .topbar-nav-link {
+            position: relative;
+            min-height: 46px;
+            gap: .6rem;
+            padding: .3rem 1rem .3rem .35rem;
+            border-radius: 9999px;
+            background: transparent !important;
+            border: 0;
+            color: #475569 !important;
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .01em;
+            box-shadow: none;
+            transform: none;
+            transition: background-color .25s ease, color .25s ease, box-shadow .3s ease, transform .25s ease;
+        }
+        html body #sidebar #sidebar-nav .topbar-nav-link,
+        html body #sidebar #sidebar-nav .topbar-nav-link:hover { text-decoration: none; }
+        html body #sidebar #sidebar-nav .topbar-nav-link span {
+            color: inherit !important;
+            text-align: left;
+        }
+
+        /* chip ikon */
+        html body #sidebar #sidebar-nav .topbar-nav-link > svg {
+            box-sizing: border-box;
+            flex: 0 0 auto;
+            width: 32px;
+            height: 32px;
+            padding: 7px;
+            border-radius: 50%;
+            color: #b45309 !important;
+            background: #fff;
+            box-shadow: 0 0 0 1px #e2e8f0, 0 3px 8px -3px rgba(15, 23, 42, 0.18);
+            transition: background .25s ease, color .25s ease, box-shadow .25s ease, transform .35s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        /* hover */
+        html body #sidebar #sidebar-nav .topbar-nav-link:hover {
+            background: rgba(255, 255, 255, 0.85) !important;
+            color: #92400e !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px -8px rgba(15, 23, 42, 0.35);
+        }
+        html body #sidebar #sidebar-nav .topbar-nav-link:hover > svg {
+            color: #fff !important;
+            background: linear-gradient(135deg, #f59e0b, #b45309);
+            box-shadow: 0 6px 12px -4px rgba(180, 83, 9, 0.6);
+            transform: rotate(-8deg) scale(1.06);
+        }
+
+        /* aktif */
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active,
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active:hover {
+            background: #fff !important;
+            color: #7c2d12 !important;
+            transform: none;
+            box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.45), 0 8px 18px -8px rgba(180, 83, 9, 0.5) !important;
+        }
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active span,
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active:hover span {
+            color: #7c2d12 !important;
+            font-weight: 800;
+        }
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active > svg,
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active:hover > svg {
+            color: #fff !important;
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            box-shadow: 0 6px 12px -4px rgba(180, 83, 9, 0.6);
+            transform: none;
+        }
+        /* titik indikator di bawah menu aktif (menggantikan garis ::before lama) */
+        html body #sidebar #sidebar-nav .topbar-nav-link.nav-active::before {
+            display: block;
+            content: '';
+            position: absolute;
+            left: 50%;
+            right: auto;
+            top: auto;
+            bottom: -4px;
+            width: 18px;
+            height: 3px;
+            transform: translateX(-50%);
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #f59e0b, #b45309);
+            box-shadow: none;
+        }
+
+        html body #sidebar #sidebar-nav .topbar-nav-link:focus-visible {
+            outline: 2px solid #f59e0b;
+            outline-offset: 2px;
+        }
+        html body #sidebar #sidebar-nav .topbar-nav-link:active { transform: scale(.97); }
+
+        /* pemisah tipis bergradasi */
+        html body #sidebar #sidebar-nav .topbar-divider {
+            width: 1px;
+            height: 26px;
+            margin: 0 .15rem;
+            background: linear-gradient(180deg, transparent, #cbd5e1, transparent);
+        }
+
+        /* ---------- Tombol Login ---------- */
+        html body #sidebar .topbar-login-btn {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            gap: .55rem;
+            min-width: 118px;
+            padding: .75rem 1.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #c2570c 0%, #92400e 55%, #7c2d12 100%);
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: .02em;
+            box-shadow: 0 10px 22px -10px rgba(146, 64, 14, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+            transition: transform .25s ease, box-shadow .3s ease, filter .25s ease;
+        }
+        html body #sidebar .topbar-login-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0 auto 0 -60%;
+            width: 40%;
+            background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            transform: skewX(-20deg);
+            transition: left .6s ease;
+            z-index: -1;
+        }
+        html body #sidebar .topbar-login-btn:hover {
+            background: linear-gradient(135deg, #d9650f 0%, #a44b0c 55%, #7c2d12 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 26px -12px rgba(146, 64, 14, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+        html body #sidebar .topbar-login-btn:hover::after { left: 120%; }
+        html body #sidebar .topbar-login-btn:active { transform: translateY(0) scale(.97); }
+        html body #sidebar .topbar-login-btn svg { transition: transform .25s ease; }
+        html body #sidebar .topbar-login-btn:hover svg { transform: translateX(3px); }
+        html body #sidebar .topbar-login-btn:focus-visible { outline: 2px solid #f59e0b; outline-offset: 3px; }
+
+        /* ---------- Profil pengguna (setelah login) ---------- */
+        html body #sidebar #user-profile-block {
+            border-radius: 9999px;
+            background: linear-gradient(180deg, #fff, #f8fafc);
+            border-color: #e2e8f0;
+            box-shadow: 0 6px 16px -10px rgba(15, 23, 42, 0.35);
+            transition: box-shadow .25s ease, border-color .25s ease;
+        }
+        html body #sidebar #user-profile-block:hover {
+            border-color: #fed7aa;
+            box-shadow: 0 10px 20px -10px rgba(146, 64, 14, 0.4);
+        }
+
+        /* ---------- Hamburger (mobile) ---------- */
+        .topbar-burger {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            background: linear-gradient(180deg, #fff, #f8fafc);
+            color: #475569;
+            box-shadow: 0 6px 14px -8px rgba(15, 23, 42, 0.35);
+            transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease;
+        }
+        .topbar-burger:hover { color: #92400e; border-color: #fed7aa; background: #fff7ed; }
+        .topbar-burger:active { transform: scale(.94); }
+        .topbar-burger .burger-line {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+            transition: transform .3s cubic-bezier(.2, .8, .2, 1), opacity .2s ease, top .3s ease;
+        }
+        .topbar-burger .burger-line:nth-child(1) { top: 15px; }
+        .topbar-burger .burger-line:nth-child(2) { top: 21px; }
+        .topbar-burger .burger-line:nth-child(3) { top: 27px; }
+        .topbar-burger.is-open { color: #92400e; background: #fff7ed; border-color: #fdba74; }
+        .topbar-burger.is-open .burger-line:nth-child(1) { top: 21px; transform: rotate(45deg); }
+        .topbar-burger.is-open .burger-line:nth-child(2) { opacity: 0; transform: scaleX(.2); }
+        .topbar-burger.is-open .burger-line:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+
+        /* ---------- Panel menu mobile ---------- */
+        @keyframes topbarDrop {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 767px) {
+            html body #sidebar #sidebar-nav.topbar-nav {
+                top: 100%;
+                padding: .75rem !important;
+                gap: .4rem;
+                background: rgba(255, 255, 255, 0.98) !important;
+                border-radius: 0 0 20px 20px !important;
+                border-top: 1px solid #e2e8f0 !important;
+                box-shadow: 0 24px 40px -20px rgba(15, 23, 42, 0.45) !important;
+            }
+            html body #sidebar #sidebar-nav.topbar-nav.mobile-open { animation: topbarDrop .25s ease both; }
+            html body #sidebar .topbar-login-btn {
+                min-width: 0;
+                width: 44px;
+                height: 44px;
+                padding: 0;
+                border-radius: 50%;
+            }
+            html body #sidebar #sidebar-nav .topbar-nav-link {
+                width: 100%;
+                min-height: 52px;
+                padding: .5rem .9rem .5rem .55rem;
+                border-radius: 16px;
+                background: #f8fafc !important;
+                font-size: .9rem;
+            }
+            html body #sidebar #sidebar-nav .topbar-nav-link::after {
+                content: '';
+                margin-left: auto;
+                width: 7px;
+                height: 7px;
+                border-top: 2px solid currentColor;
+                border-right: 2px solid currentColor;
+                transform: rotate(45deg);
+                opacity: .4;
+                flex-shrink: 0;
+            }
+            html body #sidebar #sidebar-nav .topbar-nav-link span { max-width: none; }
+            html body #sidebar #sidebar-nav .topbar-nav-link.nav-active::before { display: none; }
+            html body #sidebar #sidebar-nav .topbar-nav-link.nav-active {
+                background: #fff7ed !important;
+                box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.5) !important;
+            }
+        }
+
+        /* Hormati preferensi "kurangi animasi" */
+        @media (prefers-reduced-motion: reduce) {
+            html body #sidebar *, html body #sidebar *::after, html body #sidebar *::before {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
     </style>
 </head>
 <body class="topbar-layout bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
@@ -2417,8 +2717,8 @@ function ensureTopbarLayout() {
                 <h1 class="font-extrabold tracking-wider text-slate-800 dynamic-site-name uppercase leading-none truncate">KABAS MEAN</h1>
             </div>
 
-            <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-700 hover:text-amber-700 hover:bg-slate-100 transition duration-200 focus:outline-none p-2 rounded-xl flex-shrink-0">
-                <i data-lucide="menu" class="w-5 h-5"></i>
+            <button onclick="toggleMobileSidebar()" id="topbar-burger" class="topbar-burger md:hidden focus:outline-none flex-shrink-0" aria-label="Buka menu" aria-expanded="false" aria-controls="sidebar-nav">
+                <span class="burger-line"></span><span class="burger-line"></span><span class="burger-line"></span>
             </button>
 
             <nav id="sidebar-nav" class="topbar-nav hidden md:flex items-center justify-center">
@@ -2640,6 +2940,12 @@ function ensureTopbarLayout() {
         function toggleMobileSidebar() {
             const nav = document.getElementById('sidebar-nav'), overlay = document.getElementById('mobile-overlay');
             isMobileSidebarOpen = !isMobileSidebarOpen;
+            const burger = document.getElementById('topbar-burger');
+            if (burger) {
+                burger.classList.toggle('is-open', isMobileSidebarOpen);
+                burger.setAttribute('aria-expanded', String(isMobileSidebarOpen));
+                burger.setAttribute('aria-label', isMobileSidebarOpen ? 'Tutup menu' : 'Buka menu');
+            }
             if (isMobileSidebarOpen) {
                 nav.classList.remove('hidden');
                 nav.classList.add('flex', 'mobile-open');
