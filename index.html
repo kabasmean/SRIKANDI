@@ -1186,6 +1186,132 @@
             }
         }
 
+
+        /* =====================================================================
+           UPGRADE KARTU LAYANAN BERANDA
+           - Deskripsi rata tengah (menimpa justify global #content-container p)
+           - Ikon dalam chip gradien, panah "Buka", garis aksen, animasi muncul
+           ===================================================================== */
+        /* Warna aksen per kategori: tiap kartu punya identitas warna sendiri. */
+        html body #content-container .home-service-card { --c1:#f59e0b; --c2:#b45309; --soft1:#fff7ed; --soft2:#ffedd5; --ring:#fed7aa; --glow:245,158,11; }
+        html body #content-container .home-service-card.tone-amber { --c1: #f59e0b; --c2: #b45309; --soft1: #fff7ed; --soft2: #ffedd5; --ring: #fed7aa; --glow: 245,158,11; }
+        html body #content-container .home-service-card.tone-sky { --c1: #38bdf8; --c2: #0369a1; --soft1: #f0f9ff; --soft2: #e0f2fe; --ring: #bae6fd; --glow: 56,189,248; }
+        html body #content-container .home-service-card.tone-violet { --c1: #a78bfa; --c2: #6d28d9; --soft1: #f5f3ff; --soft2: #ede9fe; --ring: #ddd6fe; --glow: 167,139,250; }
+        html body #content-container .home-service-card.tone-emerald { --c1: #34d399; --c2: #047857; --soft1: #ecfdf5; --soft2: #d1fae5; --ring: #a7f3d0; --glow: 52,211,153; }
+        html body #content-container .home-service-card.tone-rose { --c1: #fb7185; --c2: #be123c; --soft1: #fff1f2; --soft2: #ffe4e6; --ring: #fecdd3; --glow: 251,113,133; }
+        html body #content-container .home-service-card.tone-indigo { --c1: #818cf8; --c2: #4338ca; --soft1: #eef2ff; --soft2: #e0e7ff; --ring: #c7d2fe; --glow: 129,140,248; }
+        html body #content-container .home-service-card.tone-teal { --c1: #2dd4bf; --c2: #0f766e; --soft1: #f0fdfa; --soft2: #ccfbf1; --ring: #99f6e4; --glow: 45,212,191; }
+        html body #content-container .home-service-card.tone-orange { --c1: #fb923c; --c2: #c2410c; --soft1: #fff7ed; --soft2: #ffedd5; --ring: #fed7aa; --glow: 251,146,60; }
+        html body #content-container .home-service-card.tone-fuchsia { --c1: #e879f9; --c2: #a21caf; --soft1: #fdf4ff; --soft2: #fae8ff; --ring: #f5d0fe; --glow: 232,121,249; }
+
+        @keyframes homeCardIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        html body #content-container .home-service-grid { gap: 1.1rem; }
+        html body #content-container .home-service-card {
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            padding: 1.6rem 1.25rem 1.3rem;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--soft1) 100%);
+            border: 1px solid #eef0f4;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 10px 24px -14px rgba(15, 23, 42, .18);
+            transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease, border-color .3s ease;
+            animation: homeCardIn .5s cubic-bezier(.2, .8, .2, 1) both;
+            animation-delay: calc(var(--i, 0) * 55ms);
+        }
+        html body #content-container .home-service-card::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--c1), var(--c2));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .4s ease;
+        }
+        html body #content-container .home-service-card::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            right: -50px;
+            top: -50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(var(--glow), .16), transparent 70%);
+            pointer-events: none;
+        }
+        html body #content-container .home-service-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--ring);
+            box-shadow: 0 2px 4px rgba(15, 23, 42, .04), 0 24px 38px -18px rgba(var(--glow), .6);
+        }
+        html body #content-container .home-service-card:hover::before { transform: scaleX(1); }
+        html body #content-container .home-service-card:active { transform: translateY(-2px) scale(.99); }
+        html body #content-container .home-service-card:focus-visible { outline: 2px solid var(--c1); outline-offset: 3px; }
+
+        html body #content-container .home-service-icon {
+            width: 58px;
+            height: 58px;
+            margin-bottom: .95rem;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--soft1) 0%, var(--soft2) 100%);
+            color: var(--c2);
+            box-shadow: inset 0 0 0 1px var(--ring), 0 8px 16px -10px rgba(var(--glow), .8);
+            transition: background .3s ease, color .3s ease, transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .3s ease;
+        }
+        html body #content-container .home-service-icon svg { display: block; flex: none; }
+        html body #content-container .home-service-card:hover .home-service-icon {
+            background: linear-gradient(135deg, var(--c1) 0%, var(--c2) 100%);
+            color: #fff;
+            transform: rotate(-6deg) scale(1.08);
+            box-shadow: 0 12px 20px -10px rgba(var(--glow), .95);
+        }
+
+        html body #content-container .home-service-card h3 {
+            font-size: 1rem;
+            line-height: 1.3;
+            font-weight: 800;
+            color: #1e293b;
+        }
+        /* menimpa "#content-container p { text-align: justify; line-height: 2 }" */
+        html body #content-container .home-service-card p {
+            margin-top: .45rem;
+            text-align: center;
+            text-justify: auto;
+            font-size: .8rem;
+            line-height: 1.55;
+            color: #64748b;
+            max-width: 26ch;
+        }
+        html body #content-container .home-service-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            margin-top: auto;
+            padding-top: .9rem;
+            font-size: .74rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+            color: var(--c2);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity .25s ease, transform .25s ease;
+        }
+        html body #content-container .home-service-cta svg { transition: transform .25s ease; }
+        html body #content-container .home-service-card:hover .home-service-cta,
+        html body #content-container .home-service-card:focus-visible .home-service-cta { opacity: 1; transform: none; }
+        html body #content-container .home-service-card:hover .home-service-cta svg { transform: translateX(3px); }
+        /* perangkat sentuh tidak punya hover: panah dibuat selalu terlihat tipis */
+        @media (hover: none) {
+            html body #content-container .home-service-cta { opacity: .8; transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html body #content-container .home-service-card { animation: none; transition: none; }
+        }
+
     </style>
 </head>
 <body class="topbar-layout bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
@@ -3408,25 +3534,28 @@ function ensureTopbarLayout() {
             return `<div class="pt-6 border-t border-slate-800/85 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">${cards}</div>`;
         }
 
+        const HOME_CARD_ICONS = {"info": "<circle cx='12' cy='12' r='10'/><path d='M12 16v-4'/><path d='M12 8h.01'/>", "users-2": "<path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><path d='M16 3.128a4 4 0 0 1 0 7.744'/><path d='M22 21v-2a4 4 0 0 0-3-3.87'/><circle cx='9' cy='7' r='4'/>", "help-circle": "<circle cx='12' cy='12' r='10'/><path d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'/><path d='M12 17h.01'/>", "shield-check": "<path d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/><path d='m9 12 2 2 4-4'/>", "fingerprint": "<path d='M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4'/><path d='M14 13.12c0 2.38 0 6.38-1 8.88'/><path d='M17.29 21.02c.12-.6.43-2.3.5-3.02'/><path d='M2 12a10 10 0 0 1 18-6'/><path d='M2 16h.01'/><path d='M21.8 16c.2-2 .131-5.354 0-6'/><path d='M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2'/><path d='M8.65 22c.21-.66.45-1.32.57-2'/><path d='M9 6.8a6 6 0 0 1 9 5.2v2'/>", "folder-input": "<path d='M2 9V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1'/><path d='M2 13h10'/><path d='m9 16 3-3-3-3'/>", "folder-output": "<path d='M2 7.5V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-1.5'/><path d='M2 13h10'/><path d='m5 10-3 3 3 3'/>", "archive": "<rect width='20' height='5' x='2' y='3' rx='1'/><path d='M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8'/><path d='M10 12h4'/>", "clipboard-list": "<rect width='8' height='4' x='8' y='2' rx='1' ry='1'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/><path d='M12 11h4'/><path d='M12 16h4'/><path d='M8 11h.01'/><path d='M8 16h.01'/>"};
+
         function renderHomeServiceCards() {
             const cards = [
-                { section: 'informasi', icon: 'info', title: 'Informasi Umum', desc: 'Informasi dasar dan referensi penting tentang SRIKANDI.' },
-                { section: 'mentors', icon: 'users-2', title: 'Pendamping Teknis', desc: 'Dapatkan bantuan dan pendampingan teknis SRIKANDI.' },
-                { section: 'faq', icon: 'help-circle', title: 'FAQ', desc: 'Temukan jawaban atas pertanyaan yang sering diajukan.' },
-                { section: 'admin-instansi', icon: 'shield-check', title: 'Hak Akses', desc: 'Panduan hak akses dan peran pengguna SRIKANDI.' },
-                { section: 'tte-pengajuan', icon: 'fingerprint', title: 'Tandatangan Elektronik (TTE)', desc: 'Panduan lengkap proses TTE dan sertifikat elektronik.' },
-                { section: 'nm-registrasi', icon: 'folder-input', title: 'Naskah Masuk', desc: 'Panduan registrasi dan pengelolaan naskah masuk.' },
-                { section: 'nk-registrasi', icon: 'folder-output', title: 'Naskah Keluar', desc: 'Panduan pembuatan dan pengelolaan naskah keluar.' },
-                { section: 'pemberkasan', icon: 'archive', title: 'Pemberkasan Arsip Aktif', desc: 'Panduan pengelolaan dan pemberkasan arsip aktif.' },
-                { section: 'permohonan', icon: 'clipboard-list', title: 'Tiket Bantuan', desc: 'Ajukan dan pantau tiket bantuan permohonan Anda.' }
+                { section: 'informasi', tone: 'sky', icon: 'info', title: 'Informasi Umum', desc: 'Informasi dasar dan referensi penting tentang SRIKANDI.' },
+                { section: 'mentors', tone: 'violet', icon: 'users-2', title: 'Pendamping Teknis', desc: 'Dapatkan bantuan dan pendampingan teknis SRIKANDI.' },
+                { section: 'faq', tone: 'amber', icon: 'help-circle', title: 'FAQ', desc: 'Temukan jawaban atas pertanyaan yang sering diajukan.' },
+                { section: 'admin-instansi', tone: 'emerald', icon: 'shield-check', title: 'Hak Akses', desc: 'Panduan hak akses dan peran pengguna SRIKANDI.' },
+                { section: 'tte-pengajuan', tone: 'rose', icon: 'fingerprint', title: 'Tandatangan Elektronik (TTE)', desc: 'Panduan lengkap proses TTE dan sertifikat elektronik.' },
+                { section: 'nm-registrasi', tone: 'indigo', icon: 'folder-input', title: 'Naskah Masuk', desc: 'Panduan registrasi dan pengelolaan naskah masuk.' },
+                { section: 'nk-registrasi', tone: 'teal', icon: 'folder-output', title: 'Naskah Keluar', desc: 'Panduan pembuatan dan pengelolaan naskah keluar.' },
+                { section: 'pemberkasan', tone: 'orange', icon: 'archive', title: 'Pemberkasan Arsip Aktif', desc: 'Panduan pengelolaan dan pemberkasan arsip aktif.' },
+                { section: 'permohonan', tone: 'fuchsia', icon: 'clipboard-list', title: 'Tiket Bantuan', desc: 'Ajukan dan pantau tiket bantuan permohonan Anda.' }
             ];
             return `
                 <section class="home-service-grid" aria-label="Layanan KABAS MEAN">
-                    ${cards.map(card => `
-                        <button type="button" onclick="navigate('${card.section}')" class="home-service-card">
-                            <span class="home-service-icon"><i data-lucide="${card.icon}" class="w-6 h-6"></i></span>
+                    ${cards.map((card, idx) => `
+                        <button type="button" onclick="navigate('${card.section}')" class="home-service-card tone-${card.tone || 'amber'}" style="--i:${idx}">
+                            <span class="home-service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${HOME_CARD_ICONS[card.icon] || ''}</svg></span>
                             <h3>${card.title}</h3>
                             <p>${card.desc}</p>
+                            <span class="home-service-cta" aria-hidden="true">Buka <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
                         </button>
                     `).join('')}
                 </section>`;
