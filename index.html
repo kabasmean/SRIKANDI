@@ -1312,6 +1312,168 @@
             html body #content-container .home-service-card { animation: none; transition: none; }
         }
 
+
+        /* =====================================================================
+           UPGRADE KB: tab, pencarian, breadcrumb, kartu, FAQ, footer, FAB, skeleton
+           ===================================================================== */
+        @keyframes kbPageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        @keyframes kbShimmer { 100% { transform: translateX(100%); } }
+        @keyframes kbPulse { 0% { box-shadow: 0 0 0 0 rgba(245,158,11,.55); } 70% { box-shadow: 0 0 0 16px rgba(245,158,11,0); } 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); } }
+        #content-container.kb-page-in { animation: kbPageIn .38s cubic-bezier(.2,.8,.2,1) both; }
+
+        /* ---------- Skeleton ---------- */
+        .kb-skel { display: grid; gap: 1.1rem; }
+        .kb-skel-block, .kb-skel-card { position: relative; overflow: hidden; background: #e8ecf2; border-radius: 20px; }
+        .kb-skel-block::after, .kb-skel-card::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent); animation: kbShimmer 1.3s infinite; }
+        .kb-skel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+        .kb-skel-card { height: 190px; }
+        @media (max-width: 767px) { .kb-skel-grid { grid-template-columns: 1fr; } }
+
+        /* ---------- Tab sub-halaman ---------- */
+        html body #content-container .kb-tabs { margin-bottom: .25rem; }
+        .kb-tabs-label { display: flex; align-items: center; gap: .5rem; margin-bottom: .6rem; font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #92400e; }
+        .kb-dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #b45309); box-shadow: 0 0 0 3px rgba(245,158,11,.2); }
+        .kb-tabs-row { display: flex; gap: .5rem; overflow-x: auto; padding: .2rem .1rem .7rem; border-bottom: 1px solid #e2e8f0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .kb-tabs-row::-webkit-scrollbar { display: none; }
+        .kb-tab { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .5rem; padding: .35rem .95rem .35rem .4rem; border-radius: 9999px; border: 1px solid #e2e8f0; background: #fff; color: #475569; font-size: .78rem; font-weight: 700; white-space: nowrap; box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .25s ease; }
+        .kb-tab-n { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #fff7ed; color: #b45309; font-size: .68rem; font-weight: 800; box-shadow: inset 0 0 0 1px #fed7aa; transition: inherit; }
+        .kb-tab:hover { transform: translateY(-2px); border-color: #fdba74; color: #92400e; box-shadow: 0 10px 18px -12px rgba(180,83,9,.6); }
+        .kb-tab.is-active, .kb-tab.is-active:hover { transform: none; color: #fff; border-color: transparent; background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); box-shadow: 0 12px 20px -10px rgba(180,83,9,.75); }
+        .kb-tab.is-active .kb-tab-n { background: rgba(255,255,255,.22); color: #fff; box-shadow: none; }
+        .kb-tab:focus-visible, .kb-crumb:focus-visible, .kb-faq-q:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
+
+        /* ---------- Breadcrumb ---------- */
+        .kb-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; font-size: .76rem; font-weight: 600; color: #64748b; }
+        .kb-crumb { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .5rem; border-radius: 9999px; }
+        .kb-crumb-link { transition: background .2s ease, color .2s ease; }
+        .kb-crumb-link:hover { background: #fff7ed; color: #92400e; }
+        .kb-crumb-current { color: #7c2d12; font-weight: 800; }
+        .kb-sep { display: inline-flex; color: #cbd5e1; }
+
+        /* ---------- Pencarian Beranda ---------- */
+        .kb-search { position: relative; z-index: 20; max-width: 760px; width: 100%; margin-left: auto; margin-right: auto; }
+        html body #content-container .kb-search.kb-search-over { margin-top: -2.4rem; padding: 0 1rem; }
+        .kb-search-main { position: relative; }
+        .kb-search-box { display: flex; align-items: center; gap: .6rem; padding: .35rem .5rem .35rem 1.1rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 9999px; box-shadow: 0 18px 40px -18px rgba(15,23,42,.45), 0 0 0 4px rgba(255,255,255,.55); transition: border-color .2s ease, box-shadow .25s ease; }
+        .kb-search-box:focus-within { border-color: #f59e0b; box-shadow: 0 18px 40px -16px rgba(180,83,9,.5), 0 0 0 4px rgba(245,158,11,.22); }
+        .kb-search-ic { display: inline-flex; color: #b45309; }
+        .kb-search-box input { flex: 1; min-width: 0; height: 46px; border: 0; outline: 0; background: transparent; color: #1e293b; font-size: .92rem; }
+        .kb-search-box input::placeholder { color: #94a3b8; }
+        .kb-search-clear { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; color: #64748b; background: #f1f5f9; transition: background .2s ease, color .2s ease; }
+        .kb-search-clear:hover { background: #fee2e2; color: #be123c; }
+        .kb-search-results { position: absolute; left: 0; right: 0; top: calc(100% + 10px); max-height: 380px; overflow-y: auto; padding: .4rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; box-shadow: 0 30px 50px -20px rgba(15,23,42,.45); }
+        .kb-sr { width: 100%; display: flex; align-items: center; gap: .75rem; padding: .6rem .7rem; text-align: left; border-radius: 14px; transition: background .15s ease; }
+        .kb-sr:hover, .kb-sr:focus-visible { background: #fff7ed; outline: none; }
+        .kb-sr-ic { flex: 0 0 auto; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 11px; background: #fff7ed; color: #b45309; }
+        .kb-sr-ic.is-faq { background: #f0f9ff; color: #0369a1; }
+        .kb-sr-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .kb-sr-body b { color: #1e293b; font-size: .84rem; line-height: 1.3; }
+        .kb-sr-body small { color: #64748b; font-size: .72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .kb-sr-tag { flex: 0 0 auto; padding: .15rem .55rem; border-radius: 9999px; background: #f1f5f9; color: #64748b; font-size: .62rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+        .kb-sr-empty { padding: 1rem; text-align: center; font-size: .8rem; color: #64748b; }
+        .kb-chips { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .45rem; margin-top: .9rem; font-size: .74rem; color: #64748b; }
+        .kb-chips span { font-weight: 700; }
+        .kb-chips button { padding: .3rem .8rem; border-radius: 9999px; background: #fff; border: 1px solid #e2e8f0; color: #475569; font-weight: 700; transition: all .2s ease; }
+        .kb-chips button:hover { background: #fff7ed; border-color: #fdba74; color: #92400e; transform: translateY(-1px); }
+
+        /* ---------- Kartu link / infografis / video ---------- */
+        html body #content-container .kb-card { background: #fff !important; border: 1px solid #eef0f4 !important; border-radius: 20px !important; box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 12px 26px -16px rgba(15,23,42,.22) !important; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease !important; }
+        html body #content-container .kb-card:hover { transform: translateY(-5px); border-color: #fdba74 !important; box-shadow: 0 2px 4px rgba(15,23,42,.04), 0 26px 40px -20px rgba(180,83,9,.45) !important; }
+        html body #content-container .kb-card:focus-visible { outline: 2px solid #f59e0b; outline-offset: 3px; }
+        html body #content-container .kb-card p.font-bold { color: #1e293b !important; }
+        html body #content-container .kb-card p.text-amber-400 { color: #b45309 !important; }
+
+        /* ---------- Isi panduan ---------- */
+        #content-container .prose a { color: #b45309; font-weight: 600; text-decoration: underline; text-decoration-color: rgba(245,158,11,.5); text-underline-offset: 3px; transition: color .2s ease; }
+        #content-container .prose a:hover { color: #7c2d12; }
+        #content-container .prose img { max-width: 100%; height: auto; border-radius: 16px; box-shadow: 0 14px 30px -18px rgba(15,23,42,.45); }
+        #content-container .prose ul li::marker { color: #f59e0b; }
+        #content-container .prose ol li::marker { color: #b45309; font-weight: 800; }
+        #content-container .prose h3, #content-container .prose h4 { color: #1e293b; font-weight: 800; padding-left: .7rem; border-left: 3px solid #f59e0b; margin-top: 1.4rem; }
+        #content-container .prose blockquote { padding: .8rem 1rem; border-left: 4px solid #f59e0b; border-radius: 0 14px 14px 0; background: #fffbeb; color: #78350f; }
+        #content-container .prose table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid #e2e8f0; border-radius: 14px; }
+        #content-container .prose th { background: #fff7ed; color: #7c2d12; text-align: left; }
+        #content-container .prose th, #content-container .prose td { padding: .6rem .8rem; border-bottom: 1px solid #f1f5f9; }
+
+        /* ---------- FAQ ---------- */
+        .kb-faq-tools { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+        .kb-faq-search { flex: 1; min-width: 220px; max-width: 420px; display: flex; align-items: center; gap: .6rem; padding: .2rem 1rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 9999px; color: #b45309; transition: border-color .2s ease, box-shadow .2s ease; }
+        .kb-faq-search:focus-within { border-color: #f59e0b; box-shadow: 0 0 0 4px rgba(245,158,11,.18); }
+        .kb-faq-search input { flex: 1; height: 40px; border: 0; outline: 0; background: transparent; color: #1e293b; font-size: .85rem; }
+        .kb-faq-count { font-size: .74rem; font-weight: 700; color: #64748b; }
+        .kb-faq-list { display: grid; gap: .75rem; }
+        .kb-faq { position: relative; overflow: hidden; background: #fff; border: 1px solid #eef0f4; border-radius: 18px; box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 10px 22px -16px rgba(15,23,42,.2); transition: border-color .25s ease, box-shadow .3s ease; }
+        .kb-faq.hidden { display: none !important; }
+        .kb-faq::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(180deg, #f59e0b, #b45309); transform: scaleY(0); transform-origin: top; transition: transform .35s ease; }
+        .kb-faq:hover { border-color: #fed7aa; }
+        .kb-faq.is-open { border-color: #fdba74; box-shadow: 0 2px 4px rgba(15,23,42,.04), 0 20px 34px -20px rgba(180,83,9,.4); }
+        .kb-faq.is-open::before { transform: scaleY(1); }
+        .kb-faq-q { width: 100%; display: flex; align-items: center; gap: .85rem; padding: .95rem 1.1rem; text-align: left; }
+        .kb-faq-num { flex: 0 0 auto; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; background: #fff7ed; color: #b45309; font-size: .72rem; font-weight: 800; box-shadow: inset 0 0 0 1px #fed7aa; transition: all .25s ease; }
+        .kb-faq.is-open .kb-faq-num { background: linear-gradient(135deg, #f59e0b, #b45309); color: #fff; box-shadow: none; }
+        .kb-faq-text { flex: 1; font-size: .9rem; font-weight: 700; line-height: 1.4; color: #1e293b; }
+        .kb-faq-chev { flex: 0 0 auto; display: inline-flex; color: #b45309; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+        .kb-faq.is-open .kb-faq-chev { transform: rotate(180deg); }
+        .kb-faq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease; }
+        .kb-faq.is-open .kb-faq-a { grid-template-rows: 1fr; }
+        .kb-faq-a > div { overflow: hidden; }
+        .kb-faq-a-in { padding: 0 1.1rem 1.1rem 3.9rem; font-size: .86rem; line-height: 1.75; color: #475569; }
+        .kb-faq-a-in p { text-align: left !important; line-height: 1.75 !important; }
+        .kb-faq-empty { padding: 1.4rem; text-align: center; border: 1px dashed #cbd5e1; border-radius: 16px; color: #64748b; font-size: .85rem; }
+        .kb-faq-empty.hidden { display: none; }
+        @media (max-width: 640px) { .kb-faq-a-in { padding-left: 1.1rem; } }
+
+        /* ---------- Footer ---------- */
+        html body .kb-footer { flex-shrink: 0; position: relative; margin-top: 2.5rem; padding: 2.6rem 1.5rem 0; background: linear-gradient(180deg, #2b1608 0%, #190d05 100%) !important; color: #d6c4b2; border-top: 0 !important; text-align: left !important; }
+        html body .kb-footer::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, #92400e, #f59e0b, #fbbf24, #92400e); }
+        .kb-footer-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 2rem; }
+        .kb-footer .dynamic-site-name { background: none !important; -webkit-text-fill-color: currentColor !important; filter: none !important; padding: 0 !important; color: #fff; font-weight: 800; letter-spacing: .06em; }
+        .kb-footer .dynamic-site-name::after { display: none !important; }
+        .kb-footer-title { font-size: 1.15rem; margin-bottom: .6rem; }
+        .kb-footer-desc, .kb-footer-col p { font-size: .8rem; line-height: 1.7; color: #b9a48f; }
+        .kb-footer-col h4 { margin-bottom: .8rem; font-size: .68rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #fbbf24; }
+        .kb-footer-col > button { display: block; margin-bottom: .45rem; font-size: .82rem; color: #d6c4b2; text-align: left; transition: color .2s ease, transform .2s ease; }
+        .kb-footer-col > button:hover { color: #fff; transform: translateX(4px); }
+        .kb-footer-cta { margin-top: .8rem; padding: .6rem 1.2rem; border-radius: 9999px; font-size: .8rem; font-weight: 800; color: #fff; background: linear-gradient(135deg, #d9650f, #92400e); box-shadow: 0 10px 20px -10px rgba(245,158,11,.6); transition: transform .2s ease, box-shadow .2s ease; }
+        .kb-footer-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 24px -12px rgba(245,158,11,.75); }
+        .kb-footer-bottom { max-width: 1120px; margin: 2rem auto 0; padding: 1.1rem 0 1.4rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; border-top: 1px solid rgba(251,191,36,.18); font-size: .74rem; color: #9c8873; }
+        .kb-footer-bottom b { color: #fbbf24; }
+        @media (max-width: 1023px) { .kb-footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 599px) { .kb-footer-grid { grid-template-columns: 1fr; } .kb-footer-bottom { flex-direction: column; } }
+
+        /* ---------- Live chat FAB ---------- */
+        html body #livechat-fab { width: auto; height: 52px; min-width: 52px; padding: 0 .95rem; gap: .5rem; border-radius: 9999px; background: linear-gradient(135deg, #d9650f 0%, #92400e 100%) !important; box-shadow: 0 14px 26px -10px rgba(146,64,14,.8) !important; color: #fff; animation: kbPulse 2.8s infinite; overflow: visible; }
+        html body #livechat-fab:hover { transform: translateY(-3px); }
+        .kb-fab-label { max-width: 0; overflow: hidden; white-space: nowrap; font-size: .8rem; font-weight: 800; opacity: 0; transition: max-width .35s ease, opacity .25s ease; }
+        #livechat-fab:hover .kb-fab-label, #livechat-fab:focus-visible .kb-fab-label { max-width: 6rem; opacity: 1; }
+        html body #livechat-fab:hover, html body #livechat-fab:focus-visible { padding-right: 1.1rem; }
+
+        /* ---------- Tombol ke atas dengan cincin progres ---------- */
+        html body #back-to-top-btn.kb-top { position: fixed; right: 1.1rem; bottom: 8.2rem; width: 46px; height: 46px; border: 0; color: #92400e; background: conic-gradient(#f59e0b var(--p, 0%), #e2e8f0 0) !important; box-shadow: 0 12px 22px -10px rgba(15,23,42,.5); z-index: 55; transition: transform .25s ease, color .2s ease; }
+        html body #back-to-top-btn.kb-top::before { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: #fff; transition: background .2s ease; }
+        html body #back-to-top-btn.kb-top svg { position: relative; z-index: 1; }
+        html body #back-to-top-btn.kb-top:hover { transform: translateY(-3px); color: #fff; }
+        html body #back-to-top-btn.kb-top:hover::before { background: linear-gradient(135deg, #f59e0b, #b45309); }
+        @media (max-width: 767px) { html body #back-to-top-btn.kb-top { bottom: 8.4rem; } }
+
+        /* Pengaman: tombol buatan sendiri tidak bergantung pada reset bawaan Tailwind */
+        .kb-sr, .kb-faq-q, .kb-chips button, .kb-footer-col > button, .kb-footer-cta, .kb-crumb, .kb-tab, .kb-search-clear { background: transparent; border: 0; cursor: pointer; font-family: inherit; color: inherit; }
+        .kb-chips button { background: #fff; border: 1px solid #e2e8f0; }
+        .kb-tab { background: #fff; border: 1px solid #e2e8f0; }
+        .kb-search-clear { background: #f1f5f9; }
+        .kb-footer-cta { background: linear-gradient(135deg, #d9650f, #92400e); color: #fff; }
+        .kb-faq-q { color: #1e293b; }
+        .kb-footer-col > button { color: #d6c4b2; }
+
+        html body .kb-footer .kb-footer-title .dynamic-site-name { color: #fff !important; -webkit-text-fill-color: #fff !important; background: none !important; -webkit-background-clip: border-box !important; background-clip: border-box !important; opacity: 1 !important; font-size: 1.2rem; }
+        html body #back-to-top-btn.kb-top, html body #back-to-top-btn.kb-top::before { border-radius: 50%; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .kb-skel-block::after, .kb-skel-card::after, #livechat-fab { animation: none !important; }
+            #content-container.kb-page-in { animation: none; }
+            .kb-tab, .kb-card, .kb-faq, .kb-faq-a { transition: none !important; }
+        }
+
     </style>
 </head>
 <body class="topbar-layout bg-[#0b0f19] text-slate-100 flex flex-col h-screen overflow-hidden custom-scrollbar">
@@ -2956,8 +3118,8 @@ function ensureTopbarLayout() {
         </div>
 
         <main id="main-content" onscroll="handleMainScroll()" class="relative flex-grow flex flex-col min-h-0 overflow-y-auto overflow-x-hidden bg-[#0d121f] custom-scrollbar">
-            <button id="back-to-top-btn" onclick="scrollMainToTop()" aria-label="Kembali ke atas halaman" title="Kembali ke atas" class="no-print hidden fixed md:absolute bottom-20 md:bottom-6 right-4 md:right-6 z-[55] w-10 h-10 rounded-full bg-slate-800/90 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 shadow-xl flex items-center justify-center transition text-slate-200">
-                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+            <button id="back-to-top-btn" onclick="scrollMainToTop()" aria-label="Kembali ke atas halaman" title="Kembali ke atas" class="kb-top no-print hidden fixed md:absolute bottom-20 md:bottom-6 right-4 md:right-6 z-[55] w-10 h-10 rounded-full bg-slate-800/90 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 shadow-xl flex items-center justify-center transition text-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
             </button>
 
             <div class="flex-grow p-4 md:p-8 flex justify-center">
@@ -3009,14 +3171,44 @@ function ensureTopbarLayout() {
 </svg>
                     </div>
                     <div id="content-container" class="space-y-6">
+                        <div class="kb-skel" aria-hidden="true">
+                            <div class="kb-skel-block" style="height:250px"></div>
+                            <div class="kb-skel-grid"><div class="kb-skel-card"></div><div class="kb-skel-card"></div><div class="kb-skel-card"></div><div class="kb-skel-card"></div><div class="kb-skel-card"></div><div class="kb-skel-card"></div></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <footer class="bg-slate-950 text-slate-500 text-center py-6 text-xs border-t border-slate-800/80 flex-shrink-0">
-                <p>&copy; 2026 <span class="dynamic-site-name text-slate-300 font-bold text-sm">KABAS MEAN</span> - Kanal Bantuan, Sumber Informasi & Media Panduan SRIKANDI</p>
-                <p class="mt-1">Dibuat dengan penuh dedikasi oleh <span class="text-amber-500 font-bold">Stanislaus Bria, S.Fil</span></p>
-                <button onclick="scrollMainToTop()" class="no-print mt-2 text-red-500 hover:text-red-400 text-sm font-bold underline underline-offset-2 transition">Kembali ke atas</button>
+            <footer class="kb-footer">
+                <div class="kb-footer-grid">
+                    <div>
+                        <p class="kb-footer-title"><span class="dynamic-site-name">KABAS MEAN</span></p>
+                        <p class="kb-footer-desc">Kanal Bantuan, Sumber Informasi &amp; Media Panduan SRIKANDI. Satu tempat untuk panduan, FAQ, dan pendampingan teknis.</p>
+                    </div>
+                    <nav class="kb-footer-col" aria-label="Tautan cepat">
+                        <h4>Tautan Cepat</h4>
+                        <button type="button" onclick="navigate('beranda')">Beranda</button>
+                        <button type="button" onclick="navigate('faq')">FAQ</button>
+                        <button type="button" onclick="navigate('mentors')">Pendamping Teknis</button>
+                        <button type="button" onclick="navigate('permohonan')">Tiket Bantuan</button>
+                    </nav>
+                    <nav class="kb-footer-col" aria-label="Layanan">
+                        <h4>Layanan</h4>
+                        <button type="button" onclick="navigate('admin-instansi')">Hak Akses</button>
+                        <button type="button" onclick="navigate('tte-pengajuan')">Tandatangan Elektronik</button>
+                        <button type="button" onclick="navigate('nm-registrasi')">Naskah Masuk</button>
+                        <button type="button" onclick="navigate('nk-registrasi')">Naskah Keluar</button>
+                    </nav>
+                    <div class="kb-footer-col">
+                        <h4>Butuh Bantuan?</h4>
+                        <p>Tanyakan langsung kepada pendamping teknis melalui Live Chat.</p>
+                        <button type="button" class="kb-footer-cta" onclick="openLiveChat()">Buka Live Chat</button>
+                    </div>
+                </div>
+                <div class="kb-footer-bottom">
+                    <p>&copy; 2026 KABAS MEAN. Hak cipta dilindungi.</p>
+                    <p>Dibuat dengan penuh dedikasi oleh <b>Stanislaus Bria, S.Fil</b></p>
+                </div>
             </footer>
         </main>
     </div>
@@ -3223,13 +3415,13 @@ function ensureTopbarLayout() {
         function renderSubTabs(section) {
             const group = findParentGroup(section);
             if (!group) return '';
-            const tabs = submenuGroups[group].map(id => {
+            const tabs = submenuGroups[group].map((id, n) => {
                 const active = id === section;
-                return `<button onclick="navigate('${id}')" class="px-4 py-2 rounded-full text-[11px] md:text-xs font-bold whitespace-nowrap transition ${active ? 'bg-gradient-to-r from-[#ff0000] to-[#cc0000] text-white shadow-lg shadow-red-600/25' : 'bg-slate-800/60 text-slate-300 border border-slate-700/60 hover:bg-slate-800 hover:text-white'}">${submenuTabLabels[id] || id}</button>`;
+                return `<button type="button" onclick="navigate('${id}')" class="kb-tab${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}><span class="kb-tab-n">${n + 1}</span><span>${submenuTabLabels[id] || id}</span></button>`;
             }).join('');
-            return `<div class="mb-1">
-                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">${submenuGroupLabels[group]}</p>
-                <div class="flex flex-wrap gap-2 pb-2 border-b border-slate-800/80">${tabs}</div>
+            return `<div class="kb-tabs">
+                <p class="kb-tabs-label"><span class="kb-dot"></span>${submenuGroupLabels[group]}</p>
+                <div class="kb-tabs-row">${tabs}</div>
             </div>`;
         }
 
@@ -3342,40 +3534,160 @@ function ensureTopbarLayout() {
         });
 
         // --- FAQ (Pertanyaan yang Sering Diajukan) ---
-        function renderFaqSection() {
-            const items = defaultFaqs.map(f => `
-                <div class="border border-slate-800 rounded-2xl overflow-hidden bg-slate-900/40" id="faq-item-${f.id}">
-                    <button onclick="toggleFaqItem('${f.id}')" class="w-full flex items-center justify-between gap-3 text-left px-4 py-3.5 hover:bg-slate-800/40 transition">
-                        <span class="text-sm font-bold text-slate-100">${f.question}</span>
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-amber-400 flex-shrink-0 transition-transform" id="faq-icon-${f.id}"></i>
-                    </button>
-                    <div class="hidden px-4 pb-4 text-sm text-slate-400 leading-relaxed" id="faq-answer-${f.id}">${f.answer}</div>
-                </div>`).join('');
+        /* ===================== UPGRADE KB: pencarian, breadcrumb, FAQ, transisi ===================== */
+        function kbEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        const KB_IC = {
+            search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+            x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+            home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+            right: '<path d="m9 18 6-6-6-6"/>',
+            down: '<path d="m6 9 6 6 6-6"/>',
+            up: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+            file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+            help: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+            chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
+        };
+        function kbSvg(inner, size, sw) {
+            return `<svg xmlns="http://www.w3.org/2000/svg" width="${size || 18}" height="${size || 18}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw || 2}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+        }
+        const kbPageTitles = { faq: 'FAQ', mentors: 'Pendamping Teknis', evaluasi: 'Evaluasi', permohonan: 'Tiket Bantuan', informasi: 'Informasi Umum', pemberkasan: 'Pemberkasan Arsip Aktif' };
 
+        /* --- Pencarian di Beranda --- */
+        let kbIndex = null;
+        function kbBuildIndex() {
+            const list = [];
+            Object.keys(localStateContents).forEach(k => {
+                const it = localStateContents[k];
+                if (it && it.title) list.push({ section: k, type: 'Panduan', title: it.title, text: stripHtmlTags(it.body) });
+            });
+            defaultFaqs.forEach(f => list.push({ section: 'faq', faqId: f.id, type: 'FAQ', title: stripHtmlTags(f.question), text: stripHtmlTags(f.answer) }));
+            return list;
+        }
+        function renderHeroSearch() {
+            const chips = ['Lupa password', 'Passphrase', 'TTE', 'Naskah masuk'];
+            return `<section class="kb-search kb-search-over" aria-label="Cari panduan">
+                <div class="kb-search-main">
+                    <div class="kb-search-box">
+                        <span class="kb-search-ic">${kbSvg(KB_IC.search, 20, 2.2)}</span>
+                        <input id="hero-search-input" type="text" autocomplete="off" placeholder="Cari panduan, menu, atau pertanyaan (mis. lupa password)" oninput="heroSearch(this.value)" onkeydown="heroSearchKey(event)" aria-label="Cari panduan">
+                        <button type="button" id="hero-search-clear" class="kb-search-clear hidden" onclick="heroSearchClear()" aria-label="Hapus pencarian">${kbSvg(KB_IC.x, 16, 2.4)}</button>
+                    </div>
+                    <div id="hero-search-results" class="kb-search-results hidden" role="listbox"></div>
+                </div>
+                <div class="kb-chips"><span>Populer:</span>${chips.map(c => `<button type="button" onclick="heroSearchSet('${c}')">${c}</button>`).join('')}</div>
+            </section>`;
+        }
+        function heroSearch(q) {
+            const box = document.getElementById('hero-search-results'), clr = document.getElementById('hero-search-clear');
+            if (!box) return;
+            const t = (q || '').trim().toLowerCase();
+            if (clr) clr.classList.toggle('hidden', !t);
+            if (!t) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+            if (!kbIndex) kbIndex = kbBuildIndex();
+            const words = t.split(/\s+/);
+            const hits = kbIndex.map(it => {
+                const ti = it.title.toLowerCase(), tx = it.text.toLowerCase();
+                if (!words.every(w => ti.includes(w) || tx.includes(w))) return null;
+                return { it, score: (ti.includes(t) ? 5 : 0) + words.filter(w => ti.includes(w)).length * 2 + (tx.includes(t) ? 1 : 0) };
+            }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 6);
+            if (!hits.length) {
+                box.innerHTML = `<div class="kb-sr-empty">Tidak ada hasil untuk &ldquo;${kbEsc(q)}&rdquo;. Coba kata kunci lain atau tanyakan lewat Live Chat.</div>`;
+            } else {
+                box.innerHTML = hits.map(({ it }) => {
+                    const i = it.text.toLowerCase().indexOf(t);
+                    const snip = it.text ? kbEsc((i > 40 ? '…' : '') + it.text.slice(Math.max(0, i - 40), Math.max(0, i - 40) + 110) + '…') : '';
+                    return `<button type="button" class="kb-sr" role="option" onclick="heroGo('${it.section}', ${it.faqId ? `'${it.faqId}'` : 'null'})">
+                        <span class="kb-sr-ic ${it.type === 'FAQ' ? 'is-faq' : ''}">${kbSvg(it.type === 'FAQ' ? KB_IC.help : KB_IC.file, 16, 2)}</span>
+                        <span class="kb-sr-body"><b>${kbEsc(it.title)}</b><small>${snip}</small></span>
+                        <span class="kb-sr-tag">${it.type}</span></button>`;
+                }).join('');
+            }
+            box.classList.remove('hidden');
+        }
+        function heroSearchSet(v) { const i = document.getElementById('hero-search-input'); if (i) { i.value = v; i.focus(); heroSearch(v); } }
+        function heroSearchClear() { const i = document.getElementById('hero-search-input'); if (i) { i.value = ''; i.focus(); } heroSearch(''); }
+        function heroSearchKey(e) {
+            if (e.key === 'Escape') heroSearchClear();
+            if (e.key === 'Enter') { const f = document.querySelector('#hero-search-results .kb-sr'); if (f) f.click(); }
+        }
+        function heroGo(section, faqId) {
+            heroSearch('');
+            navigate(section);
+            if (faqId) setTimeout(() => { const el = document.getElementById('faq-item-' + faqId); if (el) { openFaqItem(faqId); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } }, 80);
+        }
+        document.addEventListener('click', e => {
+            const box = document.getElementById('hero-search-results');
+            if (box && !e.target.closest('.kb-search-main')) box.classList.add('hidden');
+        });
+
+        /* --- Breadcrumb + transisi halaman (otomatis untuk semua halaman) --- */
+        function renderBreadcrumb(section) {
+            if (!section || section === 'beranda') return '';
+            const group = findParentGroup(section);
+            const sep = `<span class="kb-sep">${kbSvg(KB_IC.right, 14, 2.4)}</span>`;
+            const title = (localStateContents[section] && localStateContents[section].title) || kbPageTitles[section] || (typeof submenuTabLabels !== 'undefined' && submenuTabLabels[section]) || section;
+            let h = `<button type="button" class="kb-crumb kb-crumb-link" onclick="navigate('beranda')">${kbSvg(KB_IC.home, 14, 2.2)}<span>Beranda</span></button>`;
+            if (group) h += sep + `<button type="button" class="kb-crumb kb-crumb-link" onclick="navigate('${submenuGroups[group][0]}')"><span>${kbEsc(submenuGroupLabels[group] || group)}</span></button>`;
+            h += sep + `<span class="kb-crumb kb-crumb-current" aria-current="page">${kbEsc(title)}</span>`;
+            return `<nav class="kb-breadcrumb no-print" aria-label="Breadcrumb">${h}</nav>`;
+        }
+        (function kbObserveContent() {
+            const c = document.getElementById('content-container');
+            if (!c) return;
+            let busy = false;
+            new MutationObserver(recs => {
+                if (busy) return;
+                busy = true;
+                try {
+                    const swapped = recs.some(r => [...r.removedNodes].some(n => !(n.classList && (n.classList.contains('kb-breadcrumb') || n.classList.contains('home-back-button')))));
+                    if (typeof currentSection !== 'undefined' && currentSection !== 'beranda' && !c.querySelector(':scope > .kb-breadcrumb')) {
+                        c.insertAdjacentHTML('afterbegin', renderBreadcrumb(currentSection));
+                    }
+                    if (swapped) { c.classList.remove('kb-page-in'); void c.offsetWidth; c.classList.add('kb-page-in'); }
+                } finally { busy = false; }
+            }).observe(c, { childList: true });
+        })();
+
+        /* --- FAQ accordion + filter --- */
+        function renderFaqSection() {
+            const items = defaultFaqs.map((f, i) => `
+                <div class="kb-faq" id="faq-item-${f.id}" data-q="${kbEsc((stripHtmlTags(f.question) + ' ' + stripHtmlTags(f.answer)).toLowerCase())}">
+                    <button type="button" class="kb-faq-q" id="faq-btn-${f.id}" aria-expanded="false" onclick="toggleFaqItem('${f.id}')">
+                        <span class="kb-faq-num">${String(i + 1).padStart(2, '0')}</span>
+                        <span class="kb-faq-text">${f.question}</span>
+                        <span class="kb-faq-chev" id="faq-icon-${f.id}">${kbSvg(KB_IC.down, 18, 2.4)}</span>
+                    </button>
+                    <div class="kb-faq-a" id="faq-answer-${f.id}"><div><div class="kb-faq-a-in">${f.answer}</div></div></div>
+                </div>`).join('');
             return `
                 <div class="space-y-6">
                     <div class="border-b border-slate-800/80 pb-4">
                         <h2 class="text-xl md:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5"><span class="w-1.5 h-6 bg-amber-500 rounded-full inline-block"></span> FAQ - Pertanyaan yang Sering Diajukan</h2>
                     </div>
-                    <p class="text-sm text-slate-400 leading-relaxed">Kumpulan jawaban atas pertanyaan yang paling sering ditanyakan seputar penggunaan SRIKANDI. Tidak menemukan jawaban yang Anda cari? Gunakan kotak pencarian di sidebar atau hubungi Admin Instansi melalui Live Chat.</p>
-                    <div class="space-y-3">${items || '<p class="text-slate-500 text-sm">Belum ada FAQ.</p>'}</div>
+                    <p class="text-sm text-slate-400 leading-relaxed">Kumpulan jawaban atas pertanyaan yang paling sering ditanyakan seputar penggunaan SRIKANDI. Saring dengan kolom di bawah, atau hubungi Admin Instansi dan Pendamping Teknis bila jawabannya belum ketemu.</p>
+                    <div class="kb-faq-tools">
+                        <div class="kb-faq-search"><span>${kbSvg(KB_IC.search, 18, 2.2)}</span><input type="text" id="faq-filter" placeholder="Saring pertanyaan…" oninput="filterFaq(this.value)" aria-label="Saring pertanyaan"></div>
+                        <span class="kb-faq-count" id="faq-count">${defaultFaqs.length} pertanyaan</span>
+                    </div>
+                    <div class="kb-faq-list" id="faq-list">${items || '<p class="text-slate-500 text-sm">Belum ada FAQ.</p>'}</div>
+                    <div id="faq-empty" class="kb-faq-empty hidden">Tidak ada pertanyaan yang cocok. Coba kata kunci lain.</div>
                 </div>`;
         }
-
-        function toggleFaqItem(id) {
-            const ans = document.getElementById('faq-answer-' + id);
-            const icon = document.getElementById('faq-icon-' + id);
-            if (!ans) return;
-            const isOpen = !ans.classList.contains('hidden');
-            if (isOpen) { ans.classList.add('hidden'); if (icon) icon.style.transform = 'rotate(0deg)'; }
-            else { ans.classList.remove('hidden'); if (icon) icon.style.transform = 'rotate(180deg)'; }
+        function setFaqOpen(id, open) {
+            const el = document.getElementById('faq-item-' + id), b = document.getElementById('faq-btn-' + id);
+            if (!el) return;
+            el.classList.toggle('is-open', open);
+            if (b) b.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
-
-        function openFaqItem(id) {
-            const ans = document.getElementById('faq-answer-' + id);
-            const icon = document.getElementById('faq-icon-' + id);
-            if (ans) ans.classList.remove('hidden');
-            if (icon) icon.style.transform = 'rotate(180deg)';
+        function toggleFaqItem(id) { const el = document.getElementById('faq-item-' + id); if (el) setFaqOpen(id, !el.classList.contains('is-open')); }
+        function openFaqItem(id) { setFaqOpen(id, true); }
+        function filterFaq(q) {
+            const t = (q || '').trim().toLowerCase();
+            let n = 0;
+            document.querySelectorAll('#faq-list .kb-faq').forEach(el => { const m = !t || el.dataset.q.includes(t); el.classList.toggle('hidden', !m); if (m) n++; });
+            const e = document.getElementById('faq-empty'), c = document.getElementById('faq-count');
+            if (e) e.classList.toggle('hidden', n > 0);
+            if (c) c.textContent = n + ' pertanyaan';
         }
 
         // --- TOMBOL KEMBALI KE ATAS ---
@@ -3388,6 +3700,8 @@ function ensureTopbarLayout() {
             if (!main || !btn) return;
             if (main.scrollTop > 400) btn.classList.remove('hidden');
             else btn.classList.add('hidden');
+            const max = main.scrollHeight - main.clientHeight;
+            btn.style.setProperty('--p', (max > 0 ? Math.min(100, main.scrollTop / max * 100) : 0).toFixed(1) + '%');
         }
         function scrollMainToTop() {
             const main = document.getElementById('main-content');
@@ -3496,7 +3810,7 @@ function ensureTopbarLayout() {
             const uid = `${category}-${Math.random().toString(36).slice(2, 7)}`;
 
             return `
-                <a href="${link.url}" target="_blank" rel="noopener" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg flex flex-col">
+                <a href="${link.url}" target="_blank" rel="noopener" class="kb-card group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg flex flex-col">
                     <div class="h-36 sm:h-40 w-full overflow-hidden bg-slate-950 relative">
                         ${buildLinkPreviewSvg(category, uid)}
                         <div class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur flex items-center justify-center border border-white/10">
@@ -3627,6 +3941,7 @@ function ensureTopbarLayout() {
                             </div>
                         </div>
                     </div>
+                    ${renderHeroSearch()}
                     ${renderHomeServiceCards()}`;
             }
             html += `
@@ -3654,7 +3969,7 @@ function ensureTopbarLayout() {
         // "Infografis" dan "Video Tutorial" yang sebelumnya berdiri sendiri di sidebar.
         function renderInfografisCard(item) {
             return `
-                <button onclick="openImageModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
+                <button onclick="openImageModal('${item.imageUrl}', '${item.title.replace(/'/g, "\\'")}')" class="kb-card group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
                     <div class="aspect-video w-full overflow-hidden bg-slate-950">
                         <img src="${item.imageUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                     </div>
@@ -3667,7 +3982,7 @@ function ensureTopbarLayout() {
 
         function renderVideoCard(item) {
             return `
-                <button onclick="openVideoModal('${item.youtubeId}', '${item.title.replace(/'/g, "\\'")}')" class="group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
+                <button onclick="openVideoModal('${item.youtubeId}', '${item.title.replace(/'/g, "\\'")}')" class="kb-card group text-left bg-slate-900/40 border border-slate-800 rounded-2xl overflow-hidden hover:border-amber-500/60 transition shadow-lg">
                     <div class="aspect-video w-full overflow-hidden bg-slate-950 relative">
                         <img src="https://img.youtube.com/vi/${item.youtubeId}/hqdefault.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                         <div class="absolute inset-0 flex items-center justify-center bg-black/30">
@@ -5025,7 +5340,7 @@ function ensureTopbarLayout() {
 
     <!-- TOMBOL MENGAMBANG (anak langsung <body> supaya posisi fixed murni relatif ke layar, selalu tampil di kanan bawah) -->
     <button id="livechat-fab" onclick="openLiveChat()" aria-label="Buka Live Chat" title="Buka Live Chat" class="fixed bottom-[68px] right-4 z-[80] w-11 h-11 rounded-full bg-emerald-600 hover:bg-emerald-500 shadow-xl shadow-emerald-600/40 flex items-center justify-center transition hover:scale-105">
-        <i data-lucide="message-circle-more" class="w-5 h-5 text-white"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg><span class="kb-fab-label">Live Chat</span>
         <span id="livechat-fab-badge" class="hidden absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-slate-950 animate-pulse">0</span>
     </button>
 
