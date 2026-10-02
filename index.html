@@ -790,6 +790,69 @@
             }
         }
 
+        /* Teks menu topbar yang panjang otomatis turun menjadi maksimal dua baris
+           (bukan memanjang ke samping). Menu pendek seperti "Beranda" tetap satu baris. */
+        #sidebar-nav .topbar-nav-link {
+            white-space: normal;
+        }
+        #sidebar-nav .topbar-nav-link span {
+            white-space: normal;
+            line-height: 1.2;
+            text-align: center;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            #sidebar-nav .topbar-nav-link {
+                padding-top: .45rem;
+                padding-bottom: .45rem;
+            }
+            #sidebar-nav .topbar-nav-link span {
+                max-width: 7.75rem;
+            }
+            /* Kolom tengah (menu) diberi sisa ruang, kolom logo & Login menyesuaikan isinya,
+               sehingga menu tidak lagi terpotong di kiri/kanan. */
+            .topbar-inner {
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                gap: .75rem;
+                padding-inline: 1.25rem;
+            }
+            .topbar-brand, .topbar-account { min-width: 0; }
+            body.topbar-layout #sidebar-nav,
+            #sidebar-nav {
+                justify-content: safe center !important;
+                min-width: 0;
+            }
+            #sidebar-nav .topbar-nav-link {
+                gap: .5rem;
+                padding-inline: .8rem;
+            }
+            #sidebar-nav .topbar-divider { margin: 0 .1rem; }
+        }
+        @media (min-width: 768px) and (max-width: 1100px) {
+            #sidebar-nav .topbar-nav-link { padding-inline: .55rem; gap: .4rem; }
+            #sidebar-nav .topbar-nav-link span { max-width: 6.5rem; }
+        }
+        @media (max-width: 767px) {
+            #sidebar-nav .topbar-nav-link span { text-align: left; }
+        }
+
+        /* PERBAIKAN: saat kursor melewati menu aktif (mis. Beranda), teks & ikon jadi putih
+           di atas latar krem sehingga tampak menghilang (akibat aturan hover lama
+           "#sidebar .nav-active:hover"). Di topbar, hover menu aktif dipertahankan
+           krem sedikit lebih pekat dengan teks & ikon tetap cokelat. */
+        html #sidebar .topbar-nav-link.nav-active:hover,
+        html.light-mode #sidebar .topbar-nav-link.nav-active:hover {
+            background: #ffedd5 !important;
+            color: #92400e !important;
+        }
+        html #sidebar .topbar-nav-link.nav-active:hover i[data-lucide],
+        html #sidebar .topbar-nav-link.nav-active:hover span {
+            color: #92400e !important;
+        }
+
         /* Tombol Kembali ke Beranda, otomatis muncul pada setiap halaman selain Beranda. */
         .home-back-button {
             display: inline-flex;
@@ -2368,6 +2431,11 @@ function ensureTopbarLayout() {
                 <a href="https://script.google.com/macros/s/AKfycbxPK14mPyAWYgNtOXvJ1SUGgpW86MQewwgVLW_wv6XW1ppEcDdeuSdhNlRVNOSwtphR/exec" class="nav-item topbar-nav-link" id="menu-btn-panduan-singkat-srikandi">
                     <i data-lucide="book-open" class="w-5 h-5"></i>
                     <span>Panduan Singkat SRIKANDI</span>
+                </a>
+
+                <a href="https://script.google.com/macros/s/AKfycbxTPDUxjyzS1FnqJExXJQSKw7U86c-t3b40Ihw6WAREuY1YLlFvji55Z622B9BeN9OJIA/exec" class="nav-item topbar-nav-link" id="menu-btn-usulan-admin-satker">
+                    <i data-lucide="user-cog" class="w-5 h-5"></i>
+                    <span>Usulan Admin Satker</span>
                 </a>
 
                 <a href="https://script.google.com/macros/s/AKfycbxxDP4dMr1iYN_6Ij26riM93t8KP4u91yVxy_GB4T43E-Fhve2ciLFxU4dmtO1e4FEQ7w/exec" class="nav-item topbar-nav-link" id="menu-btn-srikandi-track">
